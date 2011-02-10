@@ -1,4 +1,4 @@
-package lecture2;
+package distributedsystems.labexercise2;
 
 import java.io.Serializable;
 

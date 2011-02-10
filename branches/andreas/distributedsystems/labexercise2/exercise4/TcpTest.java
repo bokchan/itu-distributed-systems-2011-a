@@ -1,9 +1,5 @@
 package distributedsystems.labexercise2.exercise4;
 
-
- 
-
-
 public class TcpTest implements Runnable {
 public static int port = 4567;
 	/**
