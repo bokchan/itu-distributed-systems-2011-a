@@ -1,4 +1,4 @@
-package distributedsystems.labexercise2;
+package pellekrogholt.labexercise2;
 
 import java.net.*; 
 import java.io.*;
