@@ -1,4 +1,4 @@
-package socketSerialization;
+package stine.labexercise2;
 
 import java.io.*;
 import java.net.*;
