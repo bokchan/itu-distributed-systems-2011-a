@@ -31,7 +31,7 @@ public class SimpleTcpClient
 {  
 	public static void main (String args[]) throws Exception
 	{
-		Dog dog = new Dog(10, "Jeff");
+		Dog dog = new Dog(7, "Djan");
 		InetAddress serverAddress = InetAddress.getByName("localhost");
 	    int serverPort = 7895;
 	    Object message = dog;
