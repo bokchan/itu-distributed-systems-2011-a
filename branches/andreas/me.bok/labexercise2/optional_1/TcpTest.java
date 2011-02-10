@@ -1,4 +1,4 @@
-package distributedsystems.labexercise2.optional_1;
+package me.bok.labexercise2.optional_1;
 
 
 public class TcpTest implements Runnable {

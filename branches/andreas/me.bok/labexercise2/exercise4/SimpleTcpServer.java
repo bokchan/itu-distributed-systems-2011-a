@@ -1,4 +1,4 @@
-package distributedsystems.labexercise2.exercise4;
+package me.bok.labexercise2.exercise4;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

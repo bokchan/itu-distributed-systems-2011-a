@@ -1,4 +1,4 @@
-package distributedsystems.labexercise2;
+package me.bok.labexercise2;
 
 import java.io.Serializable;
 

@@ -1,17 +1,20 @@
-package distributedsystems.labexercise2;
+package me.bok.labexercise2.optional_1;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class SimpleTcpServer{
+	private static ArrayList<Object> list;
 
-	int port; 
-
+	int port;
+	
 	public SimpleTcpServer(int port) throws Exception {
 		this.port = port;
+		list = new ArrayList<Object>();
 
 		ServerSocket server = new ServerSocket(port);	
 
@@ -21,6 +24,14 @@ public class SimpleTcpServer{
 			t.start();
 		}
 	}
+	
+	public static ArrayList<Object> getList() {
+		return list;
+	}  
+	public static void removeFromList(int idx) {
+		if (list.get(idx) != null)
+			list.remove(idx);
+	} 
 
 } 
 
@@ -41,11 +52,12 @@ class Connection implements Runnable {
 	}
 	public void run() {
 		// TODO Auto-generated method stub
-		Object o = null;
+		Object o1 = null;
+		Object o2 = null;
 		try {
-			o = ois.readObject();
-			System.out.println(o.toString()) ;
-			sendMessage(o);
+			o1 = ois.readObject();
+			o2 = ois.readObject();
+			handleAction(o1, o2);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -56,19 +68,26 @@ class Connection implements Runnable {
 		}
 	}
 
-	public void sendMessage() {
-		try {
-			oos.writeObject("Message received");
-		} catch (Exception e) {	
+	public void handleAction(Object m, Object o) {
+		int i = Integer.parseInt(m.toString()); 
+		if (i == 1) {
+			SimpleTcpServer.getList().add(o);
+			
+			try {
+				oos.writeObject(null);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			int j = Integer.parseInt(o.toString());
+			Object p = SimpleTcpServer.getList().get(j);
+			try {
+				oos.writeObject(p);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-	}
-
-	public void sendMessage(Object o) {
-		try {
-			oos.writeObject(o);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
 	} 
 }

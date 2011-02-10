@@ -1,4 +1,4 @@
-package distributedsystems.labexercise2.exercise6;
+package me.bok.labexercise2.exercise6;
 public class UdpClient {
 
 	/**

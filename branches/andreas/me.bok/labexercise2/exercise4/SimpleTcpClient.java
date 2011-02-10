@@ -1,4 +1,4 @@
-package distributedsystems.labexercise2;
+package me.bok.labexercise2.exercise4;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,13 +15,13 @@ public class SimpleTcpClient {
 		this.port = port;
 	}
 	
-	public void send(Object o) throws Exception {
+	public void send(int value, Object o) throws Exception {
 		InetAddress serverAddress = InetAddress.getByName(serverAddr); //InetAddress.getByName("localhost");
 		this.socket = new Socket( serverAddress, port); //
 						
 		ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+		oos.writeObject(value);
 		oos.writeObject(o);
-		oos.writeObject("sdfdsf");
 		oos.flush();
 		
 		readMessage();
@@ -35,7 +35,6 @@ public class SimpleTcpClient {
 		
 		} catch (Exception e){
 			
-		}		
-
+		}	
 	}
 }

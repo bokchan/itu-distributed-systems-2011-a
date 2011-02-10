@@ -1,28 +1,27 @@
-package distributedsystems.labexercise2.exercise4;
+package me.bok.labexercise2;
 
 public class TcpTest implements Runnable {
-public static int port = 4567;
+public static int port = 4568;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		Exercise4();		
+		Exercise3();		
 	}
 	
-	public static void Exercise4() throws Exception{
-		System.out.println("Exercise 4: Supporting different functionality");
+	
+	public static void Exercise3() throws Exception {
+		System.out.println("Exercise 3: A round trip");
 		String serverIP = "localhost";
 		// TODO Auto-generated method stub
 		
 		new Thread(new TcpTest()).start();
 		
+		
 		SimpleTcpClient stc = new SimpleTcpClient(serverIP, port);
-		stc.send(1, "Hello");
-		stc.send(0, "Hello");
-		
-		
+		stc.send("Hello");
 	}
-
+	
 	public void run() {
 		// TODO Auto-generated method stub
 		System.out.println("Thread called and server created");
