@@ -21,7 +21,11 @@ public class MyTcpServerClientRunner implements Runnable {
 		
 		// ? stands for a so called wild card...
 		MyTcpClient<String, ?> client = new MyTcpClient (server_port, server_address); 		
+
 		client.send("hello world");
+		
+		
+		
 		client.send("hello another world");
 		client.send("hello another another world");
 		
@@ -49,7 +53,7 @@ public class MyTcpServerClientRunner implements Runnable {
 		// TODO Auto-generated method stub
 		try {
 			
-			System.out.println("Thread called and server created");
+			System.out.println("Runner thread called and server created");
 			MyTcpServer server = new MyTcpServer(server_port);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
