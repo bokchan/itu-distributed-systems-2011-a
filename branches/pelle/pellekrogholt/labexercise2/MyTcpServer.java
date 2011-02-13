@@ -42,59 +42,54 @@ public class MyTcpServer implements IServer {
 	 */
 	private class Connection implements Runnable {
 		
-		private ObjectInputStream object_in_stream; // previously in
-		private ObjectOutputStream object_out_stream; // previously out
+		private ObjectInputStream ois; // previously in
+		private ObjectOutputStream oos; // previously out
 		private Socket socket;
 		
 		
 		// pelle: whats best practice to throw exception or try/catch clauses ?
 		private Connection (Socket socket) throws IOException {
 			
-			System.out.println("Connection - created ...");
-			
 			this.socket = socket;
-			
-			
-			object_out_stream = new ObjectOutputStream( socket.getOutputStream());
-			
-			
-			object_in_stream = new ObjectInputStream( socket.getInputStream());
+			oos = new ObjectOutputStream( socket.getOutputStream());
+			ois = new ObjectInputStream( socket.getInputStream());
 
 		}
 
 		public void run() {
-			
 
-			
 			// TODO Auto-generated method stub
 			Object o = null;
 			
-			System.out.println("Connection run () called...");
-			
+//			System.out.println("Connection run () called...");
 			
 			try {
-//				String method = object_in_stream.readObject().toString();
+//				String method = ois.readObject().toString();				
+//				System.out.println("Connection run () called... and now inside try clause");
 				
-				System.out.println("Connection run () called... and now inside try clause");
+				// first object in current stream
+				o = ois.readObject();
+//				System.out.println("o:" + o.toString());
 				
-				o = object_in_stream.readObject();
+				// second object in current stream - this part breaks if no second object is send ... hmmm
+				String method = ois.readObject().toString();
 				
-				System.out.println(o.toString()) ;
+				System.out.println("method: " + method.toString());
 				
-//				sendMessage(method, o);
+				if (method.toString().isEmpty()) {
+					send(o);
+				} else {
+					send(o, Integer.parseInt(method));
+				}
 
-				
-				
+//				send(o, method);
+
 				if (o.toString().equals("quit")) {
 		//			TODO: stop server
 					System.out.println("quit server called");
 					// quit server
 					socket.close(); 
-				}
-				
-				
-				
-				
+				}				
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -104,11 +99,31 @@ public class MyTcpServer implements IServer {
 				e.printStackTrace();
 			}
 		} // end run()
+		
+		private void send(Object o) {
+			try {
+				
+				System.out.println("server send() called");
+				
+				oos.writeObject("Server respons: Message received");
+			} catch (Exception e) {	
+			}
+		}
 
+		private void send(Object o, int i) {
+			String message = "";
+			if (i == 0)
+				message = o.toString().toLowerCase();
+			if (i == 1)
+				message = o.toString().toUpperCase();
+			try {
+				oos.writeObject(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
 	} // end Connection
-} // end MyTcpServer 
 
-
-
-
-
+} // end MyTcpServer
