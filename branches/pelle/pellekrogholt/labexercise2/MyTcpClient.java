@@ -25,9 +25,11 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 		this.port = port;
 		this.server_address = server_address;		
 
+		// note: 
 		// create a new socket - not sure if this should be here in the constructor 
-		// or in the send method
-		this.socket = new Socket( server_address, port );
+		// or in the send method - so fare do it in the send method - if done here 
+		// only one send will go through per client.
+		// this.socket = new Socket( server_address, port );
 	}
 
 
@@ -40,8 +42,10 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 */
 	public void send(V value, C command) throws IOException {
 
+		this.socket = new Socket( server_address, port );
+		
 		OutputStream os = socket.getOutputStream();
-		// could have gotten an InputStream as well - perhaps try that within a recieve method ?
+		// could have gotten an InputStream as well - perhaps try that within a receive method ?
 
 		ObjectOutputStream oos = new ObjectOutputStream(os);
 		
@@ -52,13 +56,6 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 //		readMessage();
 
 		
-//		DataOutputStream dos = new DataOutputStream( os );
-//
-//		
-//		System.out.println(message);
-//		
-//		dos.writeUTF( (String) message);		
-//		dos.flush();
 	}
 
 
@@ -69,19 +66,22 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 * @throws IOException 
 	 */
 	public void send(V message) throws IOException {
+		
+		System.out.println("send(V message) called");
+		
 		// create a new socket
-		Socket socket = new Socket( server_address, port );
+		this.socket = new Socket( server_address, port );
 		
 		OutputStream os = socket.getOutputStream();
 		// could have gotten an InputStream as well
 
-		DataOutputStream dos = new DataOutputStream( os );
+		ObjectOutputStream oos = new ObjectOutputStream( os );
 
 		
-		System.out.println(message);
+//		System.out.println(message);
 		
-		dos.writeUTF( (String) message);		
-		dos.flush();
+		oos.writeObject(message);		
+		oos.flush();
 	}
 
 

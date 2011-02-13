@@ -41,48 +41,72 @@ public class MyTcpServer implements IServer {
 	 * 
 	 */
 	private class Connection implements Runnable {
-		private DataInputStream in;
-		private DataOutputStream out;
+		
+		private ObjectInputStream object_in_stream; // previously in
+		private ObjectOutputStream object_out_stream; // previously out
 		private Socket socket;
 		
 		
-		private Connection (Socket socket) {
-			try {
-				System.out.println( "test" );
-				this.socket = socket;
-				in = new DataInputStream( socket.getInputStream());
-				out =new DataOutputStream( socket.getOutputStream());
-//				this.start(); not used in 
-			} catch(IOException e) {System.out.println("Connection:"+e.getMessage());}
+		// pelle: whats best practice to throw exception or try/catch clauses ?
+		private Connection (Socket socket) throws IOException {
+			
+			System.out.println("Connection - created ...");
+			
+			this.socket = socket;
+			
+			
+			object_out_stream = new ObjectOutputStream( socket.getOutputStream());
+			
+			
+			object_in_stream = new ObjectInputStream( socket.getInputStream());
+
 		}
-		public void run(){
-			try {			                 // an echo server
+
+		public void run() {
+			
+
+			
+			// TODO Auto-generated method stub
+			Object o = null;
+			
+			System.out.println("Connection run () called...");
+			
+			
+			try {
+//				String method = object_in_stream.readObject().toString();
 				
-				String data = in.readUTF();	                  // read a line of data from the stream
-				out.writeUTF(data);
-				if (data.equals("quit")) {
-//					TODO: stop server
+				System.out.println("Connection run () called... and now inside try clause");
+				
+				o = object_in_stream.readObject();
+				
+				System.out.println(o.toString()) ;
+				
+//				sendMessage(method, o);
+
+				
+				
+				if (o.toString().equals("quit")) {
+		//			TODO: stop server
 					System.out.println("quit server called");
 					// quit server
-					try {
-						System.out.println("socket.close() called but the connection seems still to hang...");
-						socket.close();
-					} catch (IOException e) 
-					{/*close failed*/}
+					socket.close(); 
 				}
 				
-			} catch (EOFException e){System.out.println("EOF:"+e.getMessage());
-			} catch(IOException e) {System.out.println("readline:"+e.getMessage());
-			} finally{ try {socket.close();}catch (IOException e){/*close failed*/}}
+				
+				
+				
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} // end run()
 
-
-		}
-	}
-
-
-
-
-}
+	} // end Connection
+} // end MyTcpServer 
 
 
 
