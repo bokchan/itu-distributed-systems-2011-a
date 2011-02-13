@@ -37,10 +37,14 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 * Send message with command
 	 * 
 	 * @param command 
-	 * @param value
+	 * @param message
 	 * @throws IOException 
 	 */
-	public void send(V value, C command) throws IOException {
+	
+	// whys is this not possible ?
+//	public void send(V value, C command) throws IOException {
+	
+	public void send(V message, int command) throws IOException {
 
 		this.socket = new Socket( server_address, port );
 		
@@ -48,14 +52,11 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 		// could have gotten an InputStream as well - perhaps try that within a receive method ?
 
 		ObjectOutputStream oos = new ObjectOutputStream(os);
-		
-		oos.writeObject(value);
+		oos.writeObject(message);
 		oos.writeObject(command);
 		oos.flush();
 		
 //		readMessage();
-
-		
 	}
 
 
@@ -66,8 +67,7 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 * @throws IOException 
 	 */
 	public void send(V message) throws IOException {
-		
-		System.out.println("send(V message) called");
+//		System.out.println("send(V message) called");
 		
 		// create a new socket
 		this.socket = new Socket( server_address, port );
@@ -76,32 +76,36 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 		// could have gotten an InputStream as well
 
 		ObjectOutputStream oos = new ObjectOutputStream( os );
-
-		
-//		System.out.println(message);
-		
-		oos.writeObject(message);		
+		oos.writeObject(message);
 		oos.flush();
+//		readMessage();
+		
 	}
 
 
-	/**
-	 * Receive (return) message form server
-	 *  
-	 * @throws ClassNotFoundException 
-	 * @throws IOException 
-	 */
-	public V receive() throws IOException, ClassNotFoundException {
+// temporarily disabled
+//	/**
+//	 * Receive (return) message form server
+//	 *  
+//	 * @throws ClassNotFoundException 
+//	 * @throws IOException 
+//	 */
+//	public V receive() throws IOException, ClassNotFoundException {
+//		
+//		System.out.println("client receive() called");
+//		
+//		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+//		Object o = ois.readObject();
+//		return (V) o; // not 100% sure about this cast - 
+//					  // perhaps it make not much sense to have a generic type in receive()?
+//	}
+	
+	
+	public String readMessageFromServer() throws IOException, ClassNotFoundException {
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 		Object o = ois.readObject();
-		return (V) o; // not 100% sure about this cast - 
-					  // perhaps it make not much sense to have a generic type in receive()?
-	}
-
-
-
-
-
+		return "client readMessage(): " + o.toString();
+	}	
 
 
 }
