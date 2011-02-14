@@ -12,8 +12,6 @@ public class MyTcpServerClientRunner implements Runnable {
 	
 	public static void main (String args[]) throws Exception{
 
-
-
 		InetAddress server_address = InetAddress.getByName("localhost");
 		
 		//start server in a separate thread

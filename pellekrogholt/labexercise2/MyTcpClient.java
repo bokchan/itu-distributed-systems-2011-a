@@ -35,17 +35,14 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 
 	/**
 	 * Send message with command
-	 * 
-	 * @param command 
+	 *  
 	 * @param message
+	 * @param operator
 	 * @throws IOException 
 	 */
-	
-	// whys is this not possible ?
-//	public void send(V value, C command) throws IOException {
-	
-	public void send(V message, int command) throws IOException {
+	public void send(V message, int operator) throws IOException {
 
+		
 		this.socket = new Socket( server_address, port );
 		
 		OutputStream os = socket.getOutputStream();
@@ -53,7 +50,7 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 
 		ObjectOutputStream oos = new ObjectOutputStream(os);
 		oos.writeObject(message);
-		oos.writeObject(command);
+		oos.writeObject(operator);
 		oos.flush();
 		
 //		readMessage();
@@ -105,7 +102,10 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 		Object o = ois.readObject();
 		return "client readMessage(): " + o.toString();
-	}	
+	}
+
+
+	
 
 
 }

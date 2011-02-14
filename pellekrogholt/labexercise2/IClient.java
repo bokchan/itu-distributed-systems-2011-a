@@ -16,12 +16,11 @@ public interface IClient<V, C> {
 	/**
 	 * Send value to server with a command
 	 * 
-	 * @param command
 	 * @param value
+	 * @param operator
 	 * @throws IOException 
 	 */
-//	void send(V value, C command) throws IOException; - had hoped for a more general generics ?
-	void send(V value, int command) throws IOException;	
+	void send(V value, int operator) throws IOException;	
 	
 	
 // temporarily disabled
