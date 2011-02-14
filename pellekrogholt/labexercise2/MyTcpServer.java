@@ -1,11 +1,17 @@
 package pellekrogholt.labexercise2;
 
+import bok.labexercise2.optional_1.Person;
+
 import java.net.*;  
 import java.io.*;
+
+import java.util.Vector;
 
 public class MyTcpServer implements IServer {
 
 	private int port;
+	private Vector<Object> storage = new Vector<Object>();
+	
 
 	/* constructor */
 	public MyTcpServer(int port) throws IOException {
@@ -20,13 +26,6 @@ public class MyTcpServer implements IServer {
 		}  
 
 	}
-
-
-
-
-
-
-
 
 
 	//class Connection extends Thread {
@@ -120,17 +119,63 @@ public class MyTcpServer implements IServer {
 		}
 
 		private void send(Object o, int i) {
-			String message = "";
-			if (i == 0)
-				message = o.toString().toLowerCase();
-			if (i == 1)
-				message = o.toString().toUpperCase();
-			try {
-				oos.writeObject(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
+			
+			
+			// assignment part 3/4
+			if (o instanceof String) {
+				
+				System.out.println(o + "is instanceof String");
+				
+				String message = "";
+				if (i == 0)
+					message = o.toString().toLowerCase();
+				if (i == 1)
+					message = o.toString().toUpperCase();
+				try {
+					oos.writeObject(message);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (o instanceof Person) {
+				
+				// assignment part optional 1
+
+				// add person to storage
+				if (i == 1)
+					storage.add(o);
+
+//				try {
+//					oos.writeObject(o);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				
+			} else {
+				// assignment part optional 1
+				System.out.println("get person should be called ");
+				
+				// request person from storage
+				if (i == 2) {
+					try {
+						oos.writeObject(storage.get(Integer.parseInt(o.toString())));
+						
+						System.out.println(Integer.parseInt(o.toString()));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}
+			
+			
+		}
+
+		private void elif(boolean b) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	} // end Connection
