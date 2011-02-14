@@ -10,7 +10,7 @@ public interface IClient<V, C> {
 	 * @param value
 	 * @throws IOException 
 	 */
-	void send(V value) throws IOException;	
+	Object send(V value) throws IOException, ClassNotFoundException;
 	
 	
 	/**
@@ -20,7 +20,7 @@ public interface IClient<V, C> {
 	 * @param operator
 	 * @throws IOException 
 	 */
-	void send(V value, int operator) throws IOException;	
+	Object send(V value, int operator) throws IOException, ClassNotFoundException;	
 	
 	
 	/**
@@ -29,6 +29,6 @@ public interface IClient<V, C> {
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
 	 */
-	V receive() throws IOException, ClassNotFoundException;
+	Object receive() throws IOException, ClassNotFoundException;
 	
 }

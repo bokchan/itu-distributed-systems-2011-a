@@ -1,7 +1,9 @@
 package pellekrogholt.labexercise2;
 
-import java.net.*; 
+import java.net.*;  
 import java.io.*;
+
+import bok.labexercise2.optional_1.Person;
 
 /**
  * 
@@ -39,8 +41,10 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 * @param operator
 	 * @throws IOException 
 	 */
-	public void send(V message, int operator) throws IOException {
+	public Object send(V message, int operator) throws IOException, ClassNotFoundException {
 
+		System.out.println("client Object send(V message, int operator) called");
+		
 		this.socket = new Socket( server_address, port );
 		
 		OutputStream os = socket.getOutputStream(); // could have gotten an InputStream as well used in receive()
@@ -50,9 +54,9 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 		oos.writeObject(operator);
 		oos.flush();
 		
-		// don't plase receive() / readMessage() here
+		return receive();
 	}
-
+	
 
 	/**
 	 * Send message
@@ -60,7 +64,9 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 * @param message
 	 * @throws IOException 
 	 */
-	public void send(V message) throws IOException {
+	public Object send(V message) throws IOException, ClassNotFoundException {
+		
+		System.out.println("client Object send(V message) called");
 		
 		// create a new socket
 		this.socket = new Socket( server_address, port );
@@ -71,15 +77,81 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 		oos.writeObject(message);
 		oos.flush();
 		
+		return receive();
 		// don't place receive() / readMessage() here 
 	}
 
-	public V receive() throws IOException, ClassNotFoundException {
+	/**
+	 * Send a Person object with command
+	 *  
+	 * @param p
+	 * @param operator
+	 * @throws IOException 
+	 */	
+	public Object send(Person p, int operator) throws IOException, ClassNotFoundException {
+
+//		System.out.println("");
+		
+		System.out.println("client Object send(Person p, int operator) called");
+		
+		this.socket = new Socket( server_address, port );
+		
+		OutputStream os = socket.getOutputStream(); // could have gotten an InputStream as well used in receive()
+
+		ObjectOutputStream oos = new ObjectOutputStream(os);
+		oos.writeObject(p);
+		oos.writeObject(operator);
+		oos.flush();
+		
+		if (operator == 1)
+			return null;
+
+		return receive();
+		// don't plase receive() / readMessage() here
+	}
+	
+	
+	/**
+	 * Send a key and get Person object
+	 *  
+	 * @param p
+	 * @param operator
+	 * @throws IOException 
+	 */	
+	public Object send(int key, int operator) throws IOException, ClassNotFoundException {
+
+		
+		System.out.println("client Object send(int key, int operator) called");
+		
+		this.socket = new Socket( server_address, port );
+		
+		OutputStream os = socket.getOutputStream(); // could have gotten an InputStream as well used in receive()
+
+		ObjectOutputStream oos = new ObjectOutputStream(os);
+		oos.writeObject(key);
+		oos.writeObject(operator);
+		oos.flush();
+		
+		
+		return receive();
+		// don't plase receive() / readMessage() here
+	}
+	
+	public Object receive() throws IOException, ClassNotFoundException {
 
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 		Object o = ois.readObject();
-		return (V) o;
+		return o;
 		
 	}
+	
+	
+//	public V receive() throws IOException, ClassNotFoundException {
+//
+//		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+//		Object o = ois.readObject();
+//		return (V) o;
+//		
+//	}
 
 }
