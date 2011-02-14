@@ -27,7 +27,7 @@ public class TcpServerClientRunner implements Runnable {
 
 		String message = "Hello world";
 		
-		System.out.println("A client send message (" +  message  + ") to server with operator 1 (uppercase)");
+		System.out.println("A client sends message (" +  message  + ") to server with operator 1 (uppercase)");
 		
 		System.out.println(client.send(message, 1)); // TODO: try with out operator
 //		client.receive().toString(); 
@@ -37,14 +37,14 @@ public class TcpServerClientRunner implements Runnable {
 		
 		message = "hello another world";
 		
-		System.out.println("A client send message (" +  message  + ") to server with operator 0 (lowercase)");
+		System.out.println("A client sends message (" +  message  + ") to server with operator 0 (lowercase)");
 		
 		System.out.println(client.send(message, 0));
 //		System.out.println(client.receive().toString());
 //		
 		message = "Hello another another world";
 		
-		System.out.println("A client send message (" +  message  + ") to server with operator 2 (do nothing)");
+		System.out.println("A client sends message (" +  message  + ") to server with operator 2 (do nothing)");
 		
 		System.out.println(client.send(message, 3));
 //		System.out.println(client.receive().toString());
@@ -64,7 +64,7 @@ public class TcpServerClientRunner implements Runnable {
 
 		message = "client 2 says: hello world";
 		
-		System.out.println("Client 2 send message (" +  message  + ") to server with operator 1 (uppercase)");
+		System.out.println("Client 2 sends message (" +  message  + ") to server with operator 1 (uppercase)");
 
 		System.out.println(client2.send(message, 1));
 

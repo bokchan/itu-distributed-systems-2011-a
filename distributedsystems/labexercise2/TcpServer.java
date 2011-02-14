@@ -58,16 +58,10 @@ public class TcpServer implements IServer {
 			// TODO Auto-generated method stub
 			Object o = null;
 			
-//			System.out.println("Connection run () called...");
-			
 			try {
-//				String method = ois.readObject().toString();				
-//				System.out.println("Connection run () called... and now inside try clause");
 				
 				// first object in current stream
 				o = ois.readObject();
-				// System.out.println("o:" + o.toString());
-				
 				
 				// quick fix
 				boolean flag = false;
@@ -75,7 +69,6 @@ public class TcpServer implements IServer {
 				try {
 					// second object in current stream - this part breaks if no second object is send ... hmmm
 					operator = ois.readObject().toString();
-					System.out.println("operator: " + operator.toString());
 					flag = true;
 				} catch (IOException e) {
 					
@@ -92,7 +85,6 @@ public class TcpServer implements IServer {
 
 				if (o.toString().equals("quit")) {
 		//			TODO: stop server
-					System.out.println("quit server called");
 					// quit server
 					socket.close(); 
 				}				
@@ -107,10 +99,7 @@ public class TcpServer implements IServer {
 		} // end run()
 		
 		private void send(Object o) {
-			try {
-				
-				// System.out.println("server send() called");
-				
+			try {				
 				oos.writeObject(o);
 			} catch (Exception e) {	
 			}
@@ -121,8 +110,6 @@ public class TcpServer implements IServer {
 			
 			// assignment part 3/4
 			if (o instanceof String) {
-				
-				System.out.println(o + "is instanceof String");
 				
 				String message = "";
 				if (i == 0)
@@ -142,24 +129,15 @@ public class TcpServer implements IServer {
 				// add person to storage
 				if (i == 1)
 					storage.add(o);
-
-//				try {
-//					oos.writeObject(o);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 				
 			} else {
 				// assignment part optional 1
-				System.out.println("get person should be called ");
 				
 				// request person from storage
 				if (i == 2) {
 					try {
 						oos.writeObject(storage.get(Integer.parseInt(o.toString())));
-						
-						System.out.println(Integer.parseInt(o.toString()));
+
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
