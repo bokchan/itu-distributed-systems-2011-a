@@ -1,20 +1,18 @@
-package pellekrogholt.labexercise2;
+package distributedsystems.labexercise2;
 
-import bok.labexercise2.optional_1.Person;
 
 import java.net.*;  
 import java.io.*;
-
 import java.util.Vector;
 
-public class MyTcpServer implements IServer {
+public class TcpServer implements IServer {
 
 	private int port;
 	private Vector<Object> storage = new Vector<Object>();
 	
 
 	/* constructor */
-	public MyTcpServer(int port) throws IOException {
+	public TcpServer(int port) throws IOException {
 		this.port = port; 
 		ServerSocket server_socket = new ServerSocket( port );
 
