@@ -20,17 +20,17 @@ public class MyTcpServerClientRunner implements Runnable {
 		// ? stands for a so called wild card...
 		MyTcpClient<String, ?> client = new MyTcpClient (server_port, server_address); 		
 
-		client.send("hello world", 1);
+		client.send("hello world", 1); // TODO: try with out operator
 //		client.receive().toString(); 
 //		note: dosen't work not sure if the approach is sane  
-		System.out.println(client.readMessageFromServer());
+		System.out.println(client.receive().toString());
 		
 		
 		client.send("hello another world", 0);
-		System.out.println(client.readMessageFromServer());
+		System.out.println(client.receive().toString());
 		
 		client.send("hello another another world", 0);
-		System.out.println(client.readMessageFromServer());
+		System.out.println(client.receive().toString());
 		
 		
 		// show we can handle multiple connections
@@ -39,17 +39,20 @@ public class MyTcpServerClientRunner implements Runnable {
 		MyTcpClient<String, ?> client2 = new MyTcpClient (server_port, server_address);
 		
 		client2.send("client 2 says: hello world", 1);
-		System.out.println(client2.readMessageFromServer());
+		System.out.println(client2.receive().toString());
 		
 		
 		// client closes down server - 'jonas' suggested this
 		// as a truly distributed approach in stead f implementing a stop() method on MyServer
 		// note: dosent work yet
 		client2.send("quit", 0);
-		System.out.println(client2.readMessageFromServer());		
+		System.out.println(client2.receive().toString());		
 
 		client2.send("message send after quit message shouldn't be possible", 0);
-		System.out.println(client2.readMessageFromServer());
+		System.out.println(client2.receive().toString());
+		
+		
+		
 		
 	}
 
