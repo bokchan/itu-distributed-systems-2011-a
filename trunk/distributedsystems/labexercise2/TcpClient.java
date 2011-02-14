@@ -33,6 +33,10 @@ public class TcpClient<V, C> implements IClient<V, C> {
 		// this.socket = new Socket( server_address, port );
 	}
 
+	
+	// TODO: 4 different send() is not optimal - i have some problems with the generics perhaps just switch to Object 
+	
+	
 	/**
 	 * Send message with command
 	 *  
@@ -41,8 +45,6 @@ public class TcpClient<V, C> implements IClient<V, C> {
 	 * @throws IOException 
 	 */
 	public Object send(V message, int operator) throws IOException, ClassNotFoundException {
-
-		System.out.println("client Object send(V message, int operator) called");
 		
 		this.socket = new Socket( server_address, port );
 		
@@ -65,8 +67,6 @@ public class TcpClient<V, C> implements IClient<V, C> {
 	 */
 	public Object send(V message) throws IOException, ClassNotFoundException {
 		
-		System.out.println("client Object send(V message) called");
-		
 		// create a new socket
 		this.socket = new Socket( server_address, port );
 		
@@ -88,10 +88,6 @@ public class TcpClient<V, C> implements IClient<V, C> {
 	 * @throws IOException 
 	 */	
 	public Object send(Person p, int operator) throws IOException, ClassNotFoundException {
-
-//		System.out.println("");
-		
-		System.out.println("client Object send(Person p, int operator) called");
 		
 		this.socket = new Socket( server_address, port );
 		
@@ -118,9 +114,6 @@ public class TcpClient<V, C> implements IClient<V, C> {
 	 * @throws IOException 
 	 */	
 	public Object send(int key, int operator) throws IOException, ClassNotFoundException {
-
-		
-		System.out.println("client Object send(int key, int operator) called");
 		
 		this.socket = new Socket( server_address, port );
 		
@@ -143,14 +136,5 @@ public class TcpClient<V, C> implements IClient<V, C> {
 		return o;
 		
 	}
-	
-	
-//	public V receive() throws IOException, ClassNotFoundException {
-//
-//		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-//		Object o = ois.readObject();
-//		return (V) o;
-//		
-//	}
 
 }
