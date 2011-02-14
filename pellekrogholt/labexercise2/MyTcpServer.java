@@ -47,7 +47,7 @@ public class MyTcpServer implements IServer {
 		private Socket socket;
 		
 		
-		// pelle: whats best practice to throw exception or try/catch clauses ?
+		// TODO: what's best practice to throw exception or try/catch clauses ?
 		private Connection (Socket socket) throws IOException {
 			
 			this.socket = socket;
@@ -69,20 +69,29 @@ public class MyTcpServer implements IServer {
 				
 				// first object in current stream
 				o = ois.readObject();
-//				System.out.println("o:" + o.toString());
+				// System.out.println("o:" + o.toString());
 				
-				// second object in current stream - this part breaks if no second object is send ... hmmm
-				String method = ois.readObject().toString();
 				
-				System.out.println("method: " + method.toString());
+				// quick fix
+				boolean flag = false;
+				String operator = null;
+				try {
+					// second object in current stream - this part breaks if no second object is send ... hmmm
+					operator = ois.readObject().toString();
+					System.out.println("operator: " + operator.toString());
+					flag = true;
+				} catch (IOException e) {
+					
+				}
 				
-				if (method.toString().isEmpty()) {
+
+//				if (operator.toString().isEmpty()) {
+				if (!flag) {
 					send(o);
 				} else {
-					send(o, Integer.parseInt(method));
+					send(o, Integer.parseInt(operator));
 				}
 
-//				send(o, method);
 
 				if (o.toString().equals("quit")) {
 		//			TODO: stop server
@@ -103,9 +112,9 @@ public class MyTcpServer implements IServer {
 		private void send(Object o) {
 			try {
 				
-				System.out.println("server send() called");
+				// System.out.println("server send() called");
 				
-				oos.writeObject("Server respons: Message received");
+				oos.writeObject(o);
 			} catch (Exception e) {	
 			}
 		}

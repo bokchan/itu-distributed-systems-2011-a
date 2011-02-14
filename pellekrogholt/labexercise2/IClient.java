@@ -23,12 +23,12 @@ public interface IClient<V, C> {
 	void send(V value, int operator) throws IOException;	
 	
 	
-// temporarily disabled
-//	/**
-//	 * Receive value
-//	 * @throws ClassNotFoundException 
-//	 * @throws IOException 
-//	 */
-//	V receive() throws IOException, ClassNotFoundException;
+	/**
+	 * Receive value
+	 * 
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
+	 */
+	V receive() throws IOException, ClassNotFoundException;
 	
 }
