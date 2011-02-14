@@ -1,4 +1,4 @@
-package pellekrogholt.labexercise2;
+package distributedsystems.labexercise2;
 
 import java.io.IOException;
 

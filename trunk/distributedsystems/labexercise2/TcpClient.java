@@ -1,16 +1,15 @@
-package pellekrogholt.labexercise2;
+package distributedsystems.labexercise2;
 
 import java.net.*;  
 import java.io.*;
 
-import bok.labexercise2.optional_1.Person;
 
 /**
  * 
  * Simple Tcp Client
  *
  */
-public class MyTcpClient<V, C> implements IClient<V, C> {
+public class TcpClient<V, C> implements IClient<V, C> {
 
 	private Socket socket;
 	private int port;
@@ -23,7 +22,7 @@ public class MyTcpClient<V, C> implements IClient<V, C> {
 	 * @param server_address
 	 * @throws IOException
 	 */
-	public MyTcpClient(int port, InetAddress server_address) throws IOException {
+	public TcpClient(int port, InetAddress server_address) throws IOException {
 		this.port = port;
 		this.server_address = server_address;		
 

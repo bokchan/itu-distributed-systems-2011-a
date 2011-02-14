@@ -1,11 +1,10 @@
-package pellekrogholt.labexercise2;
+package distributedsystems.labexercise2;
 
 import java.net.*; 
 import java.io.*;
 
-import bok.labexercise2.optional_1.Person;
 
-public class MyTcpServerClientRunner implements Runnable {
+public class TcpServerClientRunner implements Runnable {
 	
 	private static int server_port = 7898;
 	
@@ -19,12 +18,12 @@ public class MyTcpServerClientRunner implements Runnable {
 		InetAddress server_address = InetAddress.getByName("localhost");
 		
 		//start server in a separate thread
-		new Thread(new MyTcpServerClientRunner()).start();
+		new Thread(new TcpServerClientRunner()).start();
 		
 		System.out.println("Client created");
 		
 		// ? stands for a so called wild card...
-		MyTcpClient<String, ?> client = new MyTcpClient (server_port, server_address); 		
+		TcpClient<String, ?> client = new TcpClient (server_port, server_address); 		
 
 		String message = "Hello world";
 		
@@ -61,7 +60,7 @@ public class MyTcpServerClientRunner implements Runnable {
 		// show we can handle multiple connections
 		// create another client 
 		// ? stands for a so called wild card...
-		MyTcpClient<String, ?> client2 = new MyTcpClient (server_port, server_address);
+		TcpClient<String, ?> client2 = new TcpClient (server_port, server_address);
 
 		message = "client 2 says: hello world";
 		
@@ -110,7 +109,7 @@ public class MyTcpServerClientRunner implements Runnable {
 		try {
 			
 //			System.out.println("Runner thread called and server created");
-			MyTcpServer server = new MyTcpServer(server_port);
+			TcpServer server = new TcpServer(server_port);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
