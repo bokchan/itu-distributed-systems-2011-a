@@ -63,7 +63,10 @@ public class TcpServer implements IServer {
 				// first object in current stream
 				o = ois.readObject();
 				
-				// quick fix
+				// quick fix 
+				// TODO: we tried to readObject() depending how many was send 
+				// - lets say send('test', 1) was only send('test') but the fix din't really worked out
+				// so for now we always have 2 arguments in send('test', 1)  
 				boolean flag = false;
 				String operator = null;
 				try {
@@ -74,7 +77,6 @@ public class TcpServer implements IServer {
 					
 				}
 				
-
 //				if (operator.toString().isEmpty()) {
 				if (!flag) {
 					send(o);
