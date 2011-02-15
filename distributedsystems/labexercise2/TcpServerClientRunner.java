@@ -66,10 +66,13 @@ public class TcpServerClientRunner implements Runnable {
 		
 		System.out.println("Client 2 sends message (" +  message  + ") to server with operator 1 (uppercase)");
 
+		//	TODO:
+		// we had expected to do something like 
+		// client2.send(message, 1);
+		// client2.receive() - but didn't work out for sending objects the later exercises so for now receive() is moved into the send()
+		
 		System.out.println(client2.send(message, 1));
 
-
-		
 		System.out.println();
 		System.out.println("Optional lab exercise 1.:");
 		System.out.println("===========================================");
