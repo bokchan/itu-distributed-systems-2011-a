@@ -1,6 +1,6 @@
 package pellekrogholt.labexercise2;
 
-import bok.labexercise2.optional_1.Person;
+import distributedsystems.labexercise2.Person;
 
 import java.net.*;  
 import java.io.*;
