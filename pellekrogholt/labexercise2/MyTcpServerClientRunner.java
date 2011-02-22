@@ -2,8 +2,7 @@ package pellekrogholt.labexercise2;
 
 import java.net.*; 
 import java.io.*;
-
-import bok.labexercise2.optional_1.Person;
+import distributedsystems.labexercise2.Person;
 
 public class MyTcpServerClientRunner implements Runnable {
 	
