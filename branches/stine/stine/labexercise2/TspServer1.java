@@ -2,7 +2,7 @@ package stine.labexercise2;
 import java.net.*;
 import java.io.*;
 
-public class TspServer 
+public class TspServer1 
 {
 	public static void main (String args[]) throws Exception
 	{

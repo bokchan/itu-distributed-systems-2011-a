@@ -16,6 +16,7 @@ public class SimpleTcpServer
 			Object message = is.readObject(); // blocking call
 			((Dog)message).print();
 		socket.close();
+		System.exit(-1);
 	  } 
 	
 }
