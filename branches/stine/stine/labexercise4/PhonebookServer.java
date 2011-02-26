@@ -6,70 +6,32 @@ import java.util.*;
 import java.net.*;
 import java.util.concurrent.*;
 
-public class PhonebookServer implements Runnable {
-  private IPhonebook phonebook = new Phonebook ();
+import bok.labexercise4.IPhonebook;
+import bok.labexercise4.ReplicatedPhonebook;
 
-  private ServerSocket Listener;
+public class PhonebookServer extends AbstractServer implements Runnable {
+	// Set of InetSocketAddresses - ensures distinct elements 
+	private Set<InetSocketAddress> cPoints;
+	// Storage
+	private IPhonebook phonebook;
 
-  private InetAddress localip;
-
-  public LinkedList<InetSocketAddress> LocalEndpoints = new LinkedList<InetSocketAddress> ();
-
-  public PhonebookServer () throws IOException {
-    Listener = new ServerSocket (0);
-    Listener.setSoTimeout (2000);
-
-    Enumeration ifs = NetworkInterface.getNetworkInterfaces ();
-    for (; ifs.hasMoreElements ();) {
-      NetworkInterface nif = (NetworkInterface) ifs.nextElement ();
-      Enumeration addrs = nif.getInetAddresses ();
-      for (; addrs.hasMoreElements ();) {
-        InetAddress ip = (InetAddress) addrs.nextElement ();
-        String hostname = ip.getCanonicalHostName ();
-        if (!hostname.equals (ip.getHostAddress ()))
-          LocalEndpoints.add (new InetSocketAddress (hostname, Listener
-              .getLocalPort ()));
-      }
-    }
-  }
-
-  boolean abort = false;
-
-  static ExecutorService exeservice = Executors.newCachedThreadPool ();
-
-  public void run () {
-    try {
-      while (!abort) {
-        try {
-          final Socket client = Listener.accept ();
-          exeservice.execute (new Runnable () {
-            public void run () {
-              try {
-                HandleConnection (client);
-              } catch (Exception e) {
-                System.err.println (e.getMessage ());
-                System.exit (-1);
-              }
-            }
-          });
-        } catch (SocketTimeoutException e) {
-        }
-      }
-    } catch (Exception e) {
-      System.err.println (e.getMessage ());
-      System.exit (-1);
-    } finally {
-      try {
-        Listener.close ();
-      } catch (IOException e) {
-      }
-      exeservice.shutdown ();
-    }
-  }
+	public PhonebookServer (int port) throws IOException {
+		// Call superclass constructor
+		super(port);
+		cPoints = new  HashSet<InetSocketAddress>();
+		phonebook = new ReplicatedPhonebook();
+	}
+	public PhonebookServer () throws IOException {
+		super();
+		cPoints = new  HashSet<InetSocketAddress>();
+		phonebook = new ReplicatedPhonebook();
+	}
 
   public synchronized void abort () {
     abort = true;
   }
+  
+  //CAme to here - get the abstract server thing!!!!
 
   void ExecuteAndSend (Command command) throws IOException {
     Object result = command.Execute (phonebook);
@@ -97,4 +59,9 @@ public class PhonebookServer implements Runnable {
         client.close ();
     }
   }
+@Override
+void ExecuteAndSend(Object command) throws IOException {
+	// TODO Auto-generated method stub
+	
+}
 }
