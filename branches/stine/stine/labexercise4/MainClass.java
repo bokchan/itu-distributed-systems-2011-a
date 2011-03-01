@@ -24,19 +24,35 @@ class MainClass {
   public static void main (String [] args) throws NoSuchAlgorithmException,
       IOException {
     MD5 = MessageDigest.getInstance ("MD5");
-    PhonebookServer server = new PhonebookServer ();
-    IPhonebook phonebook = new RemotePhonebook (server.LocalEndpoints
+    
+    PhonebookServer server1 = new PhonebookServer ();
+    IPhonebook phonebook = new RemotePhonebook (server1.LocalEndpoints
         .getFirst ());
     UserInterface ui = new UserInterface (phonebook);
-    Thread serverThread = new Thread (server);
+    Thread serverThread = new Thread (server1);
     serverThread.start ();
+    
+    PhonebookServer server2 = new PhonebookServer();
+    Thread server2Thread    = new Thread (server2);
+    server2Thread.start ();
+    
+    JoinCommand addRole = new JoinCommand(server2.LocalEndpoints
+        .getFirst (), server1.LocalEndpoints
+        .getFirst ());
+    
+    server1.ExecuteAndSend(addRole);
+    
     System.out.println ("I'm listening on");
-    for (InetSocketAddress sa : server.LocalEndpoints) {
+    for (InetSocketAddress sa : server1.LocalEndpoints) {
       System.out.println ("  " + sa);
     }
     System.out.println ("My GUID is "
-        + GuidFromString (server.LocalEndpoints.getFirst ().toString ()));
+        + GuidFromString (server1.LocalEndpoints.getFirst ().toString ()));
+    System.out.println(server1.serverSet);
     ui.Start ();
-    server.abort ();
+    
+
+    server1.abort();
+    server2.abort();
   }
 }
