@@ -1,0 +1,11 @@
+<ScrollView android:id="@+id/ScrollView01" 
+			android:layout_width="fill_parent" 
+			android:layout_height="fill_parent" 
+			xmlns:android="http://schemas.android.com/apk/res/android">
+			
+	<HorizontalScrollView android:id="@+id/PhotoScrollView" 
+						  android:layout_width="wrap_content" 
+						  android:layout_height="wrap_content">
+	</HorizontalScrollView>
+
+</ScrollView>
