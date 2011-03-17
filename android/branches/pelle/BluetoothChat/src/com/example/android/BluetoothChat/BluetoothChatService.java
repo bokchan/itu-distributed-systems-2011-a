@@ -16,20 +16,33 @@
 
 package com.example.android.BluetoothChat;
 
+/* XXX org code
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
+
+import from special bluetooth package in order to get the emulator working e.g.: 
+import dk.itu.android.bluetooth.BluetoothAdapter;
+import dk.itu.android.bluetooth.BluetoothDevice;
+
+- placed here as a general comment to enable the command + shift + o working
+*/
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import dk.itu.android.bluetooth.BluetoothAdapter;
+import dk.itu.android.bluetooth.BluetoothDevice;
+import dk.itu.android.bluetooth.BluetoothServerSocket;
+import dk.itu.android.bluetooth.BluetoothSocket;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -277,8 +290,12 @@ public class BluetoothChatService {
                     tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
                         MY_UUID_SECURE);
                 } else {
-                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
+// XXX - looks like dk.itu.android.bluetooth don't implement method - quick fixed  
+//                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
+//                            NAME_INSECURE, MY_UUID_INSECURE);
+                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(
                             NAME_INSECURE, MY_UUID_INSECURE);
+                	
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
@@ -364,7 +381,10 @@ public class BluetoothChatService {
                     tmp = device.createRfcommSocketToServiceRecord(
                             MY_UUID_SECURE);
                 } else {
-                    tmp = device.createInsecureRfcommSocketToServiceRecord(
+// XXX - looks like dk.itu.android.bluetooth don't implement method - quick fixed
+//                	tmp = device.createInsecureRfcommSocketToServiceRecord(
+//                            MY_UUID_INSECURE);
+                	tmp = device.createRfcommSocketToServiceRecord(
                             MY_UUID_INSECURE);
                 }
             } catch (IOException e) {

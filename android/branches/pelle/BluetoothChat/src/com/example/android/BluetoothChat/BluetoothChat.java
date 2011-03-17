@@ -16,9 +16,23 @@
 
 package com.example.android.BluetoothChat;
 
-import android.app.Activity; 
+
+/* XXX org code
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
+
+import from special bluetooth package in order to get the emulator working e.g.: 
+import dk.itu.android.bluetooth.BluetoothAdapter;
+import dk.itu.android.bluetooth.BluetoothDevice;
+
+- placed here as a general comment to enable the command + shift + o working
+*/
+
+
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,8 +43,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +52,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import dk.itu.android.bluetooth.BluetoothAdapter;
+import dk.itu.android.bluetooth.BluetoothDevice;
+
 
 /**
  * This is the main Activity that displays the current chat session.
