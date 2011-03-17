@@ -2,7 +2,7 @@
 
 package dk.itu.smds.android.bt;
 
-import android.app.Activity;
+import android.app.Activity; 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -174,8 +174,9 @@ public class DeviceListActivity extends Activity
             {
                 /*do something with the intent here*/
                 String action = intent.getAction();
+                Log.i("BCRECEIVERDISCOVERY", "received intent action: " + action);
              
-                if (action==BluetoothDevice.ACTION_FOUND)
+                if (action.equals(BluetoothDevice.ACTION_FOUND))
                 {
                 	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 	if (device.getBondState() !=BluetoothDevice.BOND_BONDED)
@@ -185,7 +186,7 @@ public class DeviceListActivity extends Activity
                 	}
                 }
                 
-                if (action==BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+                if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
                 {
                 	startDiscoveryButton.setEnabled(true);
                 }
