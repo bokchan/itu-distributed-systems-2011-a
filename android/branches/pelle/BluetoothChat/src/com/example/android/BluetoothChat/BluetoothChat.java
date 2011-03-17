@@ -103,6 +103,10 @@ public class BluetoothChat extends Activity {
         super.onCreate(savedInstanceState);
         if(D) Log.e(TAG, "+++ ON CREATE +++");
 
+        //XXX needed for the emulator bluetooth tweak
+        dk.itu.android.bluetooth.BluetoothAdapter.SetContext(this);
+        
+        
         // Set up the window layout
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.main);

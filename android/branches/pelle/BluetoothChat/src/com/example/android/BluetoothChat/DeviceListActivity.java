@@ -28,7 +28,7 @@ import dk.itu.android.bluetooth.BluetoothDevice;
 - placed here as a general comment to enable the command + shift + o working
 */
 
-import java.util.Set;
+import java.util.Set; 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -72,6 +72,10 @@ public class DeviceListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //XXX needed for the emulator bluetooth tweak
+        dk.itu.android.bluetooth.BluetoothAdapter.SetContext(this);
+        
+        
         // Setup the window
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.device_list);
