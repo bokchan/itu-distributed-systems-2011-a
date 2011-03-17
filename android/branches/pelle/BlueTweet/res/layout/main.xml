@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+<EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/TweetEditText"></EditText>
+<Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/Update" android:onClick="updateTweet" android:text="Post"></Button>
+<Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Quit" android:id="@+id/QuitButton" android:onClick="quitBlueTweet"></Button><ListView android:id="@+id/TweetList" android:layout_height="fill_parent" android:layout_width="fill_parent"></ListView>
+
+</LinearLayout>
