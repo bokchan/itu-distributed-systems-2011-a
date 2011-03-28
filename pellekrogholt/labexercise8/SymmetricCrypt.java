@@ -22,6 +22,17 @@ public class SymmetricCrypt {
 		// Create Key
 		byte key[] = password.getBytes();
 		DESKeySpec desKeySpec = new DESKeySpec(key);
+		
+// possible input for SecretKeyFactory.getInstance(<key type>)
+//		Algorithm	Maximum Keysize
+//		DES	64
+//		DESede	*
+//		RC2	128
+//		RC4	128
+//		RC5	128
+//		RSA	*
+//		all others	128
+		
 		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
 		SecretKey secretKey = keyFactory.generateSecret(desKeySpec);
 
@@ -29,7 +40,8 @@ public class SymmetricCrypt {
 		Cipher desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
 		desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-		// Create outputstream
+		// Create outputstream 
+		// note: nb when running in eclipse files goes to <path to eclipse workspace>/distributedsystems/ 
 		FileOutputStream fos = new FileOutputStream("out.txt");
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		CipherOutputStream cos = new CipherOutputStream(bos, desCipher);
@@ -40,6 +52,8 @@ public class SymmetricCrypt {
 		oos.flush();
 		oos.close();
 
+		// note: extract encrypted file - key is needed there but should not be send along with the file right ?
+		
 		// Change cipher mode
 		desCipher.init(Cipher.DECRYPT_MODE, secretKey);
 
@@ -52,7 +66,8 @@ public class SymmetricCrypt {
 		// Read 
 		String plaintext2 = ois.readUTF();
 		ois.close();
-
+		
+		
 		// Compare
 		System.out.println(plaintext);
 		System.out.println(plaintext2);
