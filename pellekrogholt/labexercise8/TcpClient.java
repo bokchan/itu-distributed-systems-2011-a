@@ -35,6 +35,11 @@ public class TcpClient implements IClient {
 		// or in the send method - so fare do it in the send method - if done here 
 		// only one send will go through per client.
 		// this.socket = new Socket( server_address, port );
+		
+		// create a new socket - apparently don't move to constructor
+		this.socket = new Socket( server_address, port );
+		
+	
 	}
  
 	// - we had some problems with the generics perhaps just switch to Object 
@@ -44,33 +49,37 @@ public class TcpClient implements IClient {
 	 * methodid, objectarg
 	 * TODO: Reverse order so it is methodid, objectarg  
 	 */ 
-	public Object send(Object o, Object methodid) throws IOException, ClassNotFoundException {
+	public void send(Object o, Object methodid) throws IOException, ClassNotFoundException {
+
+		System.out.println("send(Object o, Object methodid) called");
+		
 		Object[] args = new Object[] {o};
-		return send(methodid, args);
+		
+		send(methodid, args);
+//		return send(methodid, args);
 	}
 	
 	/**
 	 * Send message
 	 * Takes a methodid and an array of argument 
 	 */
-	public Object send(Object methodid, Object[] args) throws IOException, ClassNotFoundException {
+	public void send(Object methodid, Object[] args) throws IOException, ClassNotFoundException {
 		
-		// create a new socket
-		this.socket = new Socket( server_address, port );
+//		// create a new socket - apparently don't move to constructor
+//		this.socket = new Socket( server_address, port );
 		
 		OutputStream os = socket.getOutputStream(); // could have gotten an InputStream as well used in receive() 
 		ObjectOutputStream oos = new ObjectOutputStream( os );
 		
-		// Write the number of elements in the argumentarray. 
+		// Write the number of elements in the argument array. 
 		// The +1 is not meant to be.  
 		oos.writeObject(args.length + 1);
+		
 		oos.writeObject(methodid);
 		for (Object o : args) {
 			oos.writeObject(o);
 		} 
-		oos.flush();
-		return receive();
-		// don't place receive() / readMessage() here 
+		oos.flush(); 
 	}
 		
 	/**
