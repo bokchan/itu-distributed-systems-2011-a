@@ -11,7 +11,7 @@ public interface IClient {
 	 * @return 
 	 * @throws IOException 
 	 */
-	Object send(Object methodid, Object[] args) throws IOException, ClassNotFoundException;	
+	void send(Object methodid, Object[] args) throws IOException, ClassNotFoundException;	
 	
 	/**
 	 * Receive value

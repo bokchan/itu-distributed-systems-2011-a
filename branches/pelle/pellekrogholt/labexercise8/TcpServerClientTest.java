@@ -52,9 +52,31 @@ public class TcpServerClientTest implements Runnable
 		
 		TcpClient client = new TcpClient (client_port, server_address);
 		String message = "Hello world";
-		Assert.assertEquals(client.send(message, 1), message.toUpperCase());
+		
+		client.send(message, 1);
+		Assert.assertEquals(client.receive(), message.toUpperCase());
 		
 	}
+
+	@Test 
+	public void testClient2ServerMessageUppercase2Messages() throws Throwable { 
+		
+		TcpClient client = new TcpClient (client_port, server_address);
+		String message = "Hello world";
+		
+		String message2 = "Hello another world";
+		
+		client.send(message, 1);
+		Assert.assertEquals(client.receive(), message.toUpperCase());
+
+		client.send(message2, 1);
+		Assert.assertEquals(client.receive(), message2.toUpperCase());		
+		
+		// if new approach is fixed we need to close
+		client.send("quit", -1);
+		
+	}
+	
 	
 	
 	@Test 
@@ -62,16 +84,18 @@ public class TcpServerClientTest implements Runnable
 		
 		TcpClient client = new TcpClient (client_port, server_address);
 		createPeronObjectsAndSend(client, 3);
-		Assert.assertNotNull(client.send(0, 2));
+		client.send(0, 2);
+		Assert.assertNotNull(client.receive());
 		
 	}
-
+	
 	
 	@Test 
 	public void testClientQuitServer() throws Throwable { 
 		
 		TcpClient client = new TcpClient (client_port, server_address);
-		Assert.assertNull(client.send("quit", -1));
+		client.send("quit", -1);
+		Assert.assertNull(client.receive());
 		// code after client.send("quit", -1) is not executed so not best practice done here
 
 	}	

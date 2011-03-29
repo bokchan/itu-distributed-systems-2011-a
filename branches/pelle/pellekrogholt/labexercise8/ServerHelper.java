@@ -27,6 +27,9 @@ public class ServerHelper{
 				param[i-1] = args[i]; 
 			}
 			arg = args[1];
+			
+			System.out.println("UnmarshallRequest called - param :" + param + " arg :" + arg + " methodId: " + methodId);
+			
 			switch (methodId) {
 			case (0):
 				return toLowerCase(param);

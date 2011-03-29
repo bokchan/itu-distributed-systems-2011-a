@@ -1,7 +1,7 @@
 package pellekrogholt.labexercise8;
 
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -41,6 +41,27 @@ public class TcpServer implements IServer {
 
 		private ObjectInputStream ois; // previously in
 		private ObjectOutputStream oos; // previously out
+		
+		/*
+		 * AppendableObjectOutputStream try out to solve errors like 
+		 * java.io.StreamCorruptedException: invalid type code: AC
+		 * 
+		 * we make many ois.readObject(); per call
+		 * and if the socket is moved away from send to the constructor of TCPClient
+		 * the second++ send message is not going through
+		 *
+		 *
+		 * approach based on:
+		 *  http://stackoverflow.com/questions/3182240/java-io-streamcorruptedexception-invalid-type-code-ac
+		 *  http://stackoverflow.com/questions/1194656/appending-to-an-objectoutputstream/1195078#1195078
+		 * 
+		 * but didn't work out as expected
+		 * 
+		 */
+		
+//		private AppendableObjectOutputStream oos; // previously out
+		 
+		
 		private Socket socket;
 
 
@@ -49,6 +70,7 @@ public class TcpServer implements IServer {
 
 			this.socket = socket;
 			oos = new ObjectOutputStream( socket.getOutputStream());
+//			oos = new AppendableObjectOutputStream( socket.getOutputStream());
 			ois = new ObjectInputStream( socket.getInputStream());
 		}
 
@@ -58,25 +80,43 @@ public class TcpServer implements IServer {
 
 			Object[] args; 
 			try {	
-				// first object in current stream
-				// This object tells us how many elements we have to read
-				Object o = ois.readObject();
 				
 				
-				System.out.println("run() TCPServer called");
+				System.out.println("run() TCPServer called before while ");
 				
-				int argCount = Integer.valueOf(o.toString());
-				args = new Object[argCount];
-				for (int i = 0; i < argCount; i++) {
-					args[i] = ois.readObject();
-					// Check if the server is requested to halt
-					if (args[i].toString().equalsIgnoreCase("quit")) 
-						{
-						destroy();
-						}
-				}
+				
+				// mads suggested the while(keep_running) appraoch 
+				// so it keeps running listning for communication on a socket
+				
+				Boolean keep_running = true;
+				while(keep_running) {
 
-				send(ServerHelper.UnmarshallRequest(args));				
+					System.out.println("run() TCPServer called before ois.readObject(); which make a blocking call ");
+						
+					// first object in current stream
+					// This object tells us how many elements we have to read
+					Object o = ois.readObject(); // blocking call
+					
+					
+					System.out.println("run() TCPServer called - o (nb there is this +1 in the send so o.toString() migth print another number):" + o.toString());
+					
+					int argCount = Integer.valueOf(o.toString());
+					args = new Object[argCount];
+					for (int i = 0; i < argCount; i++) {
+						args[i] = ois.readObject();
+						// Check if the server is requested to halt
+						if (args[i].toString().equalsIgnoreCase("quit")) 
+							{
+							destroy();
+							keep_running = false;
+							}
+					}
+	
+					send(ServerHelper.UnmarshallRequest(args));
+				
+				}
+				
+				
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -90,6 +130,7 @@ public class TcpServer implements IServer {
 		private void send(Object o) {
 			try {				
 				oos.writeObject(o);
+//				oos.reset(); try out to solve java.io.StreamCorruptedException: invalid type code: AC
 			} 
 			catch (Exception e) {	
 			}
