@@ -1,6 +1,7 @@
 package dk.itu.smds.android.bt;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import dk.itu.android.bluetooth.BluetoothAdapter;
-import dk.itu.android.bluetooth.BluetoothDevice;
 
 public class DeviceListActivity extends Activity
 {

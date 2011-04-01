@@ -1,11 +1,14 @@
 package dk.itu.smds.android.bt;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.UUID;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import dk.itu.android.bluetooth.BluetoothAdapter;
-import dk.itu.android.bluetooth.BluetoothDevice;
-import dk.itu.android.bluetooth.BluetoothServerSocket;
-import dk.itu.android.bluetooth.BluetoothSocket;
 
 
 public class EchoActivity extends Activity {
@@ -268,6 +267,3 @@ public class EchoActivity extends Activity {
 		}
 	}
 }
-
-
-
