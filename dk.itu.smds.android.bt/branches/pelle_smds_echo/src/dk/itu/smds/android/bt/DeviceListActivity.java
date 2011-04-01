@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import dk.itu.android.bluetooth.BluetoothAdapter;
 import dk.itu.android.bluetooth.BluetoothDevice;
 
@@ -27,7 +26,7 @@ public class DeviceListActivity extends Activity {
 
 // delete	
 //	/* used when requesting the bluetooth-enabling activity */
-	static final int REQUEST_BLUETOOTH_ENABLE = 1;
+//	static final int REQUEST_BLUETOOTH_ENABLE = 1;
 
 	
 	public static String EXTRA_DEVICE_ADDRESS = "dk.itu.smds.android.bt.DeviceListActivity.EXTRA_DEVICE_ADDRESS";
@@ -148,29 +147,7 @@ public class DeviceListActivity extends Activity {
 		// note: since DeviceListActivity is called from EchoActivity
 		// so no bluetooth check needed is already done and we can call up setup directly
 		
-		// Here we can check if a bluetooth module is available or not; just check if the btadapter is null:
-
-			if(btadapter == null) {
-			    /* uh-oh.. no bluetooth module found! */
-			    Toast.makeText(this, "Sorry, no bluetooth module found!", Toast.LENGTH_SHORT);
-
-			    /* terminate the activity */
-			    finish();
-			}
-			// Otherwise, we check if the bluetooth adapter is enabled or not. If it is not, we launch the appropriate activity to enable it. Usually this activity will ask to the user if she wants to enable the bluetooth module.
-
-			else
-			{
-			    if( !btadapter.isEnabled() ) {
-			        startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_BLUETOOTH_ENABLE);
-			    }
-			// If the bluetooth module is already enabled, then we call the setup() method.
-
-			    else
-			    {
-			        setup();
-			    }
-			}
+		setup();
 
 	}
 
@@ -256,7 +233,7 @@ public class DeviceListActivity extends Activity {
 		// If the system is currently discovering, we cancel the current discovery 
 		// and restart it (we dont want to lose some devices):
 		if(btadapter.isDiscovering()){
-			System.out.println("hest 2 - btadapter.isDiscovering() is true");
+//			System.out.println("hest 2 - btadapter.isDiscovering() is true"); - not possisble to system print use log
 			btadapter.cancelDiscovery();
 		}
 
