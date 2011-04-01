@@ -163,7 +163,6 @@ public class EchoActivity extends Activity {
 	public void startServer(View view) {
 		setServer(true);
 		this.server = new Server();
-
 		startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE), REQUEST_ENABLE_DISCOVERABLE);
 	}
 
@@ -172,6 +171,7 @@ public class EchoActivity extends Activity {
 	 * @param view
 	 */
 	public void stopServer(View view) {
+		if (server.running)
 		server.stop();
 	}
 
@@ -185,9 +185,6 @@ public class EchoActivity extends Activity {
 	private class Server implements Runnable {
 		boolean running = true;
 		BluetoothServerSocket socket = null;
-
-
-
 
 		public void stop() {
 			running = false;
