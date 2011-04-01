@@ -14,5 +14,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="DeviceListActivity"></activity>
+
     </application>
 </manifest>

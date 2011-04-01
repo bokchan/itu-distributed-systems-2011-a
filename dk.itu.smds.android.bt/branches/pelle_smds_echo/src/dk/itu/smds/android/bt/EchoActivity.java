@@ -1,5 +1,8 @@
 package dk.itu.smds.android.bt;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -7,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import dk.itu.android.bluetooth.BluetoothAdapter;
@@ -243,57 +247,59 @@ public class EchoActivity extends Activity {
 	// used in *.xml - android:onClick="startServer"
 	// XXX View view is essential here - missed that part from the exercise - is that clear
 	public void startServer(View view){
-//		Called when the user press the Start Server button (without much fantasy). 
-//		Here you want to call 
+		//		Called when the user press the Start Server button (without much fantasy). 
+		//		Here you want to call 
 		setServer(true); 
-//		create a new Server instance 
+		//		create a new Server instance 
 		this.server = new Server();
-		
-		
-//		and finally start an activity to put the device in discoverable mode
-		
-//		TODO: - not sure about this one ?
 
+
+		//		and finally start an activity to put the device in discoverable mode
+
+		//		TODO: - not sure about this one ?
+		// taken from andreas branc
+		startActivityForResult(
+				new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE), 
+				REQUEST_ENABLE_DISCOVERABLE
+		);
 
 	}
 
-	
+
 	public void stopServer(View view){
-		
+
 		// I guess that you managed to understand when this method is called.
 		// Anyway, here you just want to check if the server instance if null, 
 		//otherwise call the server.stop() method.
-		
+
 		if(this.server != null) {
 			server.stop();
-//			Log.i("BCRECEIVERDISCOVERY", "received intent action: " + action);
+			//			Log.i("BCRECEIVERDISCOVERY", "received intent action: " + action);
 			Log.i(getPackageCodePath(), "server stopped");
 		} else {
 			Log.i(getPackageCodePath(), "no running servers");
 		}
-		
+
 	}
-	
-	
+
+
 	public void sendMessage(View view){
 
-//		If the device is is client mode, then the user has to press the Send Messsage 
-//		button to actually create a communication with the server device. In this 
-//		method you want to see the client.message property with the user input text:
+		//		If the device is is client mode, then the user has to press the Send Messsage 
+		//		button to actually create a communication with the server device. In this 
+		//		method you want to se the client.message property with the user input text:
 
-		
-		
-		
-		
-//		client.message = ((EditText)findViewById(R.id.SendEditText)).getText().toString();
-//		and then start a thread to handle the bluetooth communication:
+		client.message = ((EditText)findViewById(R.id.SendEditText)).getText().toString();
 
-//		new Thread(client).start();
+		//		and then start a thread to handle the bluetooth communication:
+
+		new Thread(client).start();
+
 	}
 
-	
-	
-	
+
+
+
 
 	/* A class to handle the service server communication */
 	private class Server implements Runnable {
@@ -307,7 +313,57 @@ public class EchoActivity extends Activity {
 			}
 		}
 
-		public void run(){}
+		//		In the inner class Server, we still need to implement the public void run() method. To start a server, one must call the BluetoothServerSocket BluetoothAdapter.listenUsingRfcommWithServiceRecord(String,UUID) method.
+		//
+		//		Call it using the EchoServiceName and EchoServiceUUID fields:
+
+		public void run() {
+			try {
+				socket = btadapter.listenUsingRfcommWithServiceRecord(EchoServiceName, EchoServiceUUID);
+			}
+			//		we need to catch an IOException here, as the signature of run does not permit to throw exceptions:
+
+			catch(IOException e) {
+				running = false;
+			}
+			//		Just exit directly from the server. Then we can start accepting connections:
+
+			while(running) {
+				// declare a socket
+				BluetoothSocket clientSocket = null;
+				try {
+					//		Call the blocking method BluetoothServerSocket.accept() to wait until a connection is available:
+
+					clientSocket = socket.accept();
+					//		In our little example, we will synchronously handle a client connection. Keep in mind that a more useful service may require to handle the communication with a client in a separate thread. Our protocol is quite simple: the client sends a String terminated by a carriage and return chars (“\r\n”). So we can use a BufferedReader and read directly a line:
+
+					BufferedReader bufReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					final String line = bufReader.readLine().trim();
+					//		Then simply get the socket OutputStream and rewrite the same line (prefixed with a “>” char), and flush the OutputStream.
+
+					clientSocket.getOutputStream().write( (">"+line+"\r\n").getBytes("UTF-8") );
+					clientSocket.getOutputStream().flush();
+					//		Now, this is a bit tricky: since we are doing this in a thread different from the principal one (the UI thread), we are not allowed to make modifications to the user interface. We can, instead, call the Activity.runOnUiThread(Runnable) method; the runnable will be run in the UI thread, as soon as it is free:
+
+					runOnUiThread(new Runnable(){
+						@Override
+						public void run() {
+							appendToResponseView("Received >> "+line);
+						}
+					});
+					//		We catch the IOException: if an exception occurred, we do not care too much. In a real application we should try to recover, e.g., corrupted or incomplete data
+
+				} catch(Exception e) {
+					Log.e("Server","Exception in server loop",e);
+					//		in the finally block, we check if the clientSocket is null, and if it is not try to close the socket.
+
+				} finally {
+					if(clientSocket != null) {
+						try{clientSocket.close();}catch(Exception ignored){}
+					}
+				}
+			}
+		}
 	}
 	/* A class to handle the service client communication */
 	private class Client implements Runnable {
@@ -318,7 +374,61 @@ public class EchoActivity extends Activity {
 			device = btadapter.getRemoteDevice(serverDeviceAddress);
 		}
 
-		public void run(){}
+
+		//		In the client class, we want to:
+		//
+		//		connect to the server device, using the 
+		//		Bluetoothdevice.createRfcommSocketToServiceRecord method
+		//		writing the user message
+		//		read the response and append it in the ResponseTextView
+		//		Like for the Server class, we need to encapsulate the network commands in 
+		//		a try...catch block, as every command can potentially throw an IOException.
+		//
+		//		In the try block, first create the BluetoothSocket socket, calling 
+		//		device.createRfcommSocketToServiceRecord(EchoServiceUUID).
+
+		public void run(){
+
+			try {
+				
+				socket = device.createRfcommSocketToServiceRecord(EchoServiceUUID);
+				socket.connect();
+				
+			    socket.getOutputStream().write( (message+"\r\n").getBytes("UTF-8") );
+			    socket.getOutputStream().flush();
+				
+			    BufferedReader bufReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			    final String echoed = bufReader.readLine();
+			    
+			    runOnUiThread(new Runnable(){
+					public void run() {
+						appendToResponseView("Echoed >> "+echoed);
+					}
+				});
+			    
+			}
+			//		we need to catch an IOException here, as the signature of run does not permit to throw exceptions:
+
+			catch(IOException e) {
+				if(socket != null) {
+					try{socket.close();}catch(Exception ignored){}
+				}
+			}
+
+
+			//			try {
+			//				
+			//			} catch(Exception e) {
+			//				Log.e("Client","Exception in cient loop",e);
+			//				//		in the finally block, we check if the clientSocket is null, and if it is not try to close the socket.
+			//
+			//			} finally {
+			//
+			//			}
+
+
+
+		}
 	}
 
 
