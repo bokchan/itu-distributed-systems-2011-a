@@ -27,7 +27,7 @@ public class DeviceListActivity extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
-    	dk.itu.android.bluetooth.BluetoothAdapter.SetContext(this);
+    	BluetoothAdapter.SetContext(this);
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);

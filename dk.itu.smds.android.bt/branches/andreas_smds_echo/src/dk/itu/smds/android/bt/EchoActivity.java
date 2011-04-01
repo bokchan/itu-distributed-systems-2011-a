@@ -51,6 +51,7 @@ public class EchoActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
 
 		((Button)findViewById(R.id.SelectDeviceButton)).setEnabled(false);
 		((Button) findViewById(R.id.StartServerButton)).setEnabled(false);
@@ -76,15 +77,15 @@ public class EchoActivity extends Activity {
 		//if she wants to enable the bluetooth module.
 		else
 		{
-			if( !btadapter.isEnabled() ) 
-			{
-				startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BLUETOOTH);
-			}
-			//If the bluetooth module is already enabled, then we call the setup() method.
-			else
-			{
-				onBlueToothEnabled();
-			}
+//			if( !btadapter.isEnabled() ) 
+//			{
+//				startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BLUETOOTH);
+//			}
+//			//If the bluetooth module is already enabled, then we call the setup() method.
+//			else
+//			{
+//				onBlueToothEnabled();
+//			}
 		}
 	}
 
