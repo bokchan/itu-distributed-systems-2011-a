@@ -5,10 +5,6 @@ import java.io.InputStreamReader;
 import java.util.UUID;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import dk.itu.android.bluetooth.BluetoothAdapter;
+import dk.itu.android.bluetooth.BluetoothDevice;
+import dk.itu.android.bluetooth.BluetoothServerSocket;
+import dk.itu.android.bluetooth.BluetoothSocket;
 
 
 public class EchoActivity extends Activity {
@@ -48,18 +48,18 @@ public class EchoActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		dk.itu.android.bluetooth.BluetoothAdapter.SetContext(this);
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.main);
 
-		((Button)findViewById(R.id.SelectDeviceButton)).setEnabled(false);
-		((Button) findViewById(R.id.StartServerButton)).setEnabled(false);
+		findViewById(R.id.SelectDeviceButton).setEnabled(false);
+		findViewById(R.id.StartServerButton).setEnabled(false);
 	}
-
-	@Override
-	protected void onStart() {
+	
+	protected void onStart() {	
 		super.onStart();
-
+		
 		btadapter = BluetoothAdapter.getDefaultAdapter();
 
 		//check if a bluetooth module is available or not; just check if the btadapter is null
@@ -76,8 +76,9 @@ public class EchoActivity extends Activity {
 		//if she wants to enable the bluetooth module.
 		else
 		{
-//			if( !btadapter.isEnabled() ) 
+			if( !btadapter.isEnabled() ) onBlueToothEnabled(); 
 //			{
+				
 //				startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BLUETOOTH);
 //			}
 //			//If the bluetooth module is already enabled, then we call the setup() method.
@@ -155,7 +156,6 @@ public class EchoActivity extends Activity {
 		}
 	}
 
-
 	/***
 	 * Start server
 	 * @param view
@@ -171,11 +171,14 @@ public class EchoActivity extends Activity {
 	 * @param view
 	 */
 	public void stopServer(View view) {
-		if (server.running)
+		if (server != null)
 		server.stop();
 	}
-
-
+	
+	/***
+	 * onClickHandler
+	 * @param view
+	 */
 	public void sendMessage(View view) {
 		client.message = ((EditText)findViewById(R.id.SendEditText)).getText().toString();
 		new Thread(server).start();
@@ -196,13 +199,14 @@ public class EchoActivity extends Activity {
 		public void run(){
 			try {
 				socket = btadapter.listenUsingRfcommWithServiceRecord(EchoServiceName, EchoServiceUUID);
+				
 			} catch (IOException e) {
 				running = false;
 				Log.e("Server","Exception in socket initialization",e);
 
 			}
-
-			while(running) {
+			
+			while(running && socket!=null) {
 				BluetoothSocket clientSocket = null;
 				try {
 					clientSocket = socket.accept();
@@ -266,4 +270,9 @@ public class EchoActivity extends Activity {
 					
 		}
 	}
+		
+	public void selectServerDevice(View view ) {
+		Intent intent = new Intent(this, DeviceListActivityPelle.class); 
+		startActivity(intent);
+	} 
 }
