@@ -11,7 +11,7 @@ public interface IClient {
 	 * @return 
 	 * @throws IOException 
 	 */
-	void send(Object message) throws IOException, ClassNotFoundException;	
+	void sendMessage(Object message) throws IOException, ClassNotFoundException;	
 	
 	/**
 	 * Receive value
@@ -19,5 +19,5 @@ public interface IClient {
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
 	 */
-	Object receive() throws IOException, ClassNotFoundException;	
+	Object receiveMessage() throws IOException, ClassNotFoundException;	
 }

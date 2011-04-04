@@ -10,15 +10,12 @@ import java.util.Vector;
 
 public class TcpServer implements IServer {
 
-	private int port;
-	private Vector<Object> storage = new Vector<Object>();
 
 	/* constructor */
-	public TcpServer(int port) throws IOException {
-		this.port = port; 
+	public TcpServer(int port) throws IOException { 
 		ServerSocket server_socket = new ServerSocket( port );
 
-		// this part handles multiple connections / users concurently
+		// this part handles multiple connections / users concurrently
 		while(true) {
 			Socket client_socket = server_socket.accept(); // blocking call code bellow not executed before request from client
 			Connection c = new Connection(client_socket);
@@ -39,78 +36,44 @@ public class TcpServer implements IServer {
 	 */
 	private class Connection implements Runnable {
 
-		private ObjectInputStream ois; // previously in
-		private ObjectOutputStream oos; // previously out
-
-		
-		private Socket socket;
+		private ObjectInputStream ois;
+		private ObjectOutputStream oos;
 
 		private Connection (Socket socket) throws IOException {
 
-			this.socket = socket;
 			oos = new ObjectOutputStream( socket.getOutputStream());
 			ois = new ObjectInputStream( socket.getInputStream());
 		}
 
 		public void run() {
-
-			// TODO Auto-generated method stub
-
-			Object[] args; 
+ 
 			try {	
 				
-				
-				System.out.println("run() TCPServer called before while ");
-				
-				
-				// mads suggested the while(keep_running) appraoch 
-				// so it keeps running listning for communication on a socket
+				/*
+				 * Note/ TODO:
+				 * 
+				 * 
+				 mads suggested the while(keep_running) approach 
+				 so it keeps running listening for communication on one socket
+				 when trying to move socket creation away from send on the client.
+				 
+				 */
+
 				
 				Boolean keep_running = true;
 				while(keep_running) {
 
-//					System.out.println("run() TCPServer called before ois.readObject(); which make a blocking call ");
-						
-					// first object in current stream
-					// This object tells us how many elements we have to read
 					Object o = ois.readObject(); // blocking call
-					
-					
-//					System.out.println("run() TCPServer called - o (nb there is this +1 in the send so o.toString() migth print another number):" + o.toString());
-					
-					
-					
-					
-//					Object obj = ois.readObject();
-					
-//					System.out.println(obj.toString());
-//					System.out.println(obj.toString().equalsIgnoreCase("quit"));
 					
 					if (o.toString().equalsIgnoreCase("quit")) 
 					{
 					destroy();
 					keep_running = false;
 					}
-					
-					
-					
-//					int argCount = Integer.valueOf(o.toString());
-//					args = new Object[argCount];
-//					for (int i = 0; i < argCount; i++) {
-//						args[i] = ois.readObject();
-//						// Check if the server is requested to halt
-//						if (args[i].toString().equalsIgnoreCase("quit")) 
-//							{
-//							destroy();
-//							keep_running = false;
-//							}
-//					}
 	
 					send(o);
 				
-				}
-				
-				
+				}				
 
 			} catch (IOException e) {
 				e.printStackTrace();
