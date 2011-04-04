@@ -33,7 +33,7 @@ public class TcpClient implements IClient {
 		
 //		TODO: figure this out whats the right approach
 //		// create a new socket - apparently don't move to constructor
-//		this.socket = new Socket( server_address, port );
+//		this.socket = new Socket( server_address, server_port );
 		
 	
 	}
