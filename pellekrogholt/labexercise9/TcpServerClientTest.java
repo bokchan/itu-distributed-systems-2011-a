@@ -76,6 +76,8 @@ public class TcpServerClientTest implements Runnable
 
 		client.sendMessage(message);
 
+//		System.out.println(client.receiveMessage());
+		
 		Assert.assertEquals("message1_message2", client.receiveMessage());
 
 		// quit server 
@@ -121,11 +123,15 @@ public class TcpServerClientTest implements Runnable
 	@Override
 	public void run() {
 		try {
+
+			System.out.println("run() called: " + ++run_call);
 			
 			// note: approach is to create one authentication server then a *normal* server 
 			if (run_call == 1) {
+				System.out.println("run_call == 1 true");
 				AuthenticationTcpServer authentication_server = new AuthenticationTcpServer(++server_port);
 			} else {
+				System.out.println("run_call == 1 false");
 				TcpServer server = new TcpServer(++server_port);
 			}
 
