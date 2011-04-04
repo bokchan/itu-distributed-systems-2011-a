@@ -10,12 +10,12 @@ import java.util.Vector;
 
 public class TcpServer implements IServer {
 
-	// moved outside Connection so its call/reach able from AuthenticationTcpServer    
-	protected ObjectInputStream ois;
-	protected ObjectOutputStream oos;
 
 	/* constructor */
 	public TcpServer(int port) throws IOException { 
+
+		System.out.println("server constructor called added to port: " + port);
+		
 		ServerSocket server_socket = new ServerSocket( port );
 
 		// this part handles multiple connections / users concurrently
@@ -34,6 +34,9 @@ public class TcpServer implements IServer {
 	 */
 	protected class Connection implements Runnable {
 
+		private ObjectInputStream ois;
+		private ObjectOutputStream oos;
+		
 		Connection (Socket socket) throws IOException {
 
 			oos = new ObjectOutputStream( socket.getOutputStream());
@@ -81,7 +84,10 @@ public class TcpServer implements IServer {
 
 		private void send(Object o) {
 			try {				
-				oos.writeObject(o);
+				oos.writeObject(o.toString() + "_message4");
+				
+				System.out.println("TcpServer send(Object o)");
+				
 				//				oos.reset(); try out to solve java.io.StreamCorruptedException: invalid type code: AC
 			} 
 			catch (Exception e) {	
