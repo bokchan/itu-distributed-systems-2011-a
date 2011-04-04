@@ -5,7 +5,7 @@ import java.net.InetAddress;
 
 public class TcpServerClientRunner implements Runnable {
 	
-	private static int server_port = 4004;
+	private static int server_port = 5000;
 	
 	/**
 	 * @param args
