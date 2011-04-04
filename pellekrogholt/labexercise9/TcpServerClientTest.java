@@ -35,7 +35,7 @@ public class TcpServerClientTest implements Runnable
 
 	
 	
-	@Test 
+//	@Test 
 	public void testA_to_S_to_A_to_B_to_A_to_B() throws Throwable { 
 
 		// a will communicate with S (Authentication Server)
@@ -58,12 +58,12 @@ public class TcpServerClientTest implements Runnable
 		client.sendMessage(message+"_message3");
 		
 		
-		// from B
+		// from B to A
 		message = client.receiveMessage().toString();
 		
 		Assert.assertEquals(message, "message1_message2_message3_message4");
 		
-		// final message to B 
+		// final message from A to B  
 		// TODO: raises error it should be posisble to send more than one message 
 //		client.sendMessage(message+"_message5");
 		
@@ -83,7 +83,7 @@ public class TcpServerClientTest implements Runnable
 	
 	
 
-//	@Test 
+	@Test 
 	public void testClient2AuthenticationServerMessage() throws Throwable { 
 
 		// a will communicate with s
@@ -93,15 +93,14 @@ public class TcpServerClientTest implements Runnable
 		client.sendMessage(message);
 
 		// no message manipulation is done so fare so message is the same
-		Assert.assertEquals(client.receiveMessage(), message+"message2");
+		Assert.assertEquals("message1_message2", client.receiveMessage());
 
 		// quit server 
 		client.sendMessage("quit");
 	}
 
-//	@Test 
+	@Test 
 	public void testClient2ServerMessage() throws Throwable { 
-
 
 		// a will communicate with b
 		TcpClient client = new TcpClient (5002, server_address);
@@ -110,12 +109,38 @@ public class TcpServerClientTest implements Runnable
 		client.sendMessage(message);
 
 		// no message manipulation is done so fare so message is the same
-		Assert.assertEquals(client.receiveMessage(), message);
+		Assert.assertEquals("message3_message4", client.receiveMessage());
 
 		// quit server 
 		client.sendMessage("quit");
 	}
 
+	
+	@Test 
+	public void testClient2Server2Messages() throws Throwable { 
+
+		// a will communicate with b
+		TcpClient client = new TcpClient (5002, server_address);
+		String message = "message3";
+
+		client.sendMessage(message);
+
+		// no message manipulation is done so fare so message is the same
+		Assert.assertEquals("message3_message4", client.receiveMessage());
+		
+		client.sendMessage("new_message");
+		
+		Assert.assertEquals("new_message_message4", client.receiveMessage());
+				
+		// quit server 
+		client.sendMessage("quit");
+	}
+	
+	
+	
+	
+	
+	
 
 	@Override
 	public void run() {
