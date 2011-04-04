@@ -35,64 +35,47 @@ public class TcpServerClientTest implements Runnable
 
 	
 	
-//	@Test 
-	public void testA_to_S_to_A_to_B_to_A_to_B() throws Throwable { 
+	@Test 
+	public void test_messages_from_A_to_S_to_A_to_B_to_A_to_B() throws Throwable { 
 
-		// a will communicate with S (Authentication Server)
+		// A will communicate with S (Authentication Server)
 		TcpClient client = new TcpClient (5001, server_address);
 		String message = "message1";
 
 		client.sendMessage(message);
 
-		// from S
+		// from S to A
 		message = client.receiveMessage().toString();
 		
-		System.out.println(message);
-		
-		// no message manipulation is done so fare so message is the same
 		Assert.assertEquals(message, "message1_message2");		
 		
-		// a will communicate with B (Another Server)
+		// from A to B (Another Server)
 		client = new TcpClient (5002, server_address);		
 
 		client.sendMessage(message+"_message3");
-		
 		
 		// from B to A
 		message = client.receiveMessage().toString();
 		
 		Assert.assertEquals(message, "message1_message2_message3_message4");
 		
-		// final message from A to B  
-		// TODO: raises error it should be posisble to send more than one message 
-//		client.sendMessage(message+"_message5");
-		
-		
-//		// hmmmmm - this works but should be needed
-//		client = new TcpClient (5002, server_address);		
-//		client.sendMessage(message+"_message5");
+		// final message from A to B   
+		client.sendMessage(message+"_message5");
 		
 		// quit server 
 		client.sendMessage("quit");
 	}
-
-	
-	
-	
-	
-	
 	
 
 	@Test 
 	public void testClient2AuthenticationServerMessage() throws Throwable { 
 
-		// a will communicate with s
+		// from A to S (Authentication Server)
 		TcpClient client = new TcpClient (5001, server_address);
 		String message = "message1";
 
 		client.sendMessage(message);
 
-		// no message manipulation is done so fare so message is the same
 		Assert.assertEquals("message1_message2", client.receiveMessage());
 
 		// quit server 
@@ -102,13 +85,12 @@ public class TcpServerClientTest implements Runnable
 	@Test 
 	public void testClient2ServerMessage() throws Throwable { 
 
-		// a will communicate with b
+		// from A to B (Server)
 		TcpClient client = new TcpClient (5002, server_address);
 		String message = "message3";
 
 		client.sendMessage(message);
 
-		// no message manipulation is done so fare so message is the same
 		Assert.assertEquals("message3_message4", client.receiveMessage());
 
 		// quit server 
@@ -119,13 +101,12 @@ public class TcpServerClientTest implements Runnable
 	@Test 
 	public void testClient2Server2Messages() throws Throwable { 
 
-		// a will communicate with b
+		// from A to B (Server)
 		TcpClient client = new TcpClient (5002, server_address);
 		String message = "message3";
 
 		client.sendMessage(message);
 
-		// no message manipulation is done so fare so message is the same
 		Assert.assertEquals("message3_message4", client.receiveMessage());
 		
 		client.sendMessage("new_message");
@@ -136,18 +117,12 @@ public class TcpServerClientTest implements Runnable
 		client.sendMessage("quit");
 	}
 	
-	
-	
-	
-	
-	
 
 	@Override
 	public void run() {
 		try {
-
-			System.out.println("run() called");
-			System.out.println("run_call: " + ++run_call);
+			
+			// note: approach is to create one authentication server then a *normal* server 
 			if (run_call == 1) {
 				AuthenticationTcpServer authentication_server = new AuthenticationTcpServer(++server_port);
 			} else {
@@ -158,7 +133,5 @@ public class TcpServerClientTest implements Runnable
 			e.printStackTrace();
 		} 
 	}
-
-
 
 }
