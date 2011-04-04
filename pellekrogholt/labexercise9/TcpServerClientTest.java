@@ -25,19 +25,7 @@ public class TcpServerClientTest implements Runnable
 		server_address = InetAddress.getByName("localhost");
 		new Thread(new TcpServerClientTest()).start();
 	}
-
-	public static void createPeronObjectsAndSend(TcpClient client, int arg) throws Throwable {
-		Person persons[] = {
-			new Person("Andreas", "Storegade 2", 1020, "60565656"),
-			new Person("Bettina", "Prinsegade 2", 2030, "60565656"),
-			new Person("Thor", "Allergade 4", 4030, "60565656")
-		};
-		for (Person p : persons) {
-			client.send(p, 3);
-		}
-	}	
-	
-	
+		
 	@Override
 	public void run() {
 		try {
@@ -48,44 +36,15 @@ public class TcpServerClientTest implements Runnable
 	}
 	
 	@Test 
-	public void testClient2ServerMessageUppercase() throws Throwable { 
+	public void testClient2ServerMessage() throws Throwable { 
 		
 		TcpClient client = new TcpClient (client_port, server_address);
 		String message = "Hello world";
 		
-		client.send(message, 1);
-		Assert.assertEquals(client.receive(), message.toUpperCase());
+		client.sendMessage(message);
 		
-	}
-
-	@Test 
-	public void testClient2ServerMessageUppercase2Messages() throws Throwable { 
-		
-		TcpClient client = new TcpClient (client_port, server_address);
-		String message = "Hello world";
-		
-		String message2 = "Hello another world";
-		
-		client.send(message, 1);
-		Assert.assertEquals(client.receive(), message.toUpperCase());
-
-		client.send(message2, 1);
-		Assert.assertEquals(client.receive(), message2.toUpperCase());		
-		
-		// if new approach is fixed we need to close
-		client.send("quit", -1);
-		
-	}
-	
-	
-	
-	@Test 
-	public void testRequestPersonObjectFromServer() throws Throwable { 
-		
-		TcpClient client = new TcpClient (client_port, server_address);
-		createPeronObjectsAndSend(client, 3);
-		client.send(0, 2);
-		Assert.assertNotNull(client.receive());
+		// no message manipulation is done so fare so message is the same
+		Assert.assertEquals(client.receiveMessage(), message);
 		
 	}
 	
@@ -94,9 +53,8 @@ public class TcpServerClientTest implements Runnable
 	public void testClientQuitServer() throws Throwable { 
 		
 		TcpClient client = new TcpClient (client_port, server_address);
-		client.send("quit", -1);
-		Assert.assertNull(client.receive());
-		// code after client.send("quit", -1) is not executed so not best practice done here
+		client.sendMessage("quit");
+		Assert.assertNull(client.receiveMessage());
 
 	}	
 	
