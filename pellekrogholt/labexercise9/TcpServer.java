@@ -10,6 +10,9 @@ import java.util.Vector;
 
 public class TcpServer implements IServer {
 
+	// moved outside Connection so its call/reach able from AuthenticationTcpServer    
+	protected ObjectInputStream ois;
+	protected ObjectOutputStream oos;
 
 	/* constructor */
 	public TcpServer(int port) throws IOException { 
@@ -23,23 +26,15 @@ public class TcpServer implements IServer {
 		}  
 	}
 
-	//class Connection extends Thread {
 	/**
 	 * Connection(s)
 	 * 
-	 * Class that can handle multiple connections - its based on xxx (add reference)
-	 * but its made private and for that reason moved into / under the server class
-	 * because it should be accessible by that class only.
-	 * 
-	 * It implements threads with use of the Runnable and not the Thread 
+	 * It implements threads with use of the Runnable and not the Thread
 	 * 
 	 */
-	private class Connection implements Runnable {
+	protected class Connection implements Runnable {
 
-		private ObjectInputStream ois;
-		private ObjectOutputStream oos;
-
-		private Connection (Socket socket) throws IOException {
+		Connection (Socket socket) throws IOException {
 
 			oos = new ObjectOutputStream( socket.getOutputStream());
 			ois = new ObjectInputStream( socket.getInputStream());
