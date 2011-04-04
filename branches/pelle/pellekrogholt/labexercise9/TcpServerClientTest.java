@@ -8,9 +8,10 @@ import org.junit.*;
 public class TcpServerClientTest implements Runnable 
 {  
 
-	private static int server_port = 4000;
-	private static int client_port = 4002;
-	private static int authentication_port = 4004;
+	private static int client_port = 4000;
+	private static int server_port = 5000;
+	
+//	private static int authentication_port = 4004;
 	private static InetAddress server_address;
 	
 	/**
@@ -45,24 +46,16 @@ public class TcpServerClientTest implements Runnable
 		
 		// no message manipulation is done so fare so message is the same
 		Assert.assertEquals(client.receiveMessage(), message);
-		
-	}
-	
-	
-	@Test 
-	public void testClientQuitServer() throws Throwable { 
-		
-		TcpClient client = new TcpClient (server_port, server_address);
-		client.sendMessage("quit");
-		Assert.assertNull(client.receiveMessage());
 
-	}	
+		// quit server 
+		client.sendMessage("quit");
+	}
 
 	
 	@Override
 	public void run() {
 		try {
-			TcpServer server = new TcpServer(server_port);
+			TcpServer server = new TcpServer(server_port++);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 

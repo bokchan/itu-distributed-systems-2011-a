@@ -41,9 +41,9 @@ public class TcpServer implements IServer {
 		}
 
 		public void run() {
- 
+
 			try {	
-				
+
 				/*
 				 * Note/ TODO:
 				 * 
@@ -51,24 +51,26 @@ public class TcpServer implements IServer {
 				 mads suggested the while(keep_running) approach 
 				 so it keeps running listening for communication on one socket
 				 when trying to move socket creation away from send on the client.
-				 
+
 				 */
 
-				
-				Boolean keep_running = true;
-				while(keep_running) {
 
-					Object o = ois.readObject(); // blocking call
-					
-					if (o.toString().equalsIgnoreCase("quit")) 
-					{
+				//				Boolean keep_running = true;
+				//				while(keep_running) {
+
+
+//				System.out.println("keep_running results in multiple calls on each message");
+				Object o = ois.readObject(); // blocking call
+
+				if (o.toString().equalsIgnoreCase("quit")) 
+				{
 					destroy();
-					keep_running = false;
-					}
-	
-					send(o);
-				
-				}				
+					//					keep_running = false;
+				}
+
+				send(o);
+
+				//				}				
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -80,7 +82,7 @@ public class TcpServer implements IServer {
 		private void send(Object o) {
 			try {				
 				oos.writeObject(o);
-//				oos.reset(); try out to solve java.io.StreamCorruptedException: invalid type code: AC
+				//				oos.reset(); try out to solve java.io.StreamCorruptedException: invalid type code: AC
 			} 
 			catch (Exception e) {	
 			}
@@ -88,7 +90,7 @@ public class TcpServer implements IServer {
 			// end Connection	
 
 		} // end MyTcpServer
-		
+
 		private void destroy() {
 			System.out.println("Server is closing down...");
 			System.exit(-1);
