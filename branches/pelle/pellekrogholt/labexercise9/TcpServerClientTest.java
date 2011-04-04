@@ -7,9 +7,10 @@ import org.junit.*;
 
 public class TcpServerClientTest implements Runnable 
 {  
-	
+
 	private static int server_port = 4000;
-	private static int client_port = 4000;
+	private static int client_port = 4002;
+	private static int authentication_port = 4004;
 	private static InetAddress server_address;
 	
 	/**
@@ -25,20 +26,19 @@ public class TcpServerClientTest implements Runnable
 		server_address = InetAddress.getByName("localhost");
 		new Thread(new TcpServerClientTest()).start();
 	}
-		
-	@Override
-	public void run() {
-		try {
-			TcpServer server = new TcpServer(server_port);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-	}
+
+
+//	@BeforeClass 
+//	public static void setupAuthenticationTcpServer() throws Throwable {
+//		server_address = InetAddress.getByName("localhost");
+//		new Thread(new TcpServerClientTest()).start();
+//	}
+
 	
 	@Test 
 	public void testClient2ServerMessage() throws Throwable { 
 		
-		TcpClient client = new TcpClient (client_port, server_address);
+		TcpClient client = new TcpClient (server_port, server_address);
 		String message = "Hello world";
 		
 		client.sendMessage(message);
@@ -52,11 +52,22 @@ public class TcpServerClientTest implements Runnable
 	@Test 
 	public void testClientQuitServer() throws Throwable { 
 		
-		TcpClient client = new TcpClient (client_port, server_address);
+		TcpClient client = new TcpClient (server_port, server_address);
 		client.sendMessage("quit");
 		Assert.assertNull(client.receiveMessage());
 
 	}	
+
+	
+	@Override
+	public void run() {
+		try {
+			TcpServer server = new TcpServer(server_port);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+	}
+	
 	
 	
 }
