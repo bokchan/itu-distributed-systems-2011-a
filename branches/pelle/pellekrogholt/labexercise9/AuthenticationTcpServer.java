@@ -25,8 +25,6 @@ public class AuthenticationTcpServer implements IServer {
 		
 		System.out.println("authentication server constructor called added to port: " + port);
 		
-		
-		
 		ServerSocket server_socket = new ServerSocket( port );
 
 		// this part handles multiple connections / users concurrently
