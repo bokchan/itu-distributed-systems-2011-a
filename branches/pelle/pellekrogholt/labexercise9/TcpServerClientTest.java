@@ -1,9 +1,12 @@
 package pellekrogholt.labexercise9;
 
 import java.io.IOException;
-import java.net.InetAddress;  
+import java.net.InetAddress;
 
-import org.junit.*;  
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 
 public class TcpServerClientTest implements Runnable 
 {  
@@ -17,6 +20,8 @@ public class TcpServerClientTest implements Runnable
 
 	//	private static int authentication_port = 4004;
 	private static InetAddress server_address;
+
+
 
 	/**
 	 * Setup server
@@ -33,8 +38,8 @@ public class TcpServerClientTest implements Runnable
 		new Thread(new TcpServerClientTest()).start();
 	}
 
-	
-	
+
+
 	@Test 
 	public void test_messages_from_A_to_S_to_A_to_B_to_A_to_B() throws Throwable { 
 
@@ -46,26 +51,26 @@ public class TcpServerClientTest implements Runnable
 
 		// from S to A
 		message = client.receiveMessage().toString();
-		
+
 		Assert.assertEquals(message, "message1_message2");		
-		
+
 		// from A to B (Another Server)
 		client = new TcpClient (5002, server_address);		
 
 		client.sendMessage(message+"_message3");
-		
+
 		// from B to A
 		message = client.receiveMessage().toString();
-		
+
 		Assert.assertEquals(message, "message1_message2_message3_message4");
-		
+
 		// final message from A to B   
 		client.sendMessage(message+"_message5");
-		
+
 		// quit server 
 		client.sendMessage("quit");
 	}
-	
+
 
 	@Test 
 	public void testClient2AuthenticationServerMessage() throws Throwable { 
@@ -76,8 +81,8 @@ public class TcpServerClientTest implements Runnable
 
 		client.sendMessage(message);
 
-//		System.out.println(client.receiveMessage());
-		
+		//		System.out.println(client.receiveMessage());
+
 		Assert.assertEquals("message1_message2", client.receiveMessage());
 
 		// quit server 
@@ -99,7 +104,7 @@ public class TcpServerClientTest implements Runnable
 		client.sendMessage("quit");
 	}
 
-	
+
 	@Test 
 	public void testClient2Server2Messages() throws Throwable { 
 
@@ -110,22 +115,22 @@ public class TcpServerClientTest implements Runnable
 		client.sendMessage(message);
 
 		Assert.assertEquals("message3_message4", client.receiveMessage());
-		
+
 		client.sendMessage("new_message");
-		
+
 		Assert.assertEquals("new_message_message4", client.receiveMessage());
-				
+
 		// quit server 
 		client.sendMessage("quit");
 	}
-	
+
 
 	@Override
 	public void run() {
 		try {
 
 			System.out.println("run() called: " + ++run_call);
-			
+
 			// note: approach is to create one authentication server then a *normal* server 
 			if (run_call == 1) {
 				System.out.println("run_call == 1 true");
