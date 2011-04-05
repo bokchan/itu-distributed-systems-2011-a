@@ -7,7 +7,19 @@ import org.junit.Assert;
 
 public class TcpServerClientRunner implements Runnable {
 	
-	private static int server_port = 5000;
+	private boolean server_authentication = false;
+	private int server_port;
+	private int client_port;
+	
+	public TcpServerClientRunner(int server_port) {
+		this.server_port = server_port;
+	}
+	
+	public TcpServerClientRunner(int server_port, boolean server_authentication) {
+		this.server_port = server_port;
+		this.server_authentication = server_authentication;
+	}
+	
 	
 	/**
 	 * @param args
@@ -15,17 +27,15 @@ public class TcpServerClientRunner implements Runnable {
 	 */
 	public static void main (String args[]) throws Exception{ 
 
-
 		
 		InetAddress server_address = InetAddress.getByName("localhost");
 		
 		//start authentication server in a separate thread
-		new Thread(new TcpServerClientRunner()).start();
+		new Thread(new TcpServerClientRunner(5001, true)).start();
 		
-		new Thread(new TcpServerClientRunner()).start();
+		new Thread(new TcpServerClientRunner(5002)).start();
 		
-		new Thread(new TcpServerClientRunner()).start();
-		
+		new Thread(new TcpServerClientRunner(5003)).start();
 		
 		TcpClient client = new TcpClient (5001, server_address);
 		String message = "message_to_5001";
@@ -122,9 +132,20 @@ public class TcpServerClientRunner implements Runnable {
 		
 	}
 
+	/**
+	 * approach is to create one authentication server then a *normal* server
+	 */
+	@Override
 	public void run() {
 		try {			
-			TcpServer server = new TcpServer(++server_port); // nb! results in a blocking call 
+			if (server_authentication) {
+				// nb! next line results in a blocking call
+				AuthenticationTcpServer authentication_server = new AuthenticationTcpServer(server_port);
+			} else {
+				// nb! next line results in a blocking call
+				TcpServer server = new TcpServer(server_port);
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
