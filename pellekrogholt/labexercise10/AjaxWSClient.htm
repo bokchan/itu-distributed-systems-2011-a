@@ -5,23 +5,6 @@
 
     <script type="text/javascript" language="javascript">
 
-
-
-// Okay,
-// 
-// So changing the line that extracts the content of the response to:
-// 
-// document.getElementById("textareaHelloWorld").innerText = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
-// 
-// and adding this:
-// 
-// xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-// 
-// Fixes it in safari. Still doesn't help with Firefox though.
-
-
-
-
         var xmlhttp;
 
 
@@ -29,9 +12,6 @@
         function CallHelloWorld() {
             // Get XmlHttpObject
             xmlhttp = GetXmlHttpObject();
-            
-            // try out fix
-            // xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
 
             if (xmlhttp == null) {
                 alert("Your browser does not support XMLHTTP!");
@@ -53,7 +33,7 @@
             // If the web service supports HTTP Post operation, then URL of your web method 
             // will be in the following format.
             // [Web service URL]/[Operation Name]
-            var url = "http://10.25.244.225:8085/labexercises/hello";
+            var url = "http://localhost:8085/labexercises/hello";
 
             xmlhttp.onreadystatechange = HelloWorldStateChanged;
 
@@ -61,13 +41,16 @@
 
             xmlhttp.setRequestHeader("Content-Type", "text/xml; charset=utf-8");
 
-
             // This header is necessary to let the web service know that we are sending Form data,
 
             xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
+            xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+
             // We should send the data with necessary parameter name.
             xmlhttp.send(data);
+
+
 
 
         }
@@ -77,36 +60,33 @@
         function HelloWorldStateChanged() {
 
             if (xmlhttp.readyState == 4) {
-
-
-                alert("xmlhttp.readyState: " + xmlhttp.readyState + " xmlhttp.status: " + xmlhttp.status);
-
-
-                // other than ie fails here
                 if (xmlhttp.status == 200) {
                     var xmlDoc = xmlhttp.responseXML;
-
-                    document.getElementById("textareaHelloWorld").innerText = xmlDoc.documentElement.text;
+                    console.log(xmlDoc.getElementsByTagName("return")[0].childNodes[0]);
+                    document.getElementById("textareaHelloWorld").innerText = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
                 }
                 else 
                 {
                     alert('Call to HelloService failed! HTTP Status Code:' + xmlhttp.status);
-                    // document.getElementById("textareaHelloWorld").innerText = xmlhttp.responseText;
-                    
-                    document.getElementById("textareaHelloWorld").innerText = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
-                    
-                    
-                    // not sure where it should go
-                    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-                    
-                    
-                    
+                    document.getElementById("textareaHelloWorld").innerText = xmlhttp.responseText;
                 }
 
             }
 
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         function ConvertToCelsius(temparature) 
@@ -133,9 +113,12 @@
         }
 
 
-        function GetXmlHttpObject() {
 
-            
+
+
+
+
+        function GetXmlHttpObject() {
             if (window.XMLHttpRequest) {
                 // code for IE7+, Firefox, Chrome, Opera, Safari
                 return new XMLHttpRequest();
