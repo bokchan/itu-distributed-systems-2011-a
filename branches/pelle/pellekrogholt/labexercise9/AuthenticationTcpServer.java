@@ -94,10 +94,6 @@ public class AuthenticationTcpServer implements IServer {
 		private void send(Object o) {
 			try {				
 				oos.writeObject(o.toString() + "_message2");
-				
-				System.out.println("TcpServer send(Object o)");
-				
-				//				oos.reset(); try out to solve java.io.StreamCorruptedException: invalid type code: AC
 			} 
 			catch (Exception e) {	
 			}

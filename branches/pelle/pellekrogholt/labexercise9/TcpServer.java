@@ -13,8 +13,6 @@ public class TcpServer implements IServer {
 
 	/* constructor */
 	public TcpServer(int port) throws IOException { 
-
-		System.out.println("server constructor called added to port: " + port);
 		
 		ServerSocket server_socket = new ServerSocket( port );
 
@@ -85,10 +83,6 @@ public class TcpServer implements IServer {
 		private void send(Object o) {
 			try {				
 				oos.writeObject(o.toString() + "_message4");
-				
-				System.out.println("TcpServer send(Object o)");
-				
-				//				oos.reset(); try out to solve java.io.StreamCorruptedException: invalid type code: AC
 			} 
 			catch (Exception e) {	
 			}
