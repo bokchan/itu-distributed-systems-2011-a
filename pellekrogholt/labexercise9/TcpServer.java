@@ -45,33 +45,15 @@ public class TcpServer implements IServer {
 
 			try {	
 
-				/*
-				 * Note/ TODO:
-				 * 
-				 * 
-				 mads suggested the while(keep_running) approach 
-				 so it keeps running listening for communication on one socket
-				 when trying to move socket creation away from send on the client.
 
-				 */
-
-
-				//				Boolean keep_running = true;
-				//				while(keep_running) {
-
-
-//				System.out.println("keep_running results in multiple calls on each message");
 				Object o = ois.readObject(); // blocking call
 
 				if (o.toString().equalsIgnoreCase("quit")) 
 				{
 					destroy();
-					//					keep_running = false;
 				}
 
-				send(o);
-
-				//				}				
+				send(o);				
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -89,7 +71,7 @@ public class TcpServer implements IServer {
 
 			// end Connection	
 
-		} // end MyTcpServer
+		} // end TcpServer
 
 		private void destroy() {
 			System.out.println("Server is closing down...");

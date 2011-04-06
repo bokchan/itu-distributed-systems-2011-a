@@ -9,21 +9,9 @@ import java.net.Socket;
 import java.util.Vector;
 
 
-
-
-//TODO: had hopped for an approach with  
-//public class AuthenticationTcpServer extends TcpServer
-//but had problems when called the constructor that actually 
-//called up the constructor of TcpServer  
-
-
 public class AuthenticationTcpServer implements IServer {
 
 	public AuthenticationTcpServer(int port) throws IOException {
-//		super(port); // why is the needed as first line in the constructor 
-		
-		
-		System.out.println("authentication server constructor called added to port: " + port);
 		
 		ServerSocket server_socket = new ServerSocket( port );
 
@@ -55,34 +43,13 @@ public class AuthenticationTcpServer implements IServer {
 		public void run() {
 
 			try {	
-
-				/*
-				 * Note/ TODO:
-				 * 
-				 * 
-				 mads suggested the while(keep_running) approach 
-				 so it keeps running listening for communication on one socket
-				 when trying to move socket creation away from send on the client.
-
-				 */
-
-
-				//				Boolean keep_running = true;
-				//				while(keep_running) {
-
-
-//				System.out.println("keep_running results in multiple calls on each message");
 				Object o = ois.readObject(); // blocking call
 
 				if (o.toString().equalsIgnoreCase("quit")) 
 				{
 					destroy();
-					//					keep_running = false;
 				}
-
 				send(o);
-
-				//				}				
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -100,7 +67,7 @@ public class AuthenticationTcpServer implements IServer {
 
 			// end Connection	
 
-		} // end MyTcpServer
+		} // end AuthenticationTcpServer
 
 		private void destroy() {
 			System.out.println("Server is closing down...");

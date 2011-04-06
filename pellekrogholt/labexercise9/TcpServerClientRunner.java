@@ -45,10 +45,9 @@ public class TcpServerClientRunner implements Runnable {
 		TcpClient client = new TcpClient (5001, server_address);
 		String message = "message_1";
 		client.sendMessage(message);
-		
-		System.out.println("A receives message from S:");
+
 		message = client.receiveMessage().toString();
-		System.out.println(message);		
+		System.out.println("A receives message from S: " + message);		
 
 		
 		System.out.println("A send message to B");
@@ -56,10 +55,8 @@ public class TcpServerClientRunner implements Runnable {
 		TcpClient client2 = new TcpClient (5002, server_address);
 		client2.sendMessage(message + "_message3");
 		
-
-		System.out.println("A receives message from B:");
 		message = client2.receiveMessage().toString();
-		System.out.println(message);
+		System.out.println("A receives message from B: " + message);
 		
 
 		System.out.println("Final message from A to B");
