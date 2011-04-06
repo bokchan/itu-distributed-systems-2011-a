@@ -1,6 +1,6 @@
 package pellekrogholt.labexercise9;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.net.InetAddress;
 
 import org.junit.Assert;
@@ -21,6 +21,7 @@ public class TcpServerClientTest implements Runnable
 	//	private static int authentication_port = 4004;
 	private static InetAddress server_address;
 
+	private static long timeout = 10;
 
 
 	/**
@@ -34,8 +35,13 @@ public class TcpServerClientTest implements Runnable
 	@BeforeClass 
 	public static void setupServer() throws Throwable {
 		server_address = InetAddress.getByName("localhost");
-		new Thread(new TcpServerClientTest()).start();
-		new Thread(new TcpServerClientTest()).start();
+
+		Thread server_authentication_thread = new Thread(new TcpServerClientTest());
+		server_authentication_thread.start();
+
+		Thread server_thread = new Thread(new TcpServerClientTest());
+		server_thread.start();
+
 	}
 
 
@@ -129,14 +135,25 @@ public class TcpServerClientTest implements Runnable
 	public void run() {
 		try {
 
-			System.out.println("run() called: " + ++run_call);
+
+			/* TODO:
+			 * 
+			 * Figure out how to ensure authentication_server is created 
+			 * before server.
+			 * 
+			 * Tried out from setupServer() to control the order of the threads with 
+			 * various approaches sleep(timeout), wait()/notify()
+			 * but didn't worked out in the junit framework.
+			 * 
+			 * For now it means that the test failes now and then when servers
+			 * not create din the right order.
+			 */
+
 
 			// note: approach is to create one authentication server then a *normal* server 
 			if (run_call == 1) {
-				System.out.println("run_call == 1 true");
 				AuthenticationTcpServer authentication_server = new AuthenticationTcpServer(++server_port);
 			} else {
-				System.out.println("run_call == 1 false");
 				TcpServer server = new TcpServer(++server_port);
 			}
 
