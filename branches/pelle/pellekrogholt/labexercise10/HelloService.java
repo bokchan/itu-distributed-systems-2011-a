@@ -1,8 +1,9 @@
 package pellekrogholt.labexercise10;
 
-import javax.jws.WebMethod;
+import javax.jws.WebMethod; 
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
+
 @WebService(name="helloService", targetNamespace = "http://hello.samples.smds2011.itu.dk/",serviceName="helloService")
 public class HelloService 
 {
