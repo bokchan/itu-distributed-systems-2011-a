@@ -7,8 +7,6 @@
 
         var xmlhttp;
 
-
-
         function CallHelloWorld() {
             // Get XmlHttpObject
             xmlhttp = GetXmlHttpObject();
@@ -73,49 +71,7 @@
 
             }
 
-
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        function ConvertToCelsius(temparature) 
-        {
-            alert('Functionality not implemented!');
-        }
-
-
-
-        function ConvertToCelsiusStateChanged() {
-
-            if (xmlhttp.readyState == 4) {
-                if (xmlhttp.status == 200) {
-                    var xmlDoc = xmlhttp.responseXML;
-
-                    document.getElementById("textareaCelsius").innerText = xmlDoc.documentElement.text;
-                }
-                else {
-                    document.getElementById("textareaCelsius").innerText = xmlhttp.responseText;
-                }
-
-            }
-
-        }
-
-
-
-
-
 
 
         function GetXmlHttpObject() {
@@ -129,16 +85,6 @@
             }
             return null;
         }
-
-
-        function ConvertToFahrenheit(temparature) {
-            alert('Functionality not implemented!');
-
-        }
-         
-
-
-    
     
     </script>
 
@@ -162,58 +108,8 @@
                 <textarea id="textareaHelloWorld" cols="30" rows="5"></textarea>
             </td>
         </tr>
-        <!--<tr>
-            <td>
-                Fahrenheit To Celsius:
-            </td>
-            <td>
-                <input type="text" id="textFahrenheit" onblur="ConvertToCelsius(this.value)" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Fahrenheit To Celsius response :
-            </td>
-            <td>
-                <textarea id="textareaCelsius" cols="30" rows="5"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <br />
-                <br />
-            </td>
-            <td>
-                <br />
-                <br />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Celsius To Fahrenheit:
-            </td>
-            <td>
-                <input type="text" id="textCelsius" onblur="ConvertToFahrenheit(this.value)" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Celsius To Fahrenheit response :
-            </td>
-            <td>
-                <textarea id="textareaFahrenheit" cols="30" rows="5"></textarea>
-            </td>
-        </tr>-->
+
     </table>
-    <!--    Enter search characters for lastname:
-    <input type="text" id="textLastname" onkeyup="showHint(this.value)" />
-    </form>
-    <p>
-        Search Results: <span id="txtHint"></span>
-    </p>
-    <div id="results">
-    </div>
--->
     </form>
 </body>
 </html>
