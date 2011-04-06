@@ -9,6 +9,8 @@ public class HelloService
 {
 	@WebMethod()
 	public String helloOperation(String name) {
+		System.out.println("helloOperation called");
+		
 		return "Hello " + name + "!";
 	}
 	/**
