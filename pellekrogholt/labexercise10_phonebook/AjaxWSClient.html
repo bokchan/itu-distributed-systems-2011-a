@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Calling a Web service using Ajax functionality</title>
+
+    <script type="text/javascript" language="javascript">
+
+
+
+// Okay,
+// 
+// So changing the line that extracts the content of the response to:
+// 
+// document.getElementById("textareaHelloWorld").innerText = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+// 
+// and adding this:
+// 
+// xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+// 
+// Fixes it in safari. Still doesn't help with Firefox though.
+
+
+
+
+        var xmlhttp;
+
+
+
+        function CallHelloWorld() {
+            // Get XmlHttpObject
+            xmlhttp = GetXmlHttpObject();
+            
+            // try out fix
+            // xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+
+            if (xmlhttp == null) {
+                alert("Your browser does not support XMLHTTP!");
+                return;
+            }
+
+
+            var data = '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">' +
+                        '<SOAP-ENV:Header/>' +
+                        "<SOAP-ENV:Body>" +
+                        '<itu:helloOperation xmlns:itu="http://hello.samples.smds2011.itu.dk/">' +
+                        "<arg0>" + document.getElementById("textyourname").value + "</arg0>" +
+                        "</itu:helloOperation>" +
+                        "</SOAP-ENV:Body>" +
+                        "</SOAP-ENV:Envelope>";
+
+
+            // Assign the URL of the web method you want to access.
+            // If the web service supports HTTP Post operation, then URL of your web method 
+            // will be in the following format.
+            // [Web service URL]/[Operation Name]
+            var url = "http://10.25.244.225:8085/labexercises/hello";
+
+            xmlhttp.onreadystatechange = HelloWorldStateChanged;
+
+            xmlhttp.open("post", url, true);
+
+            xmlhttp.setRequestHeader("Content-Type", "text/xml; charset=utf-8");
+
+
+            // This header is necessary to let the web service know that we are sending Form data,
+
+            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            // We should send the data with necessary parameter name.
+            xmlhttp.send(data);
+
+
+        }
+
+
+
+        function HelloWorldStateChanged() {
+
+            if (xmlhttp.readyState == 4) {
+
+
+                alert("xmlhttp.readyState: " + xmlhttp.readyState + " xmlhttp.status: " + xmlhttp.status);
+
+
+                // other than ie fails here
+                if (xmlhttp.status == 200) {
+                    var xmlDoc = xmlhttp.responseXML;
+
+                    document.getElementById("textareaHelloWorld").innerText = xmlDoc.documentElement.text;
+                }
+                else 
+                {
+                    alert('Call to HelloService failed! HTTP Status Code:' + xmlhttp.status);
+                    // document.getElementById("textareaHelloWorld").innerText = xmlhttp.responseText;
+                    
+                    document.getElementById("textareaHelloWorld").innerText = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+                    
+                    
+                    // not sure where it should go
+                    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+                    
+                    
+                    
+                }
+
+            }
+
+
+        }
+
+
+        function ConvertToCelsius(temparature) 
+        {
+            alert('Functionality not implemented!');
+        }
+
+
+
+        function ConvertToCelsiusStateChanged() {
+
+            if (xmlhttp.readyState == 4) {
+                if (xmlhttp.status == 200) {
+                    var xmlDoc = xmlhttp.responseXML;
+
+                    document.getElementById("textareaCelsius").innerText = xmlDoc.documentElement.text;
+                }
+                else {
+                    document.getElementById("textareaCelsius").innerText = xmlhttp.responseText;
+                }
+
+            }
+
+        }
+
+
+        function GetXmlHttpObject() {
+
+            
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                return new XMLHttpRequest();
+            }
+            if (window.ActiveXObject) {
+                // code for IE6, IE5
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            return null;
+        }
+
+
+        function ConvertToFahrenheit(temparature) {
+            alert('Functionality not implemented!');
+
+        }
+         
+
+
+    
+    
+    </script>
+
+</head>
+<body>
+    <form action="" id="myform">
+    <table>
+        <tr>
+        <td>Your Name: <input type="text" id="textyourname"  /></td>
+            <td>
+                <input id="buttonHelloWorld" type="button" onclick="CallHelloWorld()" value="Call Hello World" />
+            </td>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Hello World web method response :
+            </td>
+            <td>
+                <textarea id="textareaHelloWorld" cols="30" rows="5"></textarea>
+            </td>
+        </tr>
+        <!--<tr>
+            <td>
+                Fahrenheit To Celsius:
+            </td>
+            <td>
+                <input type="text" id="textFahrenheit" onblur="ConvertToCelsius(this.value)" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Fahrenheit To Celsius response :
+            </td>
+            <td>
+                <textarea id="textareaCelsius" cols="30" rows="5"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br />
+                <br />
+            </td>
+            <td>
+                <br />
+                <br />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Celsius To Fahrenheit:
+            </td>
+            <td>
+                <input type="text" id="textCelsius" onblur="ConvertToFahrenheit(this.value)" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Celsius To Fahrenheit response :
+            </td>
+            <td>
+                <textarea id="textareaFahrenheit" cols="30" rows="5"></textarea>
+            </td>
+        </tr>-->
+    </table>
+    <!--    Enter search characters for lastname:
+    <input type="text" id="textLastname" onkeyup="showHint(this.value)" />
+    </form>
+    <p>
+        Search Results: <span id="txtHint"></span>
+    </p>
+    <div id="results">
+    </div>
+-->
+    </form>
+</body>
+</html>
