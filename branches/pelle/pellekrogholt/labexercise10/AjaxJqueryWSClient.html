@@ -1,13 +1,13 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Calling a Web service using Ajax functionality</title>
+    <title>Calling a Web service using Ajax functionality - jquery version</title>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 
     <script type="text/javascript" language="javascript">
 
-    // for 
+    // for: https://blog.itu.dk/SMDS-F2011/course-plan/lab-exercise-week-10
 
     // js based on http://openlandscape.wordpress.com/2009/09/25/call-soap-xm-web-services-with-jquery-ajax
     
@@ -24,9 +24,8 @@
 
     var serviceUrl = 'http://localhost:8085/labexercises/hello'; // Preferably write this out from server side
 
-    function call_hello_world()
-    {    
-        var text = $("#textyourname").val();    
+    function call_hello_world(text)
+    {        
         var soapMessage =
         '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">' +
                                 '<SOAP-ENV:Header/>' +
@@ -69,31 +68,35 @@
             }
         } 
 
-    }
+    }    
     
+    $(document).ready(function() {
+
+        $('#buttonHelloWorld').click(function() {
+            
+            var text = $("#textyourname").val();
+            call_hello_world(text);
+        });
+
+    });
+    
+
     </script>
 
 </head>
 <body>
+    
+    <!-- todo: add support alternative option/version when javascript is disabled -->
+    
     <form action="" id="myform">
-    <table>
-        <tr>
-        <td>Your Name: <input type="text" id="textyourname"  /></td>
-            <td>
-                <input id="buttonHelloWorld" type="button" onclick="call_hello_world()" value="Call Hello World" />
-            </td>
-            <td>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Hello World web method response :
-            </td>
-            <td>
-                <textarea id="textareahelloworld" cols="30" rows="5"></textarea>
-            </td>
-        </tr>
-    </table>
+        <label for="textyourname">Your Name</label> <input type="text" id="textyourname"  />
+        
+        <input id="buttonHelloWorld" type="button" value="Call Hello World" />
+        <div>
+            <label for="textareahelloworld">Hello World web method response</label>
+            <textarea id="textareahelloworld" cols="30" rows="5"></textarea>
+        </div>
     </form>
+    
 </body>
 </html>
