@@ -1,4 +1,4 @@
-package pellekrogholt.labexercise10;
+package pellekrogholt.labexercise10_phonebook;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -27,7 +27,9 @@ public class HelloServiceClient {
 			new QName("http://hello.samples.smds2011.itu.dk/","helloService");
 			QName port =
 			new QName("http://hello.samples.smds2011.itu.dk/", "helloServicePort");
-			String endpointAddress = "http://localhost:8085/labexercises/hello";
+//			String endpointAddress = "http://localhost:8085/labexercises/hello";
+			
+			String endpointAddress = "http://localhost:8085/labexercises/person";
 			Service webservice = Service.create(service);
 			webservice.addPort(port,SOAPBinding.SOAP11HTTP_BINDING, endpointAddress);	
 			//webservice.addPort(port,HTTPBinding.HTTP_BINDING, endpointAddress);
@@ -44,26 +46,38 @@ public class HelloServiceClient {
 						SOAPBody body = envelope.getBody();
 						SOAPElement content = body.addBodyElement(
 						new QName("http://hello.samples.smds2011.itu.dk/",
-						"helloOperation",
+//						"helloOperation",
+						"addPerson",
+//						"person",
 						"itu"));
 						
-						SOAPElement name;
+						SOAPElement name, person, person_name;
 
 						//name = content.addChildElement("arg0","", "http://hello.samples.smds2010.itu.dk/");
 						name = content.addChildElement("arg0");
+//						name = content.addChildElement("name");
 						//name.setTextContent("Rao");
-						name.addTextNode("Hello DS");
+//						name.addTextNode("Hello DS");
+//						name.addTextNode("Name Name");
+						
+//						// try out to build <xs:complexType name="person">
+//						person = content.addChildElement("person");
+//						person_name = person.addChildElement("name");
+//						person_name.addTextNode("Name Name");						
 					
 						Utils.print(request);
 					
 					Dispatch<SOAPMessage> dispatch =
 						webservice.createDispatch(port, SOAPMessage.class,
 						Service.Mode.MESSAGE);
+						System.out.println("test 1");
+						System.out.println(dispatch);
 						SOAPMessage response = dispatch.invoke(request);
+						System.out.println("test 2");
 						String text = response.getSOAPBody().getTextContent();
+						System.out.println("test 3");
 						
 						Utils.print(response);
-					
 						System.out.println(text);
 					
 				} 
