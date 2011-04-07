@@ -1,4 +1,4 @@
-package pellekrogholt.labexercise10;
+package pellekrogholt.labexercise10_phonebook;
 
 import java.io.StringWriter;
 
