@@ -46,39 +46,37 @@ public class HelloServiceClient {
 						SOAPBody body = envelope.getBody();
 						SOAPElement content = body.addBodyElement(
 						new QName("http://hello.samples.smds2011.itu.dk/",
-//						"helloOperation",
 						"addPerson",
-//						"person",
 						"itu"));
 						
-						SOAPElement name, person, person_name;
+						SOAPElement root, person, name, address, phone, zip;
 
 						//name = content.addChildElement("arg0","", "http://hello.samples.smds2010.itu.dk/");
-						name = content.addChildElement("arg0");
-//						name = content.addChildElement("name");
-						//name.setTextContent("Rao");
-//						name.addTextNode("Hello DS");
-//						name.addTextNode("Name Name");
+						root = content.addChildElement("arg0");
 						
-//						// try out to build <xs:complexType name="person">
-//						person = content.addChildElement("person");
-//						person_name = person.addChildElement("name");
-//						person_name.addTextNode("Name Name");						
-					
+						person = root.addChildElement("person");
+						name = root.addChildElement("name");
+//						name = person.addChildElement("name"); // had expected it to be on root
+						name.addTextNode("Name Name");
+						
+						
+						address = root.addChildElement("address");
+						address.addTextNode("Address dfsdf 8898");
+
+						phone = root.addChildElement("phone");
+						phone.addTextNode("90099909");
+						
+						zip = root.addChildElement("zip");
+						zip.addTextNode("79798");						
+						
 						Utils.print(request);
 					
 					Dispatch<SOAPMessage> dispatch =
 						webservice.createDispatch(port, SOAPMessage.class,
 						Service.Mode.MESSAGE);
-						System.out.println("test 1");
-						System.out.println(dispatch);
 						SOAPMessage response = dispatch.invoke(request);
-						System.out.println("test 2");
 						String text = response.getSOAPBody().getTextContent();
-						System.out.println("test 3");
-						
 						Utils.print(response);
-						System.out.println(text);
 					
 				} 
 				catch (SOAPException e) {

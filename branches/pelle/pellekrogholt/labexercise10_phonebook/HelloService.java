@@ -21,24 +21,22 @@ public class HelloService
 		return "Hello " + name + "!";
 	}
 
+	
+	
+	
+	// a simpler approach could have been
+	// public String addPerson(Sting name, String street, int phone ...) {
+	
 	@WebMethod()
 	public String addPerson(Person person) {
 		//		Person p = new Person(name, "Last name", 0, null)		
 		System.out.println("addPerson called "  + ++count );
-		System.out.println("person.getName(): "  + person.getName() );
+		System.out.println("person: "  + person );
 
 		// for now just store person in memory
 		persons.add(person);
 
-		return person.getName() + "added to the phone book service";
-
-		// when the bin/wsgen run in terminal it creates:
-		//		[ProcessedMethods Class: java.lang.Object]
-		//		 pellekrogholt/labexercise10_phonebook/jaxws/AddPerson.java
-		//		 pellekrogholt/labexercise10_phonebook/jaxws/AddPersonResponse.java
-		//		 pellekrogholt/labexercise10_phonebook/jaxws/HelloOperation.java
-		//		 pellekrogholt/labexercise10_phonebook/jaxws/HelloOperationResponse.java
-
+		return person.getName() + " added to the phone book service";
 
 	}
 
