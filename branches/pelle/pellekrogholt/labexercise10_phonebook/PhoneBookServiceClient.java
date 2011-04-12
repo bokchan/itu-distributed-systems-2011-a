@@ -14,19 +14,17 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
 
-public class HelloServiceClient {
+public class PhoneBookServiceClient {
 
 
 
 	public static void main(String[] args) 
 	{
 
-		//System.out.println("Hello Rao!");
-
 		QName service =
-			new QName("http://hello.samples.smds2011.itu.dk/","helloService");
+			new QName("http://hello.samples.smds2011.itu.dk/","phoneBookService");
 		QName port =
-			new QName("http://hello.samples.smds2011.itu.dk/", "helloServicePort");
+			new QName("http://hello.samples.smds2011.itu.dk/", "phoneBookServicePort");
 		//			String endpointAddress = "http://localhost:8085/labexercises/hello";
 
 		String endpointAddress = "http://localhost:8085/labexercises/person";
