@@ -20,6 +20,7 @@ import dk.itu.android.bluetooth.BluetoothSocket;
 
 
 public class EchoActivity extends Activity {
+		
 	/* request to enable the bluetooth */
 	static final int REQUEST_ENABLE_BLUETOOTH = 1;
 	/* request to make the device discoverable */
@@ -29,7 +30,7 @@ public class EchoActivity extends Activity {
 
 	/* the service UUID and name */
 	static final UUID EchoServiceUUID = UUID.fromString("419bbc68-c365-4c5e-8793-5ebff85b908c");
-	static final String EchoServiceName = "Smds.Echo";
+	static final String EchoServiceName = "SmdsEcho";
 
 	/* the local bluetooth adapter */
 	BluetoothAdapter btadapter;
@@ -48,7 +49,7 @@ public class EchoActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		dk.itu.android.bluetooth.BluetoothAdapter.SetContext(this);
+		//dk.itu.android.bluetooth.BluetoothAdapter.SetContext(this);
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.main);
@@ -181,7 +182,7 @@ public class EchoActivity extends Activity {
 	 */
 	public void sendMessage(View view) {
 		client.message = ((EditText)findViewById(R.id.SendEditText)).getText().toString();
-		new Thread(server).start();
+		new Thread(client).start();
 	}
 
 	/* A class to handle the service server communication */
@@ -197,6 +198,7 @@ public class EchoActivity extends Activity {
 		}
 
 		public void run(){
+			
 			try {
 				socket = btadapter.listenUsingRfcommWithServiceRecord(EchoServiceName, EchoServiceUUID);
 				
@@ -209,6 +211,7 @@ public class EchoActivity extends Activity {
 			while(running && socket!=null) {
 				BluetoothSocket clientSocket = null;
 				try {
+					Log.e("Server","Accept socket");
 					clientSocket = socket.accept();
 					BufferedReader bufReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 					final String line = bufReader.readLine().trim();
@@ -224,7 +227,7 @@ public class EchoActivity extends Activity {
 					});
 				}
 				catch (Exception e) {
-
+					e.printStackTrace();
 					Log.e("Server","Exception in server loop",e);
 				} finally {
 					if(clientSocket != null) {
@@ -232,7 +235,6 @@ public class EchoActivity extends Activity {
 					}
 				}
 			}
-
 		}
 	}
 	/* A class to handle the service client communication */
@@ -272,7 +274,7 @@ public class EchoActivity extends Activity {
 	}
 		
 	public void selectServerDevice(View view ) {
-		Intent intent = new Intent(this, DeviceListActivityPelle.class); 
+		Intent intent = new Intent(this, DeviceListActivity.class); 
 		startActivity(intent);
 	} 
 }
