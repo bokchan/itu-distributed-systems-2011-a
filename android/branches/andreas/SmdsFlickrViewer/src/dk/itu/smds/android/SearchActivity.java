@@ -85,4 +85,12 @@ public class SearchActivity extends Activity {
 		// fire the intent
 		startActivity(startThumbnailsActIntent);
 	}
+	
+	@Override
+	protected void onDestroy() {
+		Intent searchActivity = new Intent(this, SearchActivity.class);
+		startActivity(searchActivity);
+		
+		super.onDestroy();
+	}
 }
