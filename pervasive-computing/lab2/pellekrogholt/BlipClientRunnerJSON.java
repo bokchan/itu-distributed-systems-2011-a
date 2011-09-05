@@ -1,6 +1,6 @@
 package lab2.pellekrogholt;
 
-import java.io.BufferedReader;
+import java.io.BufferedReader; 
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -25,6 +25,9 @@ public class BlipClientRunnerJSON implements Runnable {
 		String point = "38E7D820836E"; // pellekrogholt droid		
 //		String point = "A4670684B501"; // PS IPAD
 
+		
+//		point = "7C2F80173FC3";
+		
 		client = new BlipClient(point);
 		
 		while(true) {
@@ -48,24 +51,33 @@ public class BlipClientRunnerJSON implements Runnable {
 		// TODO Auto-generated method stub
 		System.out.println("-------- thread call up start --------");
 		
-		
 		try {
 
 			BufferedReader in = client.device();
 
-			// build string
+			// build string from buffer - similar to a browser request
 			StringBuilder sb = new StringBuilder();
 			String inputLine = "";
-			while ((inputLine = in.readLine()) != null)
+			while ((inputLine = in.readLine()) != null) {
+//				System.out.println(inputLine);
 				sb.append(inputLine);
+			}
 			in.close();
 			
 //			TODO: only parse sb with json if not sb = { 'error' : 'null'}  
 			
-			HashMap<String, String> obj; 
-			if ((obj = (HashMap<String, String>) JSON.parse(sb.toString())) != null) {
+//			Note the blip webservice unfortunately provides unfriendly json using ' and not "
+//			tried something like if (!sb.equals("{ 'error' : 'null'}")) but didn't work well
+			
+//			String json_string;
+//			
+//			json_string = (String) sb.replace("'", "\"");
+//
+//			
+			HashMap<String, String> map; 
+			if ((map = (HashMap<String, String>) JSON.parse(sb.toString())) != null) {
 				
-				String location = obj.get("location");
+				String location = map.get("location");
 				if (!location.equals(previous_location)) {
 					System.out.println(location);
 				}
@@ -74,7 +86,6 @@ public class BlipClientRunnerJSON implements Runnable {
 			} else {
 				System.out.println("Device has not truned on bluetooth");
 			}
-			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
