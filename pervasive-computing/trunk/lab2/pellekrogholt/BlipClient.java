@@ -21,7 +21,6 @@ public class BlipClient {
 		
 		pitlab = new URL("http://pit.itu.dk:7331/location-of/" + point);
 
-
 	}
 		
 	public BufferedReader device() throws IOException {
