@@ -1,15 +1,9 @@
 package lab2.stine;
 
-
-//import edu.princeton.cs.stdlib.StdOut; 
-//import edu.princeton.cs.stdlib.StdRandom;
-//import edu.princeton.cs.stdlib.Stopwatch;
 import java.util.HashMap;
 import junit.framework.Assert;
 import org.eclipse.jetty.util.ajax.JSON; 
 import org.junit.Test;
-//import org.junit.Test;  
-//import org.junit.Assert;
 
 public class JSONTest
 {  
