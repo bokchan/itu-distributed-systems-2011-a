@@ -1,4 +1,4 @@
-package lab2;
+package lab2.aboa;
 
 import java.util.Map;
 

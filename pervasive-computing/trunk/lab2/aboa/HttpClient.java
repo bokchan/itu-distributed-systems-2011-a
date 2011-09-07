@@ -1,4 +1,4 @@
-package lab2;
+package lab2.aboa;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
