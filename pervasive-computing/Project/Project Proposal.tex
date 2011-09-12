@@ -1,0 +1,117 @@
+\documentclass{ubicomp2011}
+\usepackage{times}
+\usepackage{url}
+\usepackage{graphics}
+\usepackage{color}
+\usepackage[pdftex]{hyperref}
+\hypersetup{%
+pdftitle={Project Proposal}, pdfauthor={Pelle Kr\o holt, Stine Hartmann Bierre, Andreas Bok Andersen}, pdfkeywords={Pervasive Computing, Ubicomp, Environment, Pollution, Sensors, Arduino, Android, Sensing}, bookmarksnumbered, pdfstartview={FitH}, colorlinks,
+citecolor=black, filecolor=black, linkcolor=black, urlcolor=black,breaklinks=true, }
+\newcommand{\comment}[1]{}
+\definecolor{Orange}{rgb}{1,0.5,0}
+\newcommand{\todo}[1]{\textsf{\textbf{\textcolor{Orange}{[[#1]]}}}}
+
+\pagenumbering{arabic}  % Arabic page numbers for submission.  Remove this line to eliminate page numbers for the camera ready copy
+
+\begin{document}
+% to make various LaTeX processors do the right thing with page size
+\special{papersize=8.5in,11in}
+\setlength{\paperheight}{11in}
+\setlength{\paperwidth}{8.5in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\title{NOxDroid - Mobile environmental sensing and feedback}
+\numberofauthors{3}
+\author{
+  \alignauthor Pelle Kr\o gholt\\
+    \affaddr{IT University Copenhagen}\\
+    \affaddr{Rued Langgaards Vej 7, DK-2300 Copenhagen S}\\
+    \email{pelle@itu.dk}
+ \alignauthor Stine Hartmann Bierre\\
+    \affaddr{IT University Copenhagen}\\
+    \affaddr{Rued Langgaards Vej 7, DK-2300 Copenhagen S}\\
+    \email{sbie@itu.dk}
+	\alignauthor Andreas Bok Andersen\\
+    \affaddr{IT University Copenhagen}\\
+    \affaddr{Rued Langgaards Vej 7, DK-2300 Copenhagen S}\\
+    \email{aboa@itu.dk} }
+\newtoks\copyrightetc
+\global\copyrightetc{ } %  Need to have 'something' so that adequate space is left for pasting in a line if "confinfo" is supplied.
+\toappear{ }
+\maketitle
+
+%\begin{abstract}
+  %In this paper we describe the formatting requirements for the UbiComp 2011
+  %Conference Proceedings, and offer recommendations on writing for the
+  %worldwide Ubiquitous Computing readership.  Please review this document even if
+  %you have submitted to Ubiquitous Computing conferences before, for some format
+  %details have changed relative to previous years. These include the
+  %formatting of table captions, the formatting of references, a
+  %requirement to include ACM DL indexing information, and guidelines for how to handle relevant references to your own work while preparing your submission for blind review.
+%\end{abstract}
+\keywords{Pervasive Computing, Ubicomp, Environment, Pollution, Sensors, Arduino, Android, Sensing}
+
+\category{H.5.2}{Information Technology and Systems}{H.5.2c}{User Interfaces}{H.5.2h}{Input devices and strategies}.
+
+\section{Introduction}
+In 2007 UN announced that for the first time in history more than half of the world’s population were living in cities.\footnote{http://www.unfpa.org/swp/2007/english/introduction.html} Environmental and health-related issues follow directly from this development, among these: air and water pollution and higher risk of diseases such as asthma, allergies, lung and respiratory related diseases. 
+Equally pervasive and interwoven in the fabric of everyday life are computers and mobile devices. Within Pervasive Computing several projects have coupled air pollution, mobile technologies and visualization. Steed et al\cite{steed2003}, Tsow et al\cite{tsow2009}, Steed \& Milton\cite{steed2008}, used mobile sensors to monitor air pollution, Al-Ali et al. \cite{al-ali2010} used fixed geo-sensors and real-time visualization, Blythe et al \cite{blythe2008} used both stationery and mobile sensors. Kanjo et al \cite{kanjo_mobsens_2009} discusses targeted mobile applications for noise level, air pollution and asthmatics. Moreover Kanjo et al\cite{kanjo_mobsens_2009} discuss how to increase environmental awareness and personal engagement by using social networks to share localized environmental information. Several projects from Living Environments Lab also emphasize this aspect, focusing on a simple and intuitive representation of sensor data.\footnote{www.living-environments.net}
+Having Copenhagen as the background for a project on air pollution and mobile sensing is challenging. With the environment already on the agenda, a lot of projects and public awareness  already exists. So as Dey \cite{krumm_ubiquitous_2010} (pp. 346) notes we must ask whether we can actually make any novel contributions. Using sensors on bikes to monitor the environment has actually been done before - The Copenhagen Wheel \footnote{http://senseable.mit.edu/copenhagenwheel/} presented at the 2008 Copenhagen Consensus. However our aim is not to design a new futuristic hyper ecological bike (that nobody uses), but to design devices that integrates conveniently with existing two-wheel transportation.
+\pagebreak
+\section{Main Idea}
+More specifically our main idea is to make environmental data visible for the everyday user. Our  plan is to create a device consisting of sensors attached to an Arduino board registrering air pollution \footnote{The MQ-135 sensor can collect data on NH3, NOx, benzene and CO2. We will focus on NOx, adding other pollutants if time allows.}, temperature, time, location. The device interfaces with a smart phone, which stores the collected environmental data. Furthermore the smart phone can upload data to a webservice yielding opportunities for visualization of pollution levels in Copenhagen.
+
+
+%The xxx will furthermore be connected to a web-service in which it will be possible to store a database for all information sent from the users. With a reasonable amount of users it will therefore be possible to keep track of where there is most polluted in this very moment. Yet another application can be made from the distribution of the data. In this application the pollution percentage would be shown on a active GIS layer, and a shortest path algorithm would calculate another way to the destination that would be far less polluted.
+
+\section{Scenarios}
+
+
+In four scenarios we describe the future use of our device and what motivations users might have. Common for all scenarios is the device envisioned as attached to the bike in an unobstructive way coupled with a web-based service showing the collected data.
+\subsection{The Copenhagen biker}
+The Copenhagen biker that is just interested in how much NOx he is exposed to can mount the Arduino-sensor to his bike and his Android phone to the handlebars and track the proximity of his breathing of NOx during the ride. 
+
+\subsection{The Biking Messenger}
+The Biking Messenger (from e.g. “De Grønne Bude”) that bikes a lot every day might be interested in his health not being threatened by pollution. By using the webservice the messenger might be able to avoid the most polluted areas by just biking 200 m extra. Furthermore the messengers are covering a wide area at a great speed and will therefore be good measurers for the web-service if they all mounted an arduino-sensor on their bikes.
+
+\subsection{The family}
+The family dad that is not interested in his child breathing too much NOx when biking through the city in the traffic swarm, can access the web service via his shortest path app on his Android and avoid the most polluted roads. Furthermore the families will be good for measuring because they are very often biking in heavy traffic during traffic swarm and they are biking slow so that there will be measured many data on a short distance.
+
+\pagebreak
+\subsection{Bicycle taxi}
+A positive side effect of NOxDroid and the web service based app will be that from the polluted areas in the cities, there can be made an assumption about the density of cars. That is very useful for the bike taxies, that really want to avoid car dense areas while transporting tourists around in e.g. Copenhagen.
+
+\section{Project Plan}
+
+We have good experiences with Android Applications and web-service development but are newbies to Arduino.
+\subsection{Step 1}
+Build a simple sensor prototype with Arduino that can be attached to handlebars of a bicycle like a bicycle light. The Arduino (board and sensor) connects to the Android Phone via Bluetooth or cable also attached to handlebars of a bicycle.
+
+Create a ‘simple’ Android Application that can store and visualize data (NOx, temperature, time, location). The visualization could be simple smileys overlayed on maps or perhaps in-depth graphs. Ideally the application starts and stops automatically based on movement detection by the accelerometer (nice to have) otherwise start and stop are invoked manually. Either the Android app asynchronously upload of data in real-time to a web-service, or the user uploads the data at the end of the trip.
+
+The web-service is placed on Google App Engine (either written in Java or Python not decided yet). We might create a service that visualizes data but this is also nice to have depending on time. 
+
+\subsection{Step 2}
+As soon as we have a simple prototype ready we will start experiments with group members who bike through Copenhagen on a daily basis. Based on problems and experiences a more final prototype is developed.
+
+\subsection{Step 3}
+Ideally test the Arduino (board and sensor) and Android application on 4 people from Copenhagen that fits into the 4 scenarios described above. One week testing is on the sketch board and then some simple interviews with the involved people to collect their experiences.
+
+
+\section{Requirements for equipment}
+\begin{itemize}
+	\item 5 Arduino boards (we expect to buy two Arduino boards privately)
+	\item MQ-135 Air Quality Control Sensors
+	\item Cables USB-miniUSB
+	\item Box cases for Arduino boards
+	\item Possible one Android Phone  from PITLab (for the person in our group that doesn’t have an Android Phone). For the field study we expect to find people who already own an Android Phone. 
+\end{itemize}
+
+\section{Supervisor}
+Aurelien Tabard \email{auta@itu.dk}
+
+\bibliographystyle{plain}
+\bibliography{pervasivecomputing}
+
+\end{document}
