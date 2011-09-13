@@ -1,6 +1,6 @@
 package lab3.pellekrogholt;
 
-import java.rmi.RemoteException;
+import java.rmi.RemoteException; 
 
 //import dk.itu.jcafdemo.entity.Room;
 //import dk.itu.jcafdemo.entity.Visitor;
@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 
 import lab3.pellekrogholt.Display;
 import lab3.pellekrogholt.Visitor;
+import lab3.pellekrogholt.Arrived;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.entity.Place;
@@ -31,7 +32,7 @@ public class ContextTester extends AbstractContextClient {
     
     final Display display1 = new Display("room1@itu.dk", 2, 'C', 10);
     
-    final ContextMonitor arrived = new ContextMonitor(this.getClass().getName());
+    final Arrived arrived = new Arrived(this.getClass().getName());
     
     
 //	final Arrived arrived = new Arrived(this.getClass().getName());
