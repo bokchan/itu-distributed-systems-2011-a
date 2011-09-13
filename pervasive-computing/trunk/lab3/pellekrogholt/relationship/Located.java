@@ -1,16 +1,16 @@
-package lab3.pellekrogholt;
+package lab3.pellekrogholt.relationship;
 
 import dk.pervasive.jcaf.relationship.TimedRelationship;
 
-public class ContextMonitor extends TimedRelationship {
+public class Located extends TimedRelationship {
 	
     private String source;
     
-	public ContextMonitor() {
+	public Located() {
 		super();
 	}
 
-	public ContextMonitor(String source) {
+	public Located(String source) {
 		this();
 		this.source = source;
 	}
@@ -27,12 +27,12 @@ public class ContextMonitor extends TimedRelationship {
     }
 
 	public String toXML() {
-		return 	"<arrived souce=\"" + getSource() + "\" time=\"" + getTime() + "\" />";
+		return 	"<located souce=\"" + getSource() + "\" time=\"" + getTime() + "\" />";
 	}
 
     public boolean equals(Object obj) {
-        if (obj instanceof ContextMonitor) {
-            ContextMonitor loc = (ContextMonitor) obj;
+        if (obj instanceof Located) {
+            Located loc = (Located) obj;
             return loc.getSource().equals(getSource());
         }
 
@@ -44,7 +44,7 @@ public class ContextMonitor extends TimedRelationship {
     }
     
     public String toString() {
-        return "arrived [" + getSource() + "]";
+        return "located [" + getSource() + "]";
     }
     
 }

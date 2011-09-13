@@ -1,4 +1,4 @@
-package lab3.pellekrogholt;
+package lab3.pellekrogholt.entity;
 
 import dk.pervasive.jcaf.entity.GenericEntity;
 

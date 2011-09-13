@@ -1,4 +1,4 @@
-package lab3.pellekrogholt;
+package lab3.pellekrogholt.entity;
 
 import dk.itu.jcafdemo.item.Presentation;
 import dk.pervasive.jcaf.ContextEvent;
@@ -39,12 +39,7 @@ public class Visitor extends Person {
 		ContextItem item = event.getItem();
 		if(item != null) {
 			
-			if(item instanceof Presentation) {
-				System.out.println("Name: " + getName() + " @ Presentation: " + ((Presentation)event.getItem()).getName());
-			} else {
-				
-				// pelle: hmm whats going on here ?
-			} if(item instanceof Display) {
+			if(item instanceof Display) {
 				System.out.println("Name: " + getName() + " in Room: " + ((Display)event.getItem()).toString());
 			}
 			

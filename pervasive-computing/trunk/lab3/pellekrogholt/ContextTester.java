@@ -9,15 +9,15 @@ import java.rmi.RemoteException;
 //import dk.itu.jcafdemo.relationship.Attending;
 
 
-import lab3.pellekrogholt.Display;
-import lab3.pellekrogholt.Visitor;
-import lab3.pellekrogholt.Arrived;
+import lab3.pellekrogholt.entity.Display;
+import lab3.pellekrogholt.entity.Visitor;
+import lab3.pellekrogholt.relationship.Arrived;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.entity.Place;
 import dk.pervasive.jcaf.impl.RemoteEntityListenerImpl;
 import dk.pervasive.jcaf.item.Location;
-import dk.pervasive.jcaf.relationship.Located;
+import dk.pervasive.jcaf.relationship.Uses;
 import dk.pervasive.jcaf.util.AbstractContextClient;
 
 public class ContextTester extends AbstractContextClient {
@@ -28,11 +28,13 @@ public class ContextTester extends AbstractContextClient {
     final Visitor visitor1 = new Visitor("visitor1@itu.dk", "Visitor 1");
     final Visitor visitor2 = new Visitor("visitor2@itu.dk", "Visitor 2");
     
-//    final Room room1 = new Room("room1@itu.dk", 2, 'C', 10);
-    
-    final Display display1 = new Display("room1@itu.dk", 2, 'C', 10);
+    final Display display1 = new Display("attrium@itu.dk", 0, 'N', 10);
+    final Display display2 = new Display("attrium@itu.dk", 0, 'S', 10);
     
     final Arrived arrived = new Arrived(this.getClass().getName());
+    
+    // try out
+//    final Uses uses = new Uses(); 
     
     
 //	final Arrived arrived = new Arrived(this.getClass().getName());
@@ -93,16 +95,45 @@ public class ContextTester extends AbstractContextClient {
     
     private void test() {
         try {
+        	
+        	// todo?: why is Visitor.class passed as argument here and not in the next
         	getContextService().addEntityListener(listener1, Visitor.class);
         	getContextService().addEntityListener(listener2, "visitor2@itu.dk");
 
-            System.out.println(getContextService().getContext(visitor1.getId()).toXML());
+        	
+        	
+//        	System.out.println(getContextService().getContext(display1.getId()).toXML());
+        	
+        	
+//            System.out.println(getContextService().getContext(visitor1.getId()).toXML());
+            
             
             getContextService().addContextItem(visitor1.getId(), arrived, display1);
-            getContextService().addContextItem(visitor2.getId(), arrived, display1);
             
             
             
+            
+            
+            
+            
+            
+            
+            
+            
+//            getContextService().addContextItem(visitor2.getId(), arrived, display1);
+//            
+//            getContextService().addContextItem(visitor2.getId(), arrived, display2);
+//            
+            // naive try out with uses but didn't play well	
+//          getContextService().addContextItem(visitor2.getId(), uses, display2);
+            
+            
+            // lets try and remove some vistor - wrong approach 
+//            getContextService().removeContextItem(service_uri, visitor1);
+//            getContextService().removeContextItem(visitor2.getId(), display1);
+            
+//            addContextClient
+            // public void addContextClient(int type, Class relation_type, RemoteContextClient client); 
             
 //            getContextService().addContextItem(visitor2.getId(), attending, new Presentation("presentation1@itu.dk", "JCAF Demo"));
         } catch (Exception e) {
