@@ -111,16 +111,7 @@ public class ContextTester extends AbstractContextClient {
             getContextService().addContextItem(visitor1.getId(), arrived, display1);
             
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-//            getContextService().addContextItem(visitor2.getId(), arrived, display1);
+            getContextService().addContextItem(visitor2.getId(), arrived, display1);
 //            
 //            getContextService().addContextItem(visitor2.getId(), arrived, display2);
 //            

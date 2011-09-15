@@ -1,43 +1,26 @@
 package lab3.pellekrogholt.monitor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 
-import dk.pervasive.jcaf.item.Location;
-import dk.pervasive.jcaf.relationship.Located;
+import lab3.pellekrogholt.entity.Display;
+import lab3.pellekrogholt.relationship.Arrived;
 import dk.pervasive.jcaf.util.AbstractMonitor;
-
-
-// based on RFIDMonitor on the tutorial
-// where is RFIDScannerListener from ?
-//public class DisplayMonitor extends AbstractMonitor implements RFIDScannerListener { 
+ 
 public class DisplayMonitor extends AbstractMonitor {
-	
-	private Located rfid_located = null; 
-	
-	public DisplayMonitor(String service_uri) throws RemoteException { 
-		super(service_uri); 
-		rfid_located = new Located(this.getClass().getName()); 
-	} 
-	
-// from the tutorial
-// 	
-//	public void tag(RFIDScanEvent event) {  
-//		
-//		if (event.getMethod() == RFIDScanEvent.TAG_SCANNED) { 
-//			rfid_located.resetTime(); 
-//			getContextService().addContextItem( 
-//					event.getId(), 
-//					rfid_located, 
-//					new Location(event.getScannerName())); 
-//		} 
-//		if (event.getMethod() == RFIDScanEvent.TAG_LEFT) { 
-//			getContextService().removeContextItem( 
-//					event.getId(), 
-//					rfid_located); 
-//		} 
-//
-//	}
+	 
 
+	private Display display;
+	private Arrived arrived;
+	
+	public DisplayMonitor(String service_uri, Display display, Arrived arrived) throws RemoteException{
+		super(service_uri);
+		this.display = display;
+		this.arrived = arrived;
+	}	
+	
 	@Override
 	public void monitor(String arg0) throws RemoteException {
 		// TODO Auto-generated method stub
@@ -47,6 +30,16 @@ public class DisplayMonitor extends AbstractMonitor {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
+		while (true) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			try {
+				String name = br.readLine();  
+					getContextService().addContextItem(name, arrived, display);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	} 
+
 }
