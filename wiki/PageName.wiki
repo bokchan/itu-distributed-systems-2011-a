@@ -1,0 +1,28 @@
+#summary Install android application on 'real' android device
+
+
+= How to install android application on a 'real' android device =
+
+Have:
+
+  * device: huawei ideos
+
+Do:
+
+  * Connect device and computer with usb 
+  * setup at device
+    # go applications / development
+    # allow usb debuging on 
+
+  * then through adb (on computer / terminal):
+
+    # list devices
+      $ adb devices
+      <some id>
+    # install application
+      adb -s <some id> install <path to>/YourApp/bin/YourApp.apk
+    # reinstall device with option -r 
+      adb -s emulator-5556 install -r <path to>/YourApp/bin/YourApp.apk
+
+
+Document eventually how to do it through eclipse with screen shots and so if you need it (at sbie)
