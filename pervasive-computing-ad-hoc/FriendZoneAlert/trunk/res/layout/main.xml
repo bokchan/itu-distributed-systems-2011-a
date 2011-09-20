@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Username"
+    />
+    
+    
+    <EditText  android:id="@+id/username" android:editable="true" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" android:text="sfdf" />
+    
+    
+    <TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Requested Name"
+    />
+    
+    <EditText android:id="@+id/reqUsername" android:editable="true" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" />
+    
+    <TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Min latitude"
+    />
+    <EditText android:id="@+id/minLat" android:editable="true" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" android:inputType="numberDecimal" />
+    
+    <TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Max latitude"
+    />
+    <EditText android:id="@+id/maxLat" android:editable="true" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" android:inputType="numberDecimal" />
+    
+    <TextView 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Minimum longitude"
+    />
+    <EditText android:id="@+id/minLon" android:editable="true" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" android:inputType="numberDecimal" />
+    
+    <TextView 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Maximum longitude"
+    />
+    <EditText android:id="@+id/maxLon" android:editable="true" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" android:inputType="numberDecimal" />
+    
+    <Button android:id="@+id/btnGo"  android:text="OK" android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" />
+</LinearLayout>
+
+</ScrollView>
