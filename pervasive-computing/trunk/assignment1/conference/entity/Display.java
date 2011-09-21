@@ -15,7 +15,17 @@ import dk.pervasive.jcaf.entity.Person;
  * @author mSpazzy
  */
 public class Display extends Room {
+
 	
+	/**
+	 * Constructor for display
+	 * 
+	 * @param id
+	 * @param floor
+	 * @param sector
+	 * @param number
+	 * @param name
+	 */
 	public Display(String id, int floor, char sector, int number, String name) {
 		super(id, floor, sector, number, name);
 	}

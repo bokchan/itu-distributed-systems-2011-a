@@ -21,8 +21,21 @@ public class Participant extends Person {
 
 	/**
 	 * Constructor for Visitor.
+	 * 
 	 * @param id
 	 * @param name
+	 */
+	public Participant(String id, String name) {
+		super(id, name);
+	}	
+
+	
+	/**
+	 * Constructor for Visitor.
+	 * 	
+	 * @param id
+	 * @param name
+	 * @param type
 	 */
 	public Participant(String id, String name, String type) {
 		super(id, name, type);
