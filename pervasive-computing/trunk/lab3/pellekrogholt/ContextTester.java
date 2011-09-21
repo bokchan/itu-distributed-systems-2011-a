@@ -1,3 +1,11 @@
+/*
+ * 
+ * use DisplayContextTester + Display2ContextTester
+ * 
+ */
+
+
+
 package lab3.pellekrogholt;
 
 import java.rmi.RemoteException; 
