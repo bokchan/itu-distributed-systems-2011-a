@@ -11,7 +11,7 @@ import lab3.pellekrogholt.entity.Display;
 import lab3.pellekrogholt.entity.Visitor;
 //import lab3.pellekrogholt.monitor.DisplayMonitor;
 import lab3.pellekrogholt.monitor.RFIDMonitor;
-import lab3.pellekrogholt.relationship.Arrived;
+import lab3.pellekrogholt.relationship.Located;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.impl.RemoteEntityListenerImpl;
@@ -35,7 +35,7 @@ public class RFIDContextTester extends AbstractContextClient {
 	final Display display = new Display("spisesal@itu.dk", 0, 'S', 10);
     
 	// todo: change into located or what ?
-    final Arrived arrived = new Arrived(this.getClass().getName());
+    final Located located = new Located(this.getClass().getName());
     
 	
 	public RFIDContextTester(String serviceUri) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
@@ -43,7 +43,7 @@ public class RFIDContextTester extends AbstractContextClient {
 
 		// similar to the VisitorDetector - jcaf tutorial/or demo 
 		try {
-			RFIDMonitor rfid_monitor = new RFIDMonitor(serviceUri, display, arrived);
+			RFIDMonitor rfid_monitor = new RFIDMonitor(serviceUri, display, located);
 			Thread t = new Thread(rfid_monitor);
 			t.start();
 			
@@ -93,7 +93,7 @@ public class RFIDContextTester extends AbstractContextClient {
         	
 			getContextService().addEntity(visitor1);
 			getContextService().addEntity(visitor2);
-//			getContextService().addEntity(visitor3);
+			getContextService().addEntity(visitor3);
 //			getContextService().addEntity(visitor4);
 //			getContextService().addEntity(visitor5);
 //			getContextService().addEntity(visitor6); 

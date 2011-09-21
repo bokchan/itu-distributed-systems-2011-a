@@ -11,9 +11,8 @@ import com.alien.enterpriseRFID.reader.AlienReaderTimeoutException;
 import com.alien.enterpriseRFID.tags.Tag;
 
 import lab3.pellekrogholt.entity.Display;
-import lab3.pellekrogholt.relationship.Arrived;
+import lab3.pellekrogholt.relationship.Located;
 
-import dk.pervasive.jcaf.relationship.Located;
 import dk.pervasive.jcaf.util.AbstractMonitor;
 
 
@@ -27,21 +26,15 @@ import dk.pervasive.jcaf.util.AbstractMonitor;
  */
 public class RFIDMonitor extends AbstractMonitor {
 	
-	// todo: try to change to located insted of arrived ?
 	private Located rfid_located = null; 
 	
 	private Display display;
-	private Arrived arrived;
 	
-	public RFIDMonitor(String service_uri, Display display, Arrived arrived) throws RemoteException, AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException{
+	public RFIDMonitor(String service_uri, Display display, Located located) throws RemoteException, AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException{
 		super(service_uri);
 		this.display = display;
-		this.arrived = arrived;
-		
-//		setupRFIDReader();
+		this.rfid_located = located;
 	}
-	
-	// might be moved to a central spot ?
 	
 		 
 	/**
@@ -84,7 +77,7 @@ public class RFIDMonitor extends AbstractMonitor {
 //		    	System.out.println("getContextService().getAllEntityIds(): " + getContextService().getAllEntityIds());
 
 		    	// bind Visitor with context
-		    	getContextService().addContextItem(tag.toString(), arrived, display);
+		    	getContextService().addContextItem(tag.toString(), rfid_located, display);
 	
 		    	// todo:  probably need a more sophisticated way to
 		    	// check if people/rfid tags are coming in or leaving ?
@@ -96,15 +89,15 @@ public class RFIDMonitor extends AbstractMonitor {
 		    }
 		    
 // note: print out full rfid data
-		    for (int i=0; i<tagList.length; i++) {
-		      Tag tag = tagList[i];
-		      System.out.println("ID:" + tag.getTagID() +
-		                         ", Discovered:" + tag.getDiscoverTime() +
-		                         ", Last Seen:" + tag.getRenewTime() +
-		                         ", Antenna:" + tag.getAntenna() +
-		                         ", Reads:" + tag.getRenewCount()
-		                         );
-		    }
+//		    for (int i=0; i<tagList.length; i++) {
+//		      Tag tag = tagList[i];
+//		      System.out.println("ID:" + tag.getTagID() +
+//		                         ", Discovered:" + tag.getDiscoverTime() +
+//		                         ", Last Seen:" + tag.getRenewTime() +
+//		                         ", Antenna:" + tag.getAntenna() +
+//		                         ", Reads:" + tag.getRenewCount()
+//		                         );
+//		    }
 		    
 		  }
 
