@@ -72,6 +72,9 @@ public class Display2ContextTester extends AbstractContextClient {
 				
 				@Override
 				public void contextChanged(ContextEvent event) {
+					
+					// todo: make logic here
+					
 					System.out.println("Listener2: " + event.toString());
 				}
 			});
@@ -116,6 +119,7 @@ public class Display2ContextTester extends AbstractContextClient {
         try {
         	
         	// what does this exactly mean
+        	// 
         	getContextService().addEntityListener(listener2, Visitor.class);
         	
         	

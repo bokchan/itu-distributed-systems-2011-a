@@ -61,6 +61,9 @@ public class DisplayContextTester extends AbstractContextClient {
 				
 				@Override
 				public void contextChanged(ContextEvent event) {
+	
+					// todo: make logic here
+					
 					System.out.println("Listener1: " + event.toString());
 				}
 			});

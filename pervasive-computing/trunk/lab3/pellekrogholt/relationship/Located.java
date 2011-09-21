@@ -1,3 +1,11 @@
+/*
+ * note: class currently not use just an example of creation of another relation
+ * 
+ * relation is a key concept in jcaf it binds the various entities...
+ * 
+ */
+
+
 package lab3.pellekrogholt.relationship;
 
 import dk.pervasive.jcaf.relationship.TimedRelationship;
