@@ -1,11 +1,11 @@
-package lab3.pellekrogholt;
+package assignment1.ubicompconference;
 
 import java.rmi.RemoteException;
 
-import lab3.pellekrogholt.entity.Display;
-import lab3.pellekrogholt.entity.Visitor;
-import lab3.pellekrogholt.monitor.DisplayMonitor;
-import lab3.pellekrogholt.relationship.Arrived;
+import assignment1.ubicompconference.entity.Display;
+import assignment1.ubicompconference.entity.Visitor;
+import assignment1.ubicompconference.monitor.DisplayMonitor;
+import assignment1.ubicompconference.relationship.Arrived;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.impl.RemoteEntityListenerImpl;

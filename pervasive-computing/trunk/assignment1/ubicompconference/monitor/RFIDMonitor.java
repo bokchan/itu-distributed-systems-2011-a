@@ -1,4 +1,4 @@
-package lab3.pellekrogholt.monitor;
+package assignment1.ubicompconference.monitor;
 
 import java.rmi.RemoteException;
 

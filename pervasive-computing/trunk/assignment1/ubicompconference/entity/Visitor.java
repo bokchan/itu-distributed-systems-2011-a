@@ -1,4 +1,4 @@
-package lab3.pellekrogholt.entity;
+package assignment1.ubicompconference.entity;
 
 import dk.itu.jcafdemo.item.Presentation;
 import dk.pervasive.jcaf.ContextEvent;

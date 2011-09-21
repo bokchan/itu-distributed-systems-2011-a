@@ -1,12 +1,12 @@
-package lab3.pellekrogholt.monitor;
+package assignment1.ubicompconference.monitor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 
-import lab3.pellekrogholt.entity.Display;
-import lab3.pellekrogholt.relationship.Arrived;
+import assignment1.ubicompconference.entity.Display;
+import assignment1.ubicompconference.relationship.Arrived;
 import dk.pervasive.jcaf.util.AbstractMonitor;
  
 public class DisplayMonitor extends AbstractMonitor {

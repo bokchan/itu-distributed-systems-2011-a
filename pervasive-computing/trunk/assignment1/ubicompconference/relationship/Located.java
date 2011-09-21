@@ -6,7 +6,7 @@
  */
 
 
-package lab3.pellekrogholt.relationship;
+package assignment1.ubicompconference.relationship;
 
 import dk.pervasive.jcaf.relationship.TimedRelationship;
 
