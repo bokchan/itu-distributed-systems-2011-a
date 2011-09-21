@@ -1,10 +1,10 @@
-package entity;
+package assignment1.conference.entity;
 
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
 
-import relationship.Attending;
+import assignment1.conference.relationship.Attending;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.entity.GenericEntity;
 import dk.pervasive.jcaf.entity.Person;

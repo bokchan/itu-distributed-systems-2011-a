@@ -1,4 +1,4 @@
-package entity;
+package assignment1.conference.entity;
 
 import dk.pervasive.jcaf.entity.Place;
 

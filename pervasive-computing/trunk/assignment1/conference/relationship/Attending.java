@@ -1,4 +1,4 @@
-package relationship;
+package assignment1.conference.relationship;
 
 
 /**

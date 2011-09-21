@@ -1,4 +1,4 @@
-package monitor;
+package assignment1.conference.monitor;
 
 import java.rmi.RemoteException;
 

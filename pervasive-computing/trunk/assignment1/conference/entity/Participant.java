@@ -1,6 +1,6 @@
-package entity;
+package assignment1.conference.entity;
 
-import relationship.Located;
+import assignment1.conference.relationship.Located;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.entity.Person;
 
