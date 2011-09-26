@@ -10,7 +10,7 @@ Have:
 Do:
 
   * Connect device and computer with usb 
-  * setup at device
+  * To setup at device, do following on your phone
     # go applications / development
     # allow usb debuging on 
 
