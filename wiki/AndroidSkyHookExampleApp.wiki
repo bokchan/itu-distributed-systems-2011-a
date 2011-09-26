@@ -3,6 +3,10 @@
 
 = How to install Skyhook example application =
 
+Code based on the example within the Android Skyhook SDK:
+
+http://www.skyhookwireless.com/developers/sdk.php
+
 
 svn co (in terminal):
 
