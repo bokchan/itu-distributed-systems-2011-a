@@ -28,6 +28,16 @@ at device (android)
 
     * select WpsApiTest
     * and remember to set username and realm under setting!
+
+screenshots:
+
+images/skyhook_example_app_front_page.png
+images/skyhook_example_app_setting.png
+
+
+
+
+
     
     
     
