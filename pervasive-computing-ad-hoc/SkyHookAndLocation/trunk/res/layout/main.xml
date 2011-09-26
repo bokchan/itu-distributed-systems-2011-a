@@ -4,9 +4,55 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
+
 <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     android:text="@string/hello"
     />
+    
+    
+    <!-- (Android) Latitude -->
+	<LinearLayout android:id="@+id/linearLayout1"
+		android:layout_height="wrap_content" android:layout_width="match_parent"
+		android:orientation="horizontal" android:layout_marginTop="40dip">
+		<TextView android:layout_marginRight="5dip" android:layout_height="wrap_content" android:id="@+id/TextView01" android:layout_marginLeft="10dip" android:layout_width="wrap_content" android:textSize="20dip" android:text="Latitude: "></TextView>
+		<TextView android:text="unknown" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView02" android:textSize="20dip"></TextView>
+	</LinearLayout>
+
+    <!-- (Android) Longitute -->
+	<LinearLayout android:id="@+id/linearLayout2"
+		android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:text="Longitute: " android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView03"
+			android:layout_marginLeft="10dip" android:layout_marginRight="5dip" android:textSize="20dip"></TextView>
+		<TextView android:text="unknown" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView04" android:textSize="20dip"></TextView>
+	</LinearLayout>
+
+
+    <!-- Skyhook latitude -->
+	<LinearLayout android:id="@+id/linearLayout3"
+		android:layout_height="wrap_content" android:layout_width="match_parent"
+		android:orientation="horizontal" android:layout_marginTop="40dip">
+		<TextView android:text="Skyhook latitude: " android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView05" android:layout_marginLeft="10dip" android:layout_marginRight="5dip" android:textSize="20dip"></TextView>
+		<TextView android:text="unknown" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView06" android:textSize="20dip"></TextView>
+	</LinearLayout>
+
+    <!-- Skyhook Longitute -->
+<!-- 	<LinearLayout android:id="@+id/linearLayout4"
+		android:layout_height="wrap_content" android:layout_width="match_parent">
+		<TextView android:text="Skyhook longitute: " android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView07"
+			android:layout_marginLeft="10dip" android:layout_marginRight="5dip" android:textSize="20dip"></TextView>
+		<TextView android:text="unknown" android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/TextView08" android:textSize="20dip"></TextView>
+	</LinearLayout>
+ -->
+
+
+    
 </LinearLayout>
