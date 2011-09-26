@@ -17,7 +17,7 @@ Do:
   * then through adb (on computer / terminal):
 
     # list devices
-      $ adb devices
+      adb devices
     # install application
        adb -s <some id> install <path to>/YourApp/bin/YourApp.apk 
        #e.g. adb -s 404D8E1812B3 install /Users/stinebierre/Documents/Studie/ITU/2.semester
