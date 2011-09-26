@@ -17,11 +17,13 @@ Do:
   * then through adb (on computer / terminal):
 
     # list devices
-      $ adb devices<>
+      $ adb devices
     # install application
-      adb -s <some id> install <path to>/YourApp/bin/YourApp.apk
+       adb -s <some id> install <path to>/YourApp/bin/YourApp.apk 
+       #e.g. adb -s 404D8E1812B3 install /Users/stinebierre/Documents/Studie/ITU/2.semester
+       /Mobile_og_distribuerede_systemer/Workspace/ButtonTest/bin/ButtonTest.apk
     # reinstall device with option -r 
-      adb -s emulator-5556 install -r <path to>/YourApp/bin/YourApp.apk
+      adb -s <some id> install -r <path to>/YourApp/bin/YourApp.apk
 
 
 Document eventually how to do it through eclipse with screen shots and so if you need it (at sbie)
