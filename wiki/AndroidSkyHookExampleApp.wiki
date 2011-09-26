@@ -31,8 +31,8 @@ at device (android)
 
 screenshots:
 
-images/skyhook_example_app_front_page.png
-images/skyhook_example_app_setting.png
+skyhook_example_app_front_page.png
+skyhook_example_app_setting.png
 
 
 
