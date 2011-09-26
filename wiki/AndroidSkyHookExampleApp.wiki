@@ -31,8 +31,8 @@ at device (android)
 
 screenshots:
 
-skyhook_example_app_front_page.png
-skyhook_example_app_setting.png
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/skyhook_example_app_front_page.png
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/skyhook_example_app_setting.png
 
 
 
