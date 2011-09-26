@@ -1,0 +1,1 @@
+Start the Android Emulator. Once the emulator has fully booted, run "make run" to build the SDK, WpsApiTest, and run WpsApiTest.
