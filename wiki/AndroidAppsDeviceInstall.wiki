@@ -17,8 +17,7 @@ Do:
   * then through adb (on computer / terminal):
 
     # list devices
-      $ adb devices
-      <some id>
+      $ adb devices<>
     # install application
       adb -s <some id> install <path to>/YourApp/bin/YourApp.apk
     # reinstall device with option -r 
