@@ -1,0 +1,26 @@
+#summary Install android application on 'real' android device
+
+
+= How to install Skyhook example application =
+
+
+svn co (in terminal):
+
+{{{
+cd <eclipse workspace>
+svn co https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/WpsApiTest/trunk WpsApiTest
+}}}
+
+import to eclipse:
+
+  * Go to eclipse
+  * Select import and browse to the above location (through eclipse)
+    
+install on device:
+
+take a look at AndroidAppsDeviceInstall
+
+at device (android)
+
+    * select WpsApiTest
+    * and remember to set username and realm under setting!
