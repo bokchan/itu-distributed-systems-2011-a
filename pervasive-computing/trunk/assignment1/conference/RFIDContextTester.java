@@ -18,7 +18,7 @@ import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.impl.RemoteEntityListenerImpl;
 import dk.pervasive.jcaf.util.AbstractContextClient;
 
-public class BLIPContextTester extends AbstractContextClient {
+public class RFIDContextTester extends AbstractContextClient {
 
 	private RemoteEntityListenerImpl listener;
 
@@ -43,7 +43,7 @@ public class BLIPContextTester extends AbstractContextClient {
     final Located located = new Located(this.getClass().getName());
     
 	
-	public BLIPContextTester(String serviceUri) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
+	public RFIDContextTester(String serviceUri) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
 		super(serviceUri);
 
 		// similar to the ParticipantDetector - jcaf tutorial/or demo 
@@ -128,6 +128,6 @@ public class BLIPContextTester extends AbstractContextClient {
 	}
 
 	public static void main(String[] args) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
-		new BLIPContextTester("testcustom");
+		new RFIDContextTester("testcustom");
 	}
 }
