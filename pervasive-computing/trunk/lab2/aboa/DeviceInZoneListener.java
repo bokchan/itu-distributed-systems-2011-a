@@ -8,26 +8,33 @@ import dk.itu.infobus.ws.PatternOperator;
 
 public class DeviceInZoneListener extends Listener {
 
-	//Terminal terminals;
+	/**
+	 * DeviceInZoneListener constructor
+	 * 
+	 * 
+	 * - so fare it make no sense to use terminals (a terminal is a device)
+	 * since we like to make look up on zone (area).
+	 * 
+	 * @param zone
+	 */
+	public DeviceInZoneListener(String zone) {
+		super(new PatternBuilder().addMatchAll("terminal.btmac")
+				.add("type", PatternOperator.EQ, "device.detected")
+				.add("zone.current", PatternOperator.EQ, zone).getPattern());
+		// this.terminals = terminals;
+	}
 
-    public DeviceInZoneListener(String zone, Terminal terminals) {
-        super(new PatternBuilder()
-            .addMatchAll("terminal.btmac")
-            .add("type", PatternOperator.EQ, "device.detected")
-            .add("zone.current", PatternOperator.EQ, zone)
-            .getPattern());
-        //this.terminals = terminals;
-    }
+	public void onStarted() {
+	}
 
-    public void onStarted(){}
-    public void cleanUp(){}
+	public void cleanUp() {
+	}
 
-    public void onMessage(Map<String,Object> message) {
-        String terminal = (String)message.get("terminal.btmac");
-        if(Terminal_old.add(terminal)) {
-            System.out.println(terminal + " in " + message.get("zone.current"));
-        }
-    }
-
+	public void onMessage(Map<String, Object> message) {
+		String terminal = (String) message.get("terminal.btmac");
+		if (Terminal_old.add(terminal)) {
+			System.out.println(terminal + " in " + message.get("zone.current"));
+		}
+	}
 
 }

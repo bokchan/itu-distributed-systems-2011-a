@@ -7,7 +7,16 @@ import dk.itu.infobus.ws.PatternBuilder;
 import dk.itu.infobus.ws.PatternOperator;
 
 public class DeviceLeftZoneListener extends Listener {
-		public DeviceLeftZoneListener(String zone, Terminal terminals) {
+	
+		/**
+		 * DeviceLeftZoneListener constructor
+		 * 
+		 * - so fare it make no sense to use terminals (a terminal is a device)
+		 * since we like to make look up on zone (area). 
+		 * 
+		 * @param zone
+		 */
+		public DeviceLeftZoneListener(String zone) {
 	
 	        super(new PatternBuilder()
 	        .addMatchAll("terminal.btmac")

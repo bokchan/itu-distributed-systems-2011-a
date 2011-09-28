@@ -1,8 +1,9 @@
 package lab2.aboa;
 
-import java.io.BufferedReader;
+import java.io.BufferedReader; 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -17,8 +18,9 @@ public class EventBusClient1_2 {
 
 	/**
 	 * @param args
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		EventBusClient1_2 eb2 = new EventBusClient1_2();
         
 		String zone_id = "itu.zone3.zone3d";
@@ -32,14 +34,15 @@ public class EventBusClient1_2 {
         EventBus eb = new EventBus("tiger.itu.dk",8004);
         eb.start();
         
-        Listener zone_listener = new DeviceInZoneListener("itu.zone3.zone3d" , t);
-        Listener left_listener = new DeviceLeftZoneListener("itu.zone3.zone3d", t);
+        Listener zone_listener = new DeviceInZoneListener("itu.zone3.zone3d");
+        Listener left_listener = new DeviceLeftZoneListener("itu.zone3.zone3d");
 
-        eb.addListener(listener);  
+        eb.addListener(zone_listener);
+        eb.addListener(left_listener);
 
 	}
 	
-	public static HashMap<String, String> getJSON(String server_address) {
+	public static HashMap<String, String> getJSON(String server_address) throws MalformedURLException {
 		URL pitlab = new URL(server_address);
 		URLConnection uc;
 		try {
@@ -64,6 +67,8 @@ public class EventBusClient1_2 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return new HashMap<String, String>();
 	}  
 
 }
