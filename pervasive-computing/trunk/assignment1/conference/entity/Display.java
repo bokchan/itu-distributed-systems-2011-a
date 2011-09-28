@@ -24,9 +24,10 @@ public class Display extends Room {
 	 * @param sector
 	 * @param number
 	 * @param name
+	 * @param blip_zone_id
 	 */
-	public Display(String id, int floor, char sector, int number, String name) {
-		super(id, floor, sector, number, name);
+	public Display(String id, int floor, char sector, int number, String name, String blip_zone_id) {
+		super(id, floor, sector, number, name, blip_zone_id);
 	}
 
 	public String getEntityInfo() {

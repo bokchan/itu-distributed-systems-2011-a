@@ -23,7 +23,18 @@ public class Room extends Place {
 	public Room(String id) {
 		super(id);
 	}
-
+	
+	/**
+	 * Room constructor
+	 * 
+	 * @param id
+	 * @param floor
+	 * @param sector
+	 * @param number
+	 * @param name
+	 * @param blip_zone_id
+	 */
+	
 	public Room(String id, int floor, char sector, int number, String name, String blip_zone_id) {
 		super(id, name);
 

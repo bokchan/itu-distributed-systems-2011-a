@@ -14,15 +14,26 @@ public class Workshop extends Room {
 	private List <Participant> participants;
 	private String name;
 	
-	public Workshop(String id, int floor, char sector, int number, String name) {
-		super(id, floor, sector, number, name);
+	public Workshop(String id, int floor, char sector, int number, String name, String blip_zone_id) {
+		super(id, floor, sector, number, name, blip_zone_id);
 		this.participants = new ArrayList<Participant>();
 		this.name = name; 
 	}
 	
-	public Workshop(String id, int floor, char sector, int number, String name,
+	/**
+	 * Workshop constructor
+	 * 
+	 * @param id
+	 * @param floor
+	 * @param sector
+	 * @param number
+	 * @param name
+	 * @param blip_zone_id
+	 * @param participants
+	 */
+	public Workshop(String id, int floor, char sector, int number, String name, String blip_zone_id,
 			List<Participant> participants) {
-		super(id, floor, sector, number, name);
+		super(id, floor, sector, number, name, blip_zone_id);
 		this.participants = participants;
 		this.name = name; 
 	}
