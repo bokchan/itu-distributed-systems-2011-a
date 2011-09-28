@@ -12,10 +12,12 @@ public class ConferenceTester extends AbstractContextClient {
 	
 	private RemoteEntityListener listener;
 	
+	
+	// look up the zone's here http://tiger.itu.dk:8000/ITUitter/
 	Participant p1 = new Participant("E200 9037 8904 0121 1860 5608", "Stine Hartmann Bierre", "4329b1550000");
-	Participant p2 = new Participant("E200 9037 8904 0121 1540 7908", "Pelle Krøgholt", "4329b1550000"); 
-	Workshop w1 = new Workshop("workshop1", 1, 'D', 57, "Ubiquitous Technologies in Hospitals"); 
-	Workshop w2 = new Workshop("workshop2", 2, 'E', 57, "Mobile Sensing and Air Quality");
+	Participant p2 = new Participant("E200 9037 8904 0121 1540 7908", "Pelle Krï¿½gholt", "4329b1550000"); 
+	Workshop w1 = new Workshop("workshop1", 1, 'C', 57, "Ubiquitous Technologies in Hospitals", "1C"); 
+	Workshop w2 = new Workshop("workshop2", 2, 'E', 57, "Mobile Sensing and Air Quality", "2E");
 	Conference ubicomp = new Conference("ubicomp2011", "Ubicomp 2011", new Date(2011, 7,1), new Date(2011, 7, 7));
 
 	public ConferenceTester(String service_uri) {
