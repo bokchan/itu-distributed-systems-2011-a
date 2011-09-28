@@ -1,0 +1,37 @@
+#The Alien RFID reader Java library
+
+
+= How to use and setup the JCAF conference system =
+
+
+= export project as jar =
+
+save it to as etc. conference.jar
+
+$ <eclipse >/framework
+
+then edit the ContextService/ContextService.bat n your favorite editr
+$ emcs ContextService
+
+and add conference.jar to the jar...
+
+note: all this could be done in a nicer way with ant's there is an example in the JCAF source code xxx (todo insert url)
+
+
+= run the service =
+
+go to the framework folder
+
+$ cd <eclipse >/framework
+
+then start srvice:
+$ ./ContextService testcustom
+
+
+
+
+= if rfid monitor starts not to work etc =
+
+ensure basic rfid is running - read LabRFIDAlienNotes
+
+todo: document the rest 
