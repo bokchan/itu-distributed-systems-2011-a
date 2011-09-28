@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 
 import assignment1.conference.entity.Display;
 import assignment1.conference.entity.Participant;
-import assignment1.conference.monitor.BLIPMonitor;
 import assignment1.conference.monitor.RFIDMonitor;
 import assignment1.conference.relationship.Located;
 
@@ -49,11 +48,10 @@ public class RFIDContextTester extends AbstractContextClient {
 		// similar to the ParticipantDetector - jcaf tutorial/or demo 
 		try {
 			
-			// probably needs a room to ? so we can bind room and user through 
-			// the blip ?
-			BLIPMonitor monitor = new BLIPMonitor(serviceUri, located);
-			Thread t = new Thread(monitor);
-			t.start();
+            RFIDMonitor rfid_monitor = new RFIDMonitor(serviceUri, display, located);
+            Thread t = new Thread(rfid_monitor);
+            t.start();
+
 			
 		} catch (RemoteException e1) {
 			// TODO Auto-generated catch block
