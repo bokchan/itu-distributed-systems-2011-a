@@ -52,7 +52,6 @@ public class Display extends Room {
 					}
 					
 					// Show info for the user
-					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

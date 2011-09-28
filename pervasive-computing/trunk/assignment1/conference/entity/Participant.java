@@ -7,6 +7,7 @@ import dk.pervasive.jcaf.entity.Person;
 public class Participant extends Person {
 
 	private String location; 
+	private String mac_addr;
 	
 	public Participant() {
 		super();
@@ -15,8 +16,9 @@ public class Participant extends Person {
 	 * Constructor for Visitor.
 	 * @param id
 	 */ 
-	public Participant(String id) {
+	public Participant(String id, String mac_addr) {
 		super(id);
+		this.mac_addr = mac_addr;
 	}
 
 	/**
@@ -25,8 +27,9 @@ public class Participant extends Person {
 	 * @param id
 	 * @param name
 	 */
-	public Participant(String id, String name) {
+	public Participant(String id, String mac_addr, String name) {
 		super(id, name);
+		this.mac_addr = mac_addr;
 	}	
 
 	
@@ -37,8 +40,9 @@ public class Participant extends Person {
 	 * @param name
 	 * @param type
 	 */
-	public Participant(String id, String name, String type) {
+	public Participant(String id, String mac_addr, String name, String type) {
 		super(id, name, type);
+		this.mac_addr = mac_addr;
 	}	
 	
 	public String getLocation() {

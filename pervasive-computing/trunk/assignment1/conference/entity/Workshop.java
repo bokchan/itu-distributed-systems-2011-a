@@ -1,6 +1,6 @@
 package assignment1.conference.entity;
 
-import java.rmi.RemoteException; 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import assignment1.conference.relationship.Attending;
@@ -30,6 +30,10 @@ public class Workshop extends Room {
 	
 	public void AddParticipant(Participant participant) {
 		this.participants.add(participant);
+	}
+	
+	public void AddParticipant(List<Participant> participants) {
+		this.participants.addAll(participants);
 	}
 	
 	@Override
