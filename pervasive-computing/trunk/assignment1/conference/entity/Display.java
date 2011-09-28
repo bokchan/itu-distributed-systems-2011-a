@@ -38,12 +38,14 @@ public class Display extends Room {
 		return "[" + getId() + "] " + getFloor() + getSector() + getRoom();
 	}
 	
+	
 	@Override
 	public void contextChanged(ContextEvent event) {
+		System.out.println("Display cxt changed");
+		/* handle everything */ 
 		super.contextChanged(event);
 		
 		ContextItem item = event.getItem();
-		item.getClass();
 		if(item != null) {
 			if(item instanceof Person) {
 				try {
