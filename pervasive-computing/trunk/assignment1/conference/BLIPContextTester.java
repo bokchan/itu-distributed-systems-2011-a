@@ -28,14 +28,14 @@ public class BLIPContextTester extends AbstractContextClient {
 	
 	// E200 9037 8904 0121 0960 B576 is the one attached to the wall of pitLab
 	// or
-	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab
+	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab - mac address is the one by book
 	final Participant participant1 = new Participant("E200 9037 8904 0121 1620 7040", "Participant 1", "4329b1550000");
 	
-	// E200 9037 8904 0121 1860 5608 is the rfid 'hold by hand' (pelle)
-	final Participant participant2 = new Participant("E200 9037 8904 0121 1860 5608", "Participant 2");
+	// E200 9037 8904 0121 1860 5608 is the rfid 'hold by hand' (pelle) - mac address is taken randomly from http://tiger.itu.dk:8000/ITUitter/ 
+	final Participant participant2 = new Participant("E200 9037 8904 0121 1860 5608", "Participant 2", "E4CE8F3C480D");
 
-	// E200 9037 8904 0121 1540 7908 is the rfid 'hold by hand' (sbie)
-	final Participant participant3 = new Participant("E200 9037 8904 0121 1540 7908", "Participant 3");
+	// E200 9037 8904 0121 1540 7908 is the rfid 'hold by hand' (sbie) - mac address is taken randomly from http://tiger.itu.dk:8000/ITUitter/
+	final Participant participant3 = new Participant("E200 9037 8904 0121 1540 7908", "Participant 3", "E4CE8F3C480D");
 	
 	// todo: clean up not sure about this constructor...
 	final Display display = new Display("spisesal@itu.dk", 0, 'S', 10, "Display in spisesal");

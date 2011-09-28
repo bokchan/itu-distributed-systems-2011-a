@@ -84,7 +84,7 @@ public class BlipClientRunnerJSON implements Runnable {
 				previous_location = location;
 				
 			} else {
-				System.out.println("Device has not truned on bluetooth");
+				System.out.println("Device has not turned on bluetooth");
 			}
 			
 		} catch (IOException e) {
