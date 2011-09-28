@@ -1,6 +1,6 @@
 package lab2.aboa;
 
-import java.io.BufferedReader; 
+import java.io.BufferedReader;  
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -11,8 +11,8 @@ import java.util.Map.Entry;
 
 import org.eclipse.jetty.util.ajax.JSON;
 
-import assignment1.conference.eventbus.DeviceInZoneListener;
-import assignment1.conference.eventbus.DeviceLeftZoneListener;
+//import assignment1.conference.eventbus.DeviceInZoneListener;
+//import assignment1.conference.eventbus.DeviceLeftZoneListener;
 
 import dk.itu.infobus.ws.EventBus;
 import dk.itu.infobus.ws.Listener;

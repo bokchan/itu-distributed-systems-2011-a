@@ -1,6 +1,6 @@
 package assignment1.conference;
 
-import java.rmi.RemoteException;
+import java.rmi.RemoteException; 
 
 import assignment1.conference.entity.Display;
 import assignment1.conference.entity.Participant;
@@ -38,8 +38,16 @@ public class BLIPContextTester extends AbstractContextClient {
 	final Participant participant3 = new Participant("E200 9037 8904 0121 1540 7908", "Participant 3", "E4CE8F3C480D");
 	
 	// todo: clean up not sure about this constructor...
-	final Display display = new Display("spisesal@itu.dk", 0, 'S', 10, "Display in spisesal", "Spisesal");
+//	final Display display = new Display("spisesal@itu.dk", 0, 'S', 10, "Display in spisesal", "Spisesal");
     
+//	final Display display = new Display("Doer syd@itu.dk", 0, 'S', 10, "Display at door sounth", "Dør syd");
+	
+	final Display display = new Display("Læsesal@itu.dk", 1, 'S', 10, "Display at Læsesal", "Læsesal");
+	
+	
+
+	
+	
     final Located located = new Located(this.getClass().getName());
     
 	

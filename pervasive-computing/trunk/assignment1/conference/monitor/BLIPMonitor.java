@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -20,6 +21,13 @@ import dk.itu.infobus.ws.EventBus;
 import dk.itu.infobus.ws.Listener;
 import dk.pervasive.jcaf.ContextService;
 import dk.pervasive.jcaf.util.AbstractMonitor;
+
+
+
+// note wild shot:
+// public class BLIPMonitor implements ContextService 
+// and then extends Listeners
+
 
 public class BLIPMonitor extends AbstractMonitor {
 
@@ -42,11 +50,12 @@ public class BLIPMonitor extends AbstractMonitor {
 	@Override
 	public void run() {
 
+		String zone_id = room.getBlipZoneId();
 		
-		System.out.println("BLIPMonitor: Eventbus");
+		System.out.println("BLIPMonitor: Eventbus started listening to zone: "  + zone_id );
 
 		
-		String zone_id = room.getBlipZoneId();
+
         
         try {
 			for (Entry<String, String> t : getJSON("http://pit.itu.dk:7331/terminals-in/" + zone_id).entrySet() ) {
@@ -56,8 +65,8 @@ public class BLIPMonitor extends AbstractMonitor {
 	        EventBus eb = new EventBus("tiger.itu.dk",8004);
 	        eb.start();
 	        
-	        Listener zone_listener = new DeviceInZoneListener(zone_id);
-	        Listener left_listener = new DeviceLeftZoneListener(zone_id);
+	        Listener zone_listener = new DeviceInZoneListener(zone_id, super.getURI(), located, room);
+	        Listener left_listener = new DeviceLeftZoneListener(zone_id, super.getURI(), located, room);
 	        
 	        eb.addListener(zone_listener);
 	        eb.addListener(left_listener);
@@ -71,6 +80,9 @@ public class BLIPMonitor extends AbstractMonitor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -75,7 +75,7 @@ public class RFIDMonitor extends AbstractMonitor {
 		    	// bind Visitor with context
 		    	getContextService().addContextItem(tag.toString(), rfid_located, display);
 		    	
-		    	// TODO: also remove people - andreas mentioned something with cmparng sets : 
+		    	// TODO: also remove people - andreas mentioned something with comparing sets : 
 //		    	getContextService().removeContextItem(entity_id, relation)
 		    	
 		    	//		      System.out.println("ID:" + tag.getTagID()
