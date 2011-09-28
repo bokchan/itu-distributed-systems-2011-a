@@ -54,13 +54,10 @@ public class DeviceLeftZoneListener extends Listener {
 
 	public void onMessage(Map<String, Object> message) {
 		String terminal = (String) message.get("terminal.btmac");
-		if (Terminals.remove(terminal)) {
-			System.out.println(terminal + " left "
-					+ message.get("zone.previous"));
-		}
+
 
 		try {
-
+			System.out.println(terminal + " left " + message.get("zone.previous"));
 			// add terminal/device to the JCAF service
 			service.addContextItem(terminal, this.located, this.room);
 		} catch (RemoteException e) {

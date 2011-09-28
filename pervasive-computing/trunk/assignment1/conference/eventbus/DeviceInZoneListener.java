@@ -53,12 +53,9 @@ public class DeviceInZoneListener extends Listener {
 
 	public void onMessage(Map<String, Object> message) {
 		String terminal = (String) message.get("terminal.btmac");
-		if (Terminals.add(terminal)) {
-			System.out.println(terminal + " in " + message.get("zone.current"));
-		}
 		
 		try {
-			
+			System.out.println(terminal + " in " + message.get("zone.current"));
 			// add terminal/device to the JCAF service
 			service.addContextItem(terminal, this.located, this.room);
 		} catch (RemoteException e) {
