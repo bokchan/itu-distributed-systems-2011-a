@@ -48,10 +48,10 @@ either point java doc to the docs folder of the downloaded JCAF source code or p
 
 http://code.google.com/p/itu-distributed-systems-2011-a/source/browse/pervasive-computing/#pervasive-computing%2Ftrunk%2Fjcaf_javadoc
 
-e.g. downloaded to:
+e.g.:
 
 {{{
-/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/pervasive-computing/jcaf_javadoc
+/path-to/jcaf_javadoc
 }}}
 
 then in Java Build Path in Eclipse go to libs and add java doc for the JCAF 
