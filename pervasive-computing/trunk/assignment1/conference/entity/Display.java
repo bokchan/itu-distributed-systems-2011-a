@@ -15,7 +15,6 @@ import dk.pervasive.jcaf.entity.Person;
  * @author mSpazzy
  */
 public class Display extends Room {
-
 	
 	/**
 	 * Constructor for display

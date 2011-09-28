@@ -1,6 +1,7 @@
 package assignment1.conference.entity;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,16 @@ public class Conference extends GenericEntity {
 	private Date dateEnd;
 	private List <Participant> participants;
 	private List <Workshop> workshops;
+	
+	
+	public Conference(String id, String name, Date dateStart, Date dateEnd) {
+		super(id);
+		this.name = name;
+		this.dateStart = dateStart;
+		this.dateEnd = dateEnd;
+		this.participants = new ArrayList<Participant>();
+		this.workshops = new ArrayList<Workshop>();
+	}
 	
 	public Conference(String id, String name, Date dateStart, Date dateEnd,
 			List<Participant> participants, List<Workshop> workshops) {
@@ -46,6 +57,7 @@ public class Conference extends GenericEntity {
 	
 	public void AddParticipant(Participant participant)
 	{
+		System.out.println("sfsdf" +  participants);
 		this.participants.add(participant);
 	}
 	

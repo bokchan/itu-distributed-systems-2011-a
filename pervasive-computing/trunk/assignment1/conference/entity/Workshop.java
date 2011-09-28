@@ -1,6 +1,7 @@
 package assignment1.conference.entity;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import assignment1.conference.relationship.Attending;
@@ -11,8 +12,14 @@ import dk.pervasive.jcaf.entity.Person;
 
 public class Workshop extends Room {
 	private List <Participant> participants;
-	private String name; 
-
+	private String name;
+	
+	public Workshop(String id, int floor, char sector, int number, String name) {
+		super(id, floor, sector, number, name);
+		this.participants = new ArrayList<Participant>();
+		this.name = name; 
+	}
+	
 	public Workshop(String id, int floor, char sector, int number, String name,
 			List<Participant> participants) {
 		super(id, floor, sector, number, name);
