@@ -14,8 +14,10 @@ public class Participant extends Person {
 	}
 	/**
 	 * Constructor for Visitor.
+	 * 
 	 * @param id
-	 */ 
+	 * @param mac_addr
+	 */
 	public Participant(String id, String mac_addr) {
 		super(id);
 		this.mac_addr = mac_addr;
@@ -26,8 +28,9 @@ public class Participant extends Person {
 	 * 
 	 * @param id
 	 * @param name
+	 * @param mac_addr
 	 */
-	public Participant(String id, String mac_addr, String name) {
+	public Participant(String id, String name, String mac_addr) {
 		super(id, name);
 		this.mac_addr = mac_addr;
 	}	
@@ -35,12 +38,13 @@ public class Participant extends Person {
 	
 	/**
 	 * Constructor for Visitor.
-	 * 	
+	 * 
 	 * @param id
 	 * @param name
+	 * @param mac_addr
 	 * @param type
 	 */
-	public Participant(String id, String mac_addr, String name, String type) {
+	public Participant(String id, String name, String mac_addr, String type) {
 		super(id, name, type);
 		this.mac_addr = mac_addr;
 	}	
