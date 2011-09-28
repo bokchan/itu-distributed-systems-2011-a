@@ -10,7 +10,7 @@ save it to as etc. conference.jar
 
 $ <eclipse >/framework
 
-then edit the ContextService/ContextService.bat n your favorite editr
+then edit the ContextService/ContextService.bat in your favorite editor
 $ emcs ContextService
 
 and add conference.jar to the jar...
@@ -24,7 +24,7 @@ go to the framework folder
 
 $ cd <eclipse >/framework
 
-then start srvice:
+then start service:
 $ ./ContextService testcustom
 
 
@@ -35,3 +35,29 @@ $ ./ContextService testcustom
 ensure basic rfid is running - read LabRFIDAlienNotes
 
 todo: document the rest 
+
+
+
+
+
+= How to get JCAF java doc shown =
+
+JCAF unfortunately doesn't shipped with java doc
+
+either point java doc to the docs folder of the JCAF source code or point to the java doc exported to:
+
+http://code.google.com/p/itu-distributed-systems-2011-a/source/browse/pervasive-computing/#pervasive-computing%2Ftrunk%2Fjcaf_javadoc
+
+then in Java Build Path in Eclipse go to libs and add java doc for the JCAF 
+
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/eclipse_get_set_java_doc_on_a_jar_lib.png
+
+
+
+
+
+
+
+
+
+
