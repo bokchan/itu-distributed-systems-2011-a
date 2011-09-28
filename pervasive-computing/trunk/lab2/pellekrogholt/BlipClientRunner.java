@@ -16,10 +16,10 @@ public class BlipClientRunner {
 	public static void main (String args[]) throws Exception{
 
 		
-		BlipClient client = new BlipClient("38E7D820836E");
+		BlipClient client = new BlipClient("http://pit.itu.dk:7331/location-of/", "0C6076A90D8D");
+//		BlipClient client = new BlipClient("http://pit.itu.dk:7331/location-of/", "38E7D820836E");
 		
 		BufferedReader in = client.device();
-		
 		
 		String inputLine;
 		while ((inputLine = in.readLine()) != null)

@@ -17,7 +17,7 @@ public class JSONTest
 	
 	
 	@Test
-	public void testJSONParseString() 
+	public void testJSONParseStringToMap() 
 	{ 		
 		
 		String json_string = "{\"last-event-description\":\"Device Detected\",\"last-event-timestamp\":1315250496330,\"location\":\"itu.zone4.zone4e\",\"major-class-of-device\":\"Not available\",\"terminal-id\":\"7C2F80173FC3\"}";
@@ -67,6 +67,36 @@ public class JSONTest
 				
 	}
 
+
+	
+	
+	
+	@Test
+	public void testJSONParse() 
+	{ 		
+		
+		String json_string = "{\"last-event-description\":\"Device Detected\",\"last-event-timestamp\":1315250496330,\"location\":\"itu.zone4.zone4e\",\"major-class-of-device\":\"Not available\",\"terminal-id\":\"7C2F80173FC3\"}";
+		
+		HashMap<String, String> map;
+		// the JSON.parse have to be type casted 
+		map = (HashMap<String, String>) JSON.parse(json_string);
+		
+		Assert.assertEquals(null, map.get("location"), "itu.zone4.zone4e");
+		
+		// System.out.println(map);
+		// prints
+		// {last-event-description=Device Detected, location=itu.zone4.zone4e, last-event-timestamp=1315250496330, major-class-of-device=Not available, terminal-id=7C2F80173FC3}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

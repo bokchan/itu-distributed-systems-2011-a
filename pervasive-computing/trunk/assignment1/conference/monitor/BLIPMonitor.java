@@ -1,6 +1,16 @@
 package assignment1.conference.monitor;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+
+import lab2.pellekrogholt.BlipClient;
+
+import org.eclipse.jetty.util.ajax.JSON;
 
 import assignment1.conference.relationship.Located;
 import dk.pervasive.jcaf.util.AbstractMonitor;
@@ -8,10 +18,14 @@ import dk.pervasive.jcaf.util.AbstractMonitor;
 public class BLIPMonitor extends AbstractMonitor {
 
 	private Located located = null;
+	private HashMap<String, String> previous_locations;  
+	private static BlipClient client;
+	
 	
 	public BLIPMonitor(String service_uri, Located located) throws RemoteException {
 		super(service_uri);
 		this.located = located;
+		
 	}
 	
 
@@ -29,9 +43,18 @@ public class BLIPMonitor extends AbstractMonitor {
 			t.start();
 			try {
 				System.out.println("BLIPMonitor: thread in blip monitor startet and reading done");
-//				getRFIDTags();
+
+				
+				
+				String point = "E4CE8F3C480D";
+				client = new BlipClient(point);
+				
+				getBlipLocation(client, point);
 				t.sleep(5000);
 			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -41,4 +64,66 @@ public class BLIPMonitor extends AbstractMonitor {
 		
 	}
 
+	/**
+	 * 
+	 */
+	private void getBlipLocation(BlipClient client, String mac_id) {
+		// TODO Auto-generated method stub
+		
+		
+		System.out.println("=======================");
+		
+		System.out.println("client");
+		
+		System.out.println("=======================");
+		
+		
+//		HashMap<String, String> map; 
+//		if ((map = (HashMap<String, String>) JSON.parse(client.toString())) != null) {
+//			
+//			String location = map.get("location");
+//			if (!location.equals(previous_locations.get(mac_id))) {
+//				System.out.println(location);
+//			}
+//			previous_locations.put(mac_id, location);
+//			
+//		} else {
+//			System.out.println("Device has not turned on bluetooth");
+//		}
+		
+		
+//		E4CE8F3C480D
+		
+		
+	}
+
+	
+	/**
+	 * 
+	 * Blip Client 1.1
+	 *
+	 */
+	private class BlipClient {
+
+		URL pitlab;
+		
+		public BlipClient(String point) throws IOException {
+			
+			pitlab = new URL("http://pit.itu.dk:7331/location-of/" + point);
+
+		}
+			
+		public BufferedReader device() throws IOException {
+
+			URLConnection uc = pitlab.openConnection();
+			BufferedReader in = new BufferedReader(
+				new InputStreamReader(uc.getInputStream())
+			);		
+			return in;
+		}
+		
+		
+
+	}
+	
 }

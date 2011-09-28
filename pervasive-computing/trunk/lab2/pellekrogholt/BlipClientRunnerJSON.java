@@ -22,13 +22,15 @@ public class BlipClientRunnerJSON implements Runnable {
 	
 	public static void main (String args[]) throws Exception{
 		 
-		String point = "38E7D820836E"; // pellekrogholt droid		
+//		String point = "38E7D820836E"; // pellekrogholt droid		
 //		String point = "A4670684B501"; // PS IPAD
+		
+		String point = "0C6076A90D8D"; // taken from http://tiger.itu.dk:8000/ITUitter/
 
 		
 //		point = "7C2F80173FC3";
 		
-		client = new BlipClient(point);
+		client = new BlipClient("http://pit.itu.dk:7331/location-of/", point);
 		
 		while(true) {
 
@@ -59,7 +61,8 @@ public class BlipClientRunnerJSON implements Runnable {
 			StringBuilder sb = new StringBuilder();
 			String inputLine = "";
 			while ((inputLine = in.readLine()) != null) {
-//				System.out.println(inputLine);
+				System.out.println(inputLine);
+				// out puts: {"last-event-description":"Device Detected","last-event-timestamp":1317211289120,"location":"itu.zone0.zoneaud2","major-class-of-device":"Not available","terminal-id":"0C6076A90D8D"} 
 				sb.append(inputLine);
 			}
 			in.close();

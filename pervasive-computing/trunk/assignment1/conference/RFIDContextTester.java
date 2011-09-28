@@ -27,7 +27,7 @@ public class RFIDContextTester extends AbstractContextClient {
 	
 	// E200 9037 8904 0121 0960 B576 is the one attached to the wall of pitLab
 	// or
-	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab - mac address taken from book
+	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab - mac address taken from a.book
 	final Participant participant1 = new Participant("E200 9037 8904 0121 1620 7040", "Participant 1", "4329b1550000");
 	
 	// E200 9037 8904 0121 1860 5608 is the rfid 'hold by hand' (pelle) - mac address randomly picked from http://tiger.itu.dk:8000/ITUitter/ 

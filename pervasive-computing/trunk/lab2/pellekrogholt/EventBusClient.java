@@ -17,7 +17,8 @@ public class EventBusClient {
 		
 //		EventBus eb = new EventBus("tiger.itu.dk",8004);
 		
-		String deviceAddress = "38E7D820836E";
+//		String deviceAddress = "38E7D820836E";
+		String deviceAddress = "E4CE8F3C480D";
 		
 		EventBus eb = new EventBus("tiger.itu.dk",8004);
 		eb.start();

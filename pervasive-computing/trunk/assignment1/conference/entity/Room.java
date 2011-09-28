@@ -14,6 +14,7 @@ public class Room extends Place {
 	private int floor;
 	private char sector;
 	private int room;
+	private String blip_zone_id;
 
 	public Room() {
 		super();
@@ -23,12 +24,14 @@ public class Room extends Place {
 		super(id);
 	}
 
-	public Room(String id, int floor, char sector, int number, String name) {
+	public Room(String id, int floor, char sector, int number, String name, String blip_zone_id) {
 		super(id, name);
 
 		this.floor = floor;
 		this.sector = sector;
 		this.room = number;
+		this.blip_zone_id = blip_zone_id;
+				
 	}
 
 	public String getEntityInfo() {
@@ -47,6 +50,10 @@ public class Room extends Place {
 		return room;
 	}
 
+	public String getBlipZoneId() {
+		return blip_zone_id;
+	}
+	
 	public String toString() {
 		return "[" + getId() + "] " + floor + sector + room;
 	}

@@ -17,9 +17,9 @@ public class BlipClient {
 
 	URL pitlab;
 	
-	public BlipClient(String point) throws IOException {
+	public BlipClient(String url, String point) throws IOException {
 		
-		pitlab = new URL("http://pit.itu.dk:7331/location-of/" + point);
+		pitlab = new URL(url + point);
 
 	}
 		
