@@ -18,9 +18,7 @@ import dk.pervasive.jcaf.util.AbstractMonitor;
 /**
  * RFID monitor
  * 
- * based on RFIDMonitor on the tutorial:
- * public class DisplayMonitor extends AbstractMonitor implements RFIDScannerListener {
- * but where is the RFIDScannerListener from ? 
+ * based on RFIDMonitor on the tutorial 
  * 
  */
 public class RFIDMonitor extends AbstractMonitor {
@@ -45,7 +43,7 @@ public class RFIDMonitor extends AbstractMonitor {
 	 * For that reason and for simplicity we use the approach lined 
 	 * out in AlienClass1ReaderTest.java
 	 * 
-	 * Read more here xxx todo: insert link to wiki page
+	 * Read more here
 	 * 
 	 * @throws AlienReaderException
 	 * @throws RemoteException 
@@ -71,32 +69,18 @@ public class RFIDMonitor extends AbstractMonitor {
 //		    System.out.println("Tag(s) found:");
 		    for (int i=0; i<tagList.length; i++) {
 		    	Tag tag = tagList[i];
-		    	
 
 //		    	System.out.println("getContextService().getAllEntityIds(): " + getContextService().getAllEntityIds());
 
 		    	// bind Visitor with context
 		    	getContextService().addContextItem(tag.toString(), rfid_located, display);
-	
-		    	// todo:  probably need a more sophisticated way to
-		    	// check if people/rfid tags are coming in or leaving ?
-		    	// but this will require the MessageListenerTest.java to work or similar
-		    	// as stated in java doc // wiki...
 		    	
+		    	
+		    	// TODO: also remove people - andreas mentioned something with cmparng sets : 
+//		    	getContextService().removeContextItem(entity_id, relation)
 		    	
 		    	//		      System.out.println("ID:" + tag.getTagID()
 		    }
-		    
-// note: print out full rfid data
-//		    for (int i=0; i<tagList.length; i++) {
-//		      Tag tag = tagList[i];
-//		      System.out.println("ID:" + tag.getTagID() +
-//		                         ", Discovered:" + tag.getDiscoverTime() +
-//		                         ", Last Seen:" + tag.getRenewTime() +
-//		                         ", Antenna:" + tag.getAntenna() +
-//		                         ", Reads:" + tag.getRenewCount()
-//		                         );
-//		    }
 		    
 		  }
 
@@ -104,25 +88,6 @@ public class RFIDMonitor extends AbstractMonitor {
 		  reader.close();
 	}
 	
-// from the tutorial - jcaf.tutorial.v15.pdf
-// 	
-//	public void tag(RFIDScanEvent event) {  
-//		
-//		if (event.getMethod() == RFIDScanEvent.TAG_SCANNED) { 
-//			rfid_located.resetTime(); 
-//			getContextService().addContextItem( 
-//					event.getId(), 
-//					rfid_located, 
-//					new Location(event.getScannerName())); 
-//		} 
-//		if (event.getMethod() == RFIDScanEvent.TAG_LEFT) { 
-//			getContextService().removeContextItem( 
-//					event.getId(), 
-//					rfid_located); 
-//		} 
-//
-//	}
-
 	@Override
 	public void monitor(String arg0) throws RemoteException {
 		// TODO Auto-generated method stub
