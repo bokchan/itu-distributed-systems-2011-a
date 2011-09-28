@@ -33,6 +33,12 @@ public class DeviceLeftZoneListener extends Listener {
 	        if(Terminals.remove(terminal)) {
 	            System.out.println(terminal + " left " + message.get("zone.previous"));
 	        }
+
+			// todo: set up with jcaf
+	    
 	    }
+	    
+	    
+	    
 	
 	}

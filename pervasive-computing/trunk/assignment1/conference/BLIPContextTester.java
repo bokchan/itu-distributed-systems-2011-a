@@ -51,7 +51,7 @@ public class BLIPContextTester extends AbstractContextClient {
 			
 			// probably needs a room to ? so we can bind room and user through 
 			// the blip ?
-			BLIPMonitor monitor = new BLIPMonitor(serviceUri, located);
+			BLIPMonitor monitor = new BLIPMonitor(serviceUri, display, located);
 			Thread t = new Thread(monitor);
 			t.start();
 			
