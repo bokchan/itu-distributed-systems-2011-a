@@ -1,17 +1,10 @@
 package assignment1.conference;
 
-import java.rmi.RemoteException;  
-
-
-
-//import lab3.pellekrogholt.entity.Display;
-//import lab3.pellekrogholt.entity.Participant;
-////import lab3.pellekrogholt.monitor.DisplayMonitor;
-//import lab3.pellekrogholt.monitor.RFIDMonitor;
-//import lab3.pellekrogholt.relationship.Located;
+import java.rmi.RemoteException;
 
 import assignment1.conference.entity.Display;
 import assignment1.conference.entity.Participant;
+import assignment1.conference.monitor.BLIPMonitor;
 import assignment1.conference.monitor.RFIDMonitor;
 import assignment1.conference.relationship.Located;
 
@@ -25,14 +18,18 @@ import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.impl.RemoteEntityListenerImpl;
 import dk.pervasive.jcaf.util.AbstractContextClient;
 
-public class RFIDContextTester extends AbstractContextClient {
+public class BLIPContextTester extends AbstractContextClient {
 
-	private RemoteEntityListenerImpl display_rfid_listener;
+	private RemoteEntityListenerImpl listener;
 
 	// define some participant with rfid ids
 
+	// E200 9037 8904 0121 1620 7040
+	
 	// E200 9037 8904 0121 0960 B576 is the one attached to the wall of pitLab
-	final Participant participant1 = new Participant("E200 9037 8904 0121 0960 B576", "Participant 1");
+	// or
+	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab
+	final Participant participant1 = new Participant("E200 9037 8904 0121 1620 7040", "Participant 1", "4329b1550000");
 	
 	// E200 9037 8904 0121 1860 5608 is the rfid 'hold by hand' (pelle)
 	final Participant participant2 = new Participant("E200 9037 8904 0121 1860 5608", "Participant 2");
@@ -46,13 +43,16 @@ public class RFIDContextTester extends AbstractContextClient {
     final Located located = new Located(this.getClass().getName());
     
 	
-	public RFIDContextTester(String serviceUri) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
+	public BLIPContextTester(String serviceUri) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
 		super(serviceUri);
 
 		// similar to the ParticipantDetector - jcaf tutorial/or demo 
 		try {
-			RFIDMonitor rfid_monitor = new RFIDMonitor(serviceUri, display, located);
-			Thread t = new Thread(rfid_monitor);
+			
+			// probably needs a room to ? so we can bind room and user through 
+			// the blip ?
+			BLIPMonitor monitor = new BLIPMonitor(serviceUri, located);
+			Thread t = new Thread(monitor);
 			t.start();
 			
 		} catch (RemoteException e1) {
@@ -63,8 +63,8 @@ public class RFIDContextTester extends AbstractContextClient {
 		
 		
 		try {
-			display_rfid_listener = new RemoteEntityListenerImpl();
-			display_rfid_listener.addEntityListener(new EntityListener() {
+			listener = new RemoteEntityListenerImpl();
+			listener.addEntityListener(new EntityListener() {
 				
 				@Override
 				public void contextChanged(ContextEvent event) {
@@ -116,7 +116,7 @@ public class RFIDContextTester extends AbstractContextClient {
         try {
         	
         	// what does this exactly mean
-        	getContextService().addEntityListener(display_rfid_listener, Participant.class);
+        	getContextService().addEntityListener(listener, Participant.class);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,6 +128,6 @@ public class RFIDContextTester extends AbstractContextClient {
 	}
 
 	public static void main(String[] args) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
-		new RFIDContextTester("testcustom");
+		new BLIPContextTester("testcustom");
 	}
 }

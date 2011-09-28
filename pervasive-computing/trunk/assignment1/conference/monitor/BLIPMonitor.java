@@ -2,15 +2,18 @@ package assignment1.conference.monitor;
 
 import java.rmi.RemoteException;
 
-import com.alien.enterpriseRFID.reader.AlienReaderException;
-
+import assignment1.conference.relationship.Located;
 import dk.pervasive.jcaf.util.AbstractMonitor;
 
 public class BLIPMonitor extends AbstractMonitor {
 
-	public BLIPMonitor(String service_uri) throws RemoteException {
+	private Located located = null;
+	
+	public BLIPMonitor(String service_uri, Located located) throws RemoteException {
 		super(service_uri);
+		this.located = located;
 	}
+	
 
 	@Override
 	public void monitor(String arg0) throws RemoteException {
