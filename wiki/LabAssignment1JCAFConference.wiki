@@ -58,6 +58,38 @@ then in Java Build Path in Eclipse go to libs and add java doc for the JCAF
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/eclipse_get_set_java_doc_on_a_jar_lib.png
 
+or open in your favorite editor:
+
+{{{
+$ emacs <path-to-eclipse-project>/.classpath
+}}}
+
+and the set 
+
+{{{
+<classpathentry kind="lib" path="framework/jcaf.v15.jar">
+	<attributes>
+		<attribute name="javadoc_location" value="file:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/pervasive-computing/jcaf_javadoc/"/>
+	</attributes>
+</classpathentry>
+}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
