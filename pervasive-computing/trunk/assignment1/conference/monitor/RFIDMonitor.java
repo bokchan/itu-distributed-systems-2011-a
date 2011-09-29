@@ -24,6 +24,7 @@ import dk.pervasive.jcaf.util.AbstractMonitor;
 public class RFIDMonitor extends AbstractMonitor {
 
 	private Located rfid_located = null;
+	
 	private Tag currentTAGS[] = null; // Tags in context before each request to
 										// the AlienReader
 	private Display display;
@@ -68,26 +69,21 @@ public class RFIDMonitor extends AbstractMonitor {
 		Tag tagList[] = reader.getTagList();
 
 		if (tagList == null) {
-			System.out.println("No Tags Found");
+			//System.out.println("No Tags Found");
 		} else {
-			
+			// match against print 
 			// Convert located rfid tags to a hashset
 			if (currentTAGS != null) {
 				for (Tag t : currentTAGS) {
-					System.out.println(t.getTagID() + " entered");
-					
 					getContextService().removeContextItem(t.getTagID(),
 							rfid_located);
 				}
 			}
 
 			for (Tag t : tagList) {
-				System.out.println(t.getTagID() + " left");
-				getContextService().addContextItem(t.getTagID(), rfid_located,
-						display);
+				getContextService().addContextItem(t.getTagID(), rfid_located,display);
 			}
-			System.out.println(currentTAGS);
-
+			
 			currentTAGS = tagList;
 		}
 		// Close the connection
@@ -113,7 +109,7 @@ public class RFIDMonitor extends AbstractMonitor {
 			Thread t = new Thread();
 			t.start();
 			try {
-				System.out.println("RFIDMonitor: thread in rfid monitor startet and reading done");
+				//System.out.println("RFIDMonitor: thread in rfid monitor startet and reading done");
 				getRFIDTags();
 				t.sleep(5000);
 			} catch (InterruptedException e) {

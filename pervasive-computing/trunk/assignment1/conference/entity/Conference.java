@@ -1,8 +1,10 @@
 package assignment1.conference.entity;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import assignment1.conference.relationship.Attending;
 import dk.pervasive.jcaf.ContextEvent;
@@ -62,6 +64,16 @@ public class Conference extends GenericEntity {
 	public HashSet<Workshop> GetWorkshops()
 	{
 		return this.workshops;
+	}
+	
+	public List<Workshop> getWorkshopsByParticipant(Participant p) {
+		ArrayList<Workshop> wList = new ArrayList<Workshop>();
+		for (Workshop w : workshops) {
+			if (w.getParticipants().contains(p)) {
+				wList.add(w);
+			}
+		}
+		return wList;
 	}
 	
 	public HashSet<Participant> GetParticipants()

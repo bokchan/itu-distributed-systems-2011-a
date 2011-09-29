@@ -58,15 +58,13 @@ public class RFIDContextTester extends AbstractContextClient {
 			e1.printStackTrace();
 		}
 		
-		
-		
 		try {
 			listener = new RemoteEntityListenerImpl();
 			listener.addEntityListener(new EntityListener() {
 				
 				@Override
 				public void contextChanged(ContextEvent event) {
-	
+					
 					// todo: make logic here
 					
 					System.out.println("Listener1: " + event.toString());
@@ -115,6 +113,7 @@ public class RFIDContextTester extends AbstractContextClient {
         	
         	// what does this exactly mean
         	getContextService().addEntityListener(listener, Participant.class);
+        	
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,6 +125,6 @@ public class RFIDContextTester extends AbstractContextClient {
 	}
 
 	public static void main(String[] args) throws AlienReaderConnectionRefusedException, AlienReaderNotValidException, AlienReaderTimeoutException, AlienReaderConnectionException {
-		new RFIDContextTester("testcustom");
+		new RFIDContextTester("conference");
 	}
 }

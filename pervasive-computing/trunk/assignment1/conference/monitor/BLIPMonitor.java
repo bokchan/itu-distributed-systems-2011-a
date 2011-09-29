@@ -47,8 +47,8 @@ public class BLIPMonitor extends AbstractMonitor{
 
 		String zone_id = room.getBlipZoneId();
 
-		System.out.println("BLIPMonitor: Eventbus started listening to zone: "
-				+ zone_id);
+//		System.out.println("BLIPMonitor: Eventbus started listening to zone: "
+//				+ zone_id);
 		try {
 			for (Entry<String, String> t : getJSON(
 					"http://pit.itu.dk:7331/terminals-in/" + zone_id)

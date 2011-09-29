@@ -40,7 +40,7 @@ public class DeviceLeftZoneListener extends Listener {
 		this.located = located;
 		this.room = room;
 
-		System.out.print("DeviceLeftZoneListener called/started");		
+		//System.out.print("DeviceLeftZoneListener called/started");		
 	}
 
 		
@@ -48,16 +48,15 @@ public class DeviceLeftZoneListener extends Listener {
 	}
 
 	public void cleanUp() {
+		
 	}
 
 	public void onMessage(Map<String, Object> message) {
 		String terminal = (String) message.get("terminal.btmac");
-
-
 		try {
-			System.out.println(terminal + " left " + message.get("zone.previous"));
+			//System.out.println(terminal + " left " + message.get("zone.previous"));
 			// add terminal/device to the JCAF service
-			service.addContextItem(terminal, this.located, this.room);
+			service.removeContextItem(terminal, this.located);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

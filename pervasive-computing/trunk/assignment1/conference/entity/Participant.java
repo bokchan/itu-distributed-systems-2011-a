@@ -84,8 +84,12 @@ public class Participant extends Person {
 		
 	};
 	
+
 	
-	
+	public String getMac_addr() {
+		return mac_addr;
+	}
+
 	public String toXML() {
 		String context = "";
 		if (getContext() != null) {

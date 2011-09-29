@@ -1,8 +1,7 @@
 package assignment1.conference.entity;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 import assignment1.conference.relationship.Attending;
 import dk.pervasive.jcaf.ContextEvent;
@@ -11,12 +10,12 @@ import dk.pervasive.jcaf.entity.Person;
 
 
 public class Workshop extends Room {
-	private List <Participant> participants;
+	private HashSet <Participant> participants;
 	private String name;
 	
 	public Workshop(String id, int floor, char sector, int number, String name, String blip_zone_id) {
 		super(id, floor, sector, number, name, blip_zone_id);
-		this.participants = new ArrayList<Participant>();
+		this.participants = new HashSet<Participant>();
 		this.name = name;
 	}
 	
@@ -32,7 +31,7 @@ public class Workshop extends Room {
 	 * @param participants
 	 */
 	public Workshop(String id, int floor, char sector, int number, String name, String blip_zone_id,
-			List<Participant> participants) {
+			HashSet<Participant> participants) {
 		super(id, floor, sector, number, name, blip_zone_id);
 		this.participants = participants;
 		this.name = name; 
@@ -42,7 +41,7 @@ public class Workshop extends Room {
 		return this.name;
 	}
 
-	public List<Participant> getParticipants() {
+	public HashSet<Participant> getParticipants() {
 		return participants;
 	}
 	
@@ -50,7 +49,7 @@ public class Workshop extends Room {
 		this.participants.add(participant);
 	}
 	
-	public void AddParticipant(List<Participant> participants) {
+	public void AddParticipant(HashSet<Participant> participants) {
 		this.participants.addAll(participants);
 	}
 	

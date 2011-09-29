@@ -41,7 +41,7 @@ public class DeviceInZoneListener extends Listener {
 		this.located = located;
 		this.room = room;
 		
-		System.out.print("DeviceInZoneListener called/started");
+		//System.out.print("DeviceInZoneListener called/started");
 	}
 
 	public void onStarted() {
@@ -54,11 +54,10 @@ public class DeviceInZoneListener extends Listener {
 		String terminal = (String) message.get("terminal.btmac");
 		
 		try {
-			System.out.println(terminal + " in " + message.get("zone.current"));
+			//System.out.println(terminal + " in " + message.get("zone.current"));
 			service.addContextItem(terminal, this.located, this.room);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
-
 }

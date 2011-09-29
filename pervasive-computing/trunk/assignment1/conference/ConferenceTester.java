@@ -1,7 +1,9 @@
 package assignment1.conference;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 import assignment1.conference.entity.Conference;
 import assignment1.conference.entity.Display;
@@ -9,7 +11,6 @@ import assignment1.conference.entity.Participant;
 import assignment1.conference.entity.Workshop;
 import assignment1.conference.eventbus.TerminalListener;
 import assignment1.conference.gui.InfoDisplay;
-import assignment1.conference.monitor.BLIPMonitor;
 import assignment1.conference.monitor.RFIDMonitor;
 import assignment1.conference.relationship.Located;
 
@@ -28,7 +29,6 @@ public class ConferenceTester extends AbstractContextClient {
 	private InfoDisplay window;
 
 	private RemoteEntityListenerImpl display_listener;
-	private RemoteEntityListenerImpl workshop_listener;
 
 	// look up the zone's here http://tiger.itu.dk:8000/ITUitter/
 	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab -
@@ -36,9 +36,9 @@ public class ConferenceTester extends AbstractContextClient {
 	final Participant participant1 = new Participant(
 			"E200 9037 8904 0121 1620 7040", "Participant 1", "4329b1550000");
 
-	Participant p1 = new Participant("E200 9037 8904 0121 1620 7040",
+	Participant p1 = new Participant("E200 9037 8904 0121 1450 81CF",
 			"Andreas Bok Andersen", "4329b1550000");
-	Participant p2 = new Participant("E200 9037 8904 0121 1540 7908",
+	Participant p2 = new Participant("E200 9037 8904 0121 1860 5608",
 			"Pelle Krøgholt", "4329b1550000");
 	Workshop w1 = new Workshop("workshop1", 1, 'C', 57,
 			"Ubiquitous Technologies in Hospitals", "1C");
@@ -51,8 +51,8 @@ public class ConferenceTester extends AbstractContextClient {
 
 	Display zone = new Display("itu.zone3.zone3e@itu.dk", 3, '4', 0, "Zone 3E",
 			"itu.zone3.zone3e");
-	Display infodisplay = new Display("infodisplay@itu.dk", 3, 'S', 10,
-			"Display in ", "3E");
+	Display infodisplay = new Display("infodisplay@itu.dk", 3, 'A', 54,
+			"Display in ", "3A");
 
 	public ConferenceTester(String serviceUri)
 			throws AlienReaderConnectionRefusedException,
@@ -64,8 +64,11 @@ public class ConferenceTester extends AbstractContextClient {
 		 */
 		ubicomp.AddParticipant(p1);
 		ubicomp.AddParticipant(p2);
-
+		
 		w1.AddParticipant(p1);
+		w2.AddParticipant(p1);
+		
+		w1.AddParticipant(p2);
 		w2.AddParticipant(p2);
 
 		ubicomp.AddWorkshop(w1);
@@ -75,10 +78,10 @@ public class ConferenceTester extends AbstractContextClient {
 			/**
 			 * Located for inanimate objects Attending for animate objects
 			 */
-			BLIPMonitor blip_monitor = new BLIPMonitor(serviceUri, zone,
-					located);
-			Thread tBlip = new Thread(blip_monitor);
-			tBlip.start();
+//			BLIPMonitor blip_monitor = new BLIPMonitor(serviceUri, zone,
+//					located);
+//			Thread tBlip = new Thread(blip_monitor);
+//			tBlip.start();
 
 			RFIDMonitor rfid_monitor = new RFIDMonitor(serviceUri, infodisplay,
 					located);
@@ -86,27 +89,38 @@ public class ConferenceTester extends AbstractContextClient {
 			t.start();
 		} catch (RemoteException e) {
 			
-		}
+		}		
 		
 		try {
-			workshop_listener = new RemoteEntityListenerImpl();
-			workshop_listener.addEntityListener(new EntityListener() {
+			display_listener = new RemoteEntityListenerImpl();
+			display_listener.addEntityListener(new EntityListener() {
 				@Override
 				public void contextChanged(ContextEvent event) {
 					if (event.getEventType() != ContextEvent.RELATIONSHIP_REMOVED) {
-						System.out.println("workshopdisplay id: "
-								+ event.getItem().getId());
-						System.out.println(event.getItem().getId()
-								.equalsIgnoreCase("infodisplay@itu.dk"));
-						if (event.getItem().getId()
-								.equalsIgnoreCase("infodisplay@itu.dk")) {
+						Display d = (Display) event.getItem(); 
+						if (d.getId().equalsIgnoreCase("infodisplay@itu.dk")) {
 							try {
-								getContextService().getEntity("ubicomp2011")
-										.contextChanged(event);
-								// Registration automatically when
-								// Show some info in the gui
-								// Do we only get event when people in the
-								// context is found
+								toConsole("event fired");
+								Conference conf = (Conference) getContextService().getEntity("ubicomp2011"); 
+								conf.contextChanged(event);
+								Participant p = (Participant) event.getEntity();
+								
+								toConsole("Welcome "  + p.getName());
+								ArrayList<Workshop> wList = (ArrayList<Workshop>) conf.getWorkshopsByParticipant(p);
+								toConsole("You are registrered for Ubicomp 2011 and participating in the following Workshops");
+								for (Workshop w : wList) {
+									toConsole(String.format("14:00 %s: %s %s %s", w.getName(), w.getFloor(), w.getSector(), w.getRoom()));
+								}
+								toConsole("\n(A map is shown)");
+								
+								Scanner in = new Scanner(System.in);
+								toConsole("\n\nDo you wish to be tracked during the conference inside ITU? \nPress Y or N");
+								String input = in.nextLine();
+								if (input.equalsIgnoreCase("y")) {
+									TerminalListener tListener = new TerminalListener(p.getMac_addr());
+									toConsole("\nYour current location is: " + d.getFloor() + d.getSector() + d.getRoom());
+								}
+								
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}
@@ -117,58 +131,27 @@ public class ConferenceTester extends AbstractContextClient {
 				}
 			});
 			
-			getContextService().addEntityListener(workshop_listener,
-					Participant.class);
+			
 		} catch (RemoteException e) {
 			
 		}
 		
-//		try {
-//			display_listener = new RemoteEntityListenerImpl();
-//			display_listener.addEntityListener(new EntityListener() {
-//				@Override
-//				public void contextChanged(ContextEvent event) {
-//					System.out.println("infodisplay id: "
-//							+ event.getItem().getId());
-//					if (event.getItem().getId().equals("infodisplay@itu.dk")) {
-//						try {
-//							getContextService().getEntity("ubicomp2011")
-//									.contextChanged(event);
-//							// Show some info in the GUI
-//
-//						} catch (RemoteException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//			});
-//
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		}
 		load();
-		//test();
-
-		window = new InfoDisplay(true);
-		window.change();
 		
+		toConsole("------------------------------------------------------------------");
+		toConsole("Welcome to ITU");
 		
-//		Calendar cal = new java.util.GregorianCalendar(); 
-//		SimpleDateFormat format = new  SimpleDateFormat("dd-MMMM");
-//		
-//		ArrayList<String[]> events = new ArrayList<String[]>();
-//		String event1[] = {"Ubicomp conference", "13th International Conference on Ubiquitous Computing (UbiComp 2011) at ITU Copenhagen", format.format(cal.getTime())};		
-//		String event4[] = {"Second International Workshop on Ubiquitous Crowdsourcing: Towards a Platform for Crowd Computing", "", format.format(cal.getTime())};
-//		String event5[] = {"Trajectory Data Mining and Analysis", "Some content", format.format(cal.getTime())};		
-//		String event2[] = {"Annual party 2011", "Students and employees we hope to see you at this festive occasion. Invitation is sent to your mailbox. Buy tickets now at the Information desk.", format.format(cal.getTime())};
-//		String event3[] = {"ITU.Film and Analog present: True Grit at 14:00 in Analog", "Drop by Analog at 14:00 and watch this great western from the Coen Brothers (Big Lebowski, Fargo). All are welcome, and there will be free popcorn as well!", format.format(cal.getTime())};
-//		
-//		events.add(event1);
-//		events.add(event2);
-//		events.add(event3);
-//		events.add(event4);
-//		events.add(event5);
+		toConsole("Todays events 30/09/2011");
+		toConsole("Ubicomp conference: \13th International Conference on Ubiquitous Computing (UbiComp 2011) at ITU Copenhagen");
 		
+		toConsole("Workshop: \nUbiquitous Technologies in Hospitals\n");
+		
+		toConsole("Workshop:\nMobile Sensing and Air Quality\n");
+		
+		toConsole("Annual party 2011\n Students and employees we hope to see you at this festive occasion. Invitation is sent to your mailbox. Buy tickets now at the Information desk.");
+		
+		toConsole("ITU.Film and Analog present: True Grit at 14:00 in Analog:\nDrop by Analog at 14:00 and watch this great western from the Coen Brothers (Big Lebowski, Fargo). All are welcome, and there will be free popcorn as well!");
+		toConsole("------------------------------------------------------------------");
 		
 	}
 
@@ -180,6 +163,10 @@ public class ConferenceTester extends AbstractContextClient {
 			getContextService().addEntity(w2);
 			getContextService().addEntity(infodisplay);
 			getContextService().addEntity(ubicomp);
+			
+			
+			getContextService().addEntityListener(display_listener,
+					Participant.class);
 
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -191,7 +178,7 @@ public class ConferenceTester extends AbstractContextClient {
 		try {
 //			Attending attending = new Attending(this.getClass().getName());
 //			located = new Located(this.getClass().getName());
-//			getContextService().addEntityListener(workshop_listener,
+//			getContextService().addEntityListener(display_listener,
 //					Participant.class);
 //
 //			System.out.println((getContextService().getContext(p1.getId())
@@ -224,6 +211,8 @@ public class ConferenceTester extends AbstractContextClient {
 			AlienReaderNotValidException, AlienReaderTimeoutException,
 			AlienReaderConnectionException {
 		new ConferenceTester("conference");
+		
+		
 	}
 	
 	private void toConsole(Object o) {
