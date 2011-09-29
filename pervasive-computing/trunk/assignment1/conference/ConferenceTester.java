@@ -20,6 +20,7 @@ import com.alien.enterpriseRFID.reader.AlienReaderNotValidException;
 import com.alien.enterpriseRFID.reader.AlienReaderTimeoutException;
 
 import dk.itu.infobus.ws.EventBus;
+import dk.itu.infobus.ws.Listener;
 import dk.pervasive.jcaf.ContextEvent;
 import dk.pervasive.jcaf.EntityListener;
 import dk.pervasive.jcaf.impl.RemoteEntityListenerImpl;
@@ -32,7 +33,7 @@ public class ConferenceTester extends AbstractContextClient {
 	// look up the zone's here http://tiger.itu.dk:8000/ITUitter/
 	// E200 9037 8904 0121 1620 7040 is the one attached to the wall of pitLab -
 	// mac address taken from a.book
-	final Participant participant1 = new Participant(
+	Participant participant1 = new Participant(
 			"E200 9037 8904 0121 1620 7040", "Participant 1", "4329b1550000");
 
 	Participant p1 = new Participant("E200 9037 8904 0121 1450 81CF",
@@ -124,8 +125,8 @@ public class ConferenceTester extends AbstractContextClient {
 									EventBus eb = new EventBus("tiger.itu.dk",
 											8004);
 									eb.start();
-									eb.addListener(new TerminalListener(p
-											.getMac_addr()));
+									Listener listener = new TerminalListener(p.getMac_addr(), p.getName());  
+									eb.addListener(listener);
 
 									toConsole("\nYour current location is: "
 											+ d.getFloor() + d.getSector()
@@ -186,33 +187,33 @@ public class ConferenceTester extends AbstractContextClient {
 		}
 	}
 
-	public void test() {
-		toConsole("testing");
-		try {
-			// Attending attending = new Attending(this.getClass().getName());
-			// located = new Located(this.getClass().getName());
-			// getContextService().addEntityListener(display_listener,
-			// Participant.class);
-			//
-			// System.out.println((getContextService().getContext(p1.getId())
-			// .toXML()));
-			//
-			// // getContextService().addContextItem(p1.getId(),attending, w1);
-			// getContextService()
-			// .addContextItem(p1.getId(), located, infodisplay);
-			// // getContextService().addContextItem(p2.getId(),located,
-			// // infodisplay);
-			//
-			// getContextService().removeContextItem(
-			// "E200 9037 8904 0121 1620 7040", located);
-
-			TerminalListener listener = new TerminalListener("4329b1550000");
-			getContextService().getEntity("E200 9037 8904 0121 1620 7040");
-
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void test() {
+//		toConsole("testing");
+//		try {
+//			// Attending attending = new Attending(this.getClass().getName());
+//			// located = new Located(this.getClass().getName());
+//			// getContextService().addEntityListener(display_listener,
+//			// Participant.class);
+//			//
+//			// System.out.println((getContextService().getContext(p1.getId())
+//			// .toXML()));
+//			//
+//			// // getContextService().addContextItem(p1.getId(),attending, w1);
+//			// getContextService()
+//			// .addContextItem(p1.getId(), located, infodisplay);
+//			// // getContextService().addContextItem(p2.getId(),located,
+//			// // infodisplay);
+//			//
+//			// getContextService().removeContextItem(
+//			// "E200 9037 8904 0121 1620 7040", located);
+//
+//			TerminalListener listener = new TerminalListener("4329b1550000", serviceui);
+//			getContextService().getEntity("E200 9037 8904 0121 1620 7040");
+//
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public void run() {

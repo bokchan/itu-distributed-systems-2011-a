@@ -26,25 +26,33 @@ import dk.itu.infobus.ws.PatternOperator;
  */
 public class TerminalListener extends Listener {
 	
+	private String deviceaddress;
+	private String name;
+	private String lastUpdatedZone = "";
 	/**
 	 * TerminalListener constructor
 	 * 
 	 * @param deviceAddress
 	 */
-	public TerminalListener(String deviceAddress) {
+	public TerminalListener(String deviceAddress, String name) {
         super(new PatternBuilder()
         .add("terminal.btmac", PatternOperator.EQ, deviceAddress)          // get all events related to the given terminal
         .add("type", PatternOperator.EQ, "device.detected","device.moved") // and the property 'type' is either detected or moved
         .addMatchAll("zone.current")                                // and have a 'zone.current' property
         .getPattern()
         );
+        this.name = name;
+        this.deviceaddress = deviceAddress;
     }
 
     public void onStarted() { System.out.println("Hello, the listener has been registered!"); }
     public void cleanUp(){ System.out.println("Bye bye!"); }
 
+    
     public void onMessage(Map<String,Object> evt) {
-    	System.out.println( "TerminalListener" );
-        System.out.println( evt.get("zone.current") );
+    	if (!lastUpdatedZone.equalsIgnoreCase(evt.get("zone.current").toString())) {
+	    	System.out.println(name + " is in zone " +  evt.get("zone.current"));
+			lastUpdatedZone = evt.get("zone.current").toString();
+    	} 
     }
 }
