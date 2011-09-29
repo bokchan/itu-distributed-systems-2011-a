@@ -17,7 +17,7 @@ public class Workshop extends Room {
 	public Workshop(String id, int floor, char sector, int number, String name, String blip_zone_id) {
 		super(id, floor, sector, number, name, blip_zone_id);
 		this.participants = new ArrayList<Participant>();
-		this.name = name; 
+		this.name = name;
 	}
 	
 	/**
@@ -57,6 +57,7 @@ public class Workshop extends Room {
 	@Override
 	public void contextChanged(ContextEvent event) {
 		super.contextChanged(event);
+		System.err.println("Workshop CTX Changed");
 		ContextItem item = event.getItem();
 		if (item instanceof Person) {
 			try {
@@ -74,5 +75,10 @@ public class Workshop extends Room {
 		}
 		
 		return String.format("<workshop id=\"%s\" ><name>%s</name>%s</workshop>", super.getId(), getName(), super.toXML()); 
-	}	
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.getId().hashCode();
+	};
 }

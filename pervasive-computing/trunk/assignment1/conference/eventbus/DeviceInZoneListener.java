@@ -42,7 +42,6 @@ public class DeviceInZoneListener extends Listener {
 		this.room = room;
 		
 		System.out.print("DeviceInZoneListener called/started");
-		
 	}
 
 	public void onStarted() {
@@ -56,14 +55,10 @@ public class DeviceInZoneListener extends Listener {
 		
 		try {
 			System.out.println(terminal + " in " + message.get("zone.current"));
-			// add terminal/device to the JCAF service
 			service.addContextItem(terminal, this.located, this.room);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 	}
 
 }

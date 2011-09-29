@@ -55,6 +55,8 @@ public class Participant extends Person {
 	
 	@Override
 	public void contextChanged(ContextEvent event) {
+		
+		System.out.println(((Participant)event.getEntity()).getName()  + " Context Changed");
 		super.contextChanged(event);
 		String new_location = null;
 		
@@ -75,6 +77,15 @@ public class Participant extends Person {
 			}
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.getId().hashCode();
+		
+	};
+	
+	
+	
 	public String toXML() {
 		String context = "";
 		if (getContext() != null) {

@@ -11,7 +11,6 @@ public class Located extends TimedRelationship {
 	}
 
 	public Located(String source) {
-		this();
 		this.source = source;
 	}
 

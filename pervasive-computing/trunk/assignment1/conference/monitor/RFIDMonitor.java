@@ -72,25 +72,34 @@ public class RFIDMonitor extends AbstractMonitor {
 		if (tagList == null) {
 			System.out.println("No Tags Found");
 		} else {
+			
+			System.out.println("currentTags pre" +  currentTAGS.toString());
 			// Convert located rfid tags to a hashset 
-			HashSet<Tag> tmp = new HashSet<Tag>(Arrays.asList(tagList));  
+			HashSet<Tag> tmp = new HashSet<Tag>(Arrays.asList(tagList));
+			System.out.println("reading: " + tmp.toString());
 			HashSet<Tag> diff = (HashSet<Tag>) currentTAGS.clone();
+			
 			// Remove from a tmp copy of currentTags all items from the new reading 
-			diff.removeAll(tmp);
+			tmp.removeAll(diff);
+			System.out.println("diff: " + diff.toString());
 			// Add all tags to currentTags
 			currentTAGS.addAll(tmp);
+			
 			// Remove the difference between currentTags and the new reading from 
 			// the union of currentTags and the new reading
 			currentTAGS.removeAll(diff);
-
+			System.out.println("currentTags post" +  currentTAGS.toString());
+			
 			// System.out.println("Tag(s) found:");
 			for (Tag t : currentTAGS) {
 				getContextService().addContextItem(t.toString(), rfid_located,
 						display);
+				System.out.println("Entered : " +  t.getTagID());
 			}
 			for (Tag t : diff) {
 				getContextService().removeContextItem(t.toString(),
 						rfid_located);
+				System.out.println("Left : " + t.getTagID()); 
 			}
 
 			// System.out.println("getContextService().getAllEntityIds(): "

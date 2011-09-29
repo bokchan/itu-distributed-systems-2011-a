@@ -8,7 +8,6 @@ import java.util.Map;
 
 import assignment1.conference.entity.Room;
 import assignment1.conference.relationship.Located;
-
 import dk.itu.infobus.ws.Listener;
 import dk.itu.infobus.ws.PatternBuilder;
 import dk.itu.infobus.ws.PatternOperator;
@@ -41,8 +40,7 @@ public class DeviceLeftZoneListener extends Listener {
 		this.located = located;
 		this.room = room;
 
-		System.out.print("DeviceLeftZoneListener called/started");
-		
+		System.out.print("DeviceLeftZoneListener called/started");		
 	}
 
 		

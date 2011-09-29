@@ -1,9 +1,7 @@
 package assignment1.conference.eventbus;
 
-import java.io.IOException;
 import java.util.Map;
 
-import dk.itu.infobus.ws.EventBus;
 import dk.itu.infobus.ws.Listener;
 import dk.itu.infobus.ws.PatternBuilder;
 import dk.itu.infobus.ws.PatternOperator;
@@ -27,7 +25,6 @@ import dk.itu.infobus.ws.PatternOperator;
  *
  */
 public class TerminalListener extends Listener {
-    
 	
 	/**
 	 * TerminalListener constructor
@@ -47,7 +44,7 @@ public class TerminalListener extends Listener {
     public void cleanUp(){ System.out.println("Bye bye!"); }
 
     public void onMessage(Map<String,Object> evt) {
+    	System.out.println( "TerminalListener" );
         System.out.println( evt.get("zone.current") );
     }
-
 }

@@ -1,12 +1,12 @@
 package assignment1.conference.entity;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 
 import assignment1.conference.relationship.Attending;
 import dk.pervasive.jcaf.ContextEvent;
+import dk.pervasive.jcaf.Entity;
 import dk.pervasive.jcaf.entity.GenericEntity;
 import dk.pervasive.jcaf.entity.Person;
 
@@ -15,8 +15,8 @@ public class Conference extends GenericEntity {
 	
 	private Date dateStart;
 	private Date dateEnd;
-	private List <Participant> participants;
-	private List <Workshop> workshops;
+	private HashSet<Participant> participants;
+	private HashSet<Workshop> workshops;
 	
 	
 	public Conference(String id, String name, Date dateStart, Date dateEnd) {
@@ -24,12 +24,12 @@ public class Conference extends GenericEntity {
 		this.name = name;
 		this.dateStart = dateStart;
 		this.dateEnd = dateEnd;
-		this.participants = new ArrayList<Participant>();
-		this.workshops = new ArrayList<Workshop>();
+		this.participants = new HashSet<Participant>();
+		this.workshops = new HashSet<Workshop>();
 	}
 	
 	public Conference(String id, String name, Date dateStart, Date dateEnd,
-			List<Participant> participants, List<Workshop> workshops) {
+			HashSet<Participant> participants, HashSet<Workshop> workshops) {
 		super(id);
 		this.name = name;
 		this.dateStart = dateStart;
@@ -44,7 +44,6 @@ public class Conference extends GenericEntity {
 		this.dateStart = dateStart;
 		this.dateEnd = dateEnd;
 	}
-
 	
 	public String getName() {
 		return name;
@@ -57,16 +56,15 @@ public class Conference extends GenericEntity {
 	
 	public void AddParticipant(Participant participant)
 	{
-		System.out.println("sfsdf" +  participants);
-		this.participants.add(participant);
+		participants.add(participant);
 	}
 	
-	public List<Workshop> GetWorkshops()
+	public HashSet<Workshop> GetWorkshops()
 	{
 		return this.workshops;
 	}
 	
-	public List<Participant> GetParticipants()
+	public HashSet<Participant> GetParticipants()
 	{
 		return this.participants;
 	}
@@ -77,7 +75,6 @@ public class Conference extends GenericEntity {
 		return "Conference";
 	}
 	
-	
 	public Date getDateStart() {
 		return dateStart;
 	}
@@ -86,12 +83,22 @@ public class Conference extends GenericEntity {
 		return dateEnd;
 	}
 	
+	public boolean isParticipant(Participant p) {
+		return participants.contains(p);
+	}
+	
 	@Override
 	public void contextChanged(ContextEvent event) {
 		super.contextChanged(event);
-		if (event.getItem() instanceof Person) {
+		
+		System.out.println("Conf ContextChanged: " +  event);
+		Entity participant = event.getEntity() ; 
+		if (participant instanceof Person) {
 			try {
-				getContextService().addContextItem(this.getId(), new Attending("attending"), (Person)event.getItem());
+				if (participants.contains(participant)  && !getContext().contains(participant)) {
+					getContextService().addContextItem(this.getId(), new Attending("attending"), (Person)event.getItem());
+					System.out.println("added " + ((Participant)participant).getName() );
+				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -99,6 +106,10 @@ public class Conference extends GenericEntity {
 		
 	}
 	
+	@Override
+	public int hashCode() {
+		return this.getId().hashCode();
+	};
 
 	public String toXML() {
 		String context = "";

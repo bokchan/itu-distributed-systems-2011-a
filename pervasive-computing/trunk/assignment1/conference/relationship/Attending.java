@@ -1,6 +1,7 @@
 package assignment1.conference.relationship;
 
 
+
 /**
  * Relationship to connect a visitor to different ITUEvents.
  * 
