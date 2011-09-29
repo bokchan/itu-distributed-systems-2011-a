@@ -1,8 +1,6 @@
 package assignment1.conference.monitor;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import assignment1.conference.entity.Display;
 import assignment1.conference.relationship.Located;
@@ -26,7 +24,8 @@ import dk.pervasive.jcaf.util.AbstractMonitor;
 public class RFIDMonitor extends AbstractMonitor {
 
 	private Located rfid_located = null;
-	private HashSet<Tag> currentTAGS; // Tags in context before each request to the AlienReader  
+	private Tag currentTAGS[] = null; // Tags in context before each request to
+										// the AlienReader
 	private Display display;
 
 	public RFIDMonitor(String service_uri, Display display, Located located)
@@ -36,7 +35,6 @@ public class RFIDMonitor extends AbstractMonitor {
 		super(service_uri);
 		this.display = display;
 		this.rfid_located = located;
-		this.currentTAGS = new HashSet<Tag>();
 	}
 
 	/**
@@ -73,48 +71,27 @@ public class RFIDMonitor extends AbstractMonitor {
 			System.out.println("No Tags Found");
 		} else {
 			
-			System.out.println("currentTags pre" +  currentTAGS.toString());
-			// Convert located rfid tags to a hashset 
-			HashSet<Tag> tmp = new HashSet<Tag>(Arrays.asList(tagList));
-			System.out.println("reading: " + tmp.toString());
-			HashSet<Tag> diff = (HashSet<Tag>) currentTAGS.clone();
-			
-			// Remove from a tmp copy of currentTags all items from the new reading 
-			tmp.removeAll(diff);
-			System.out.println("diff: " + diff.toString());
-			// Add all tags to currentTags
-			currentTAGS.addAll(tmp);
-			
-			// Remove the difference between currentTags and the new reading from 
-			// the union of currentTags and the new reading
-			currentTAGS.removeAll(diff);
-			System.out.println("currentTags post" +  currentTAGS.toString());
-			
-			// System.out.println("Tag(s) found:");
-			for (Tag t : currentTAGS) {
-				getContextService().addContextItem(t.toString(), rfid_located,
+			// Convert located rfid tags to a hashset
+			if (currentTAGS != null) {
+				for (Tag t : currentTAGS) {
+					System.out.println(t.getTagID() + " entered");
+					
+					getContextService().removeContextItem(t.getTagID(),
+							rfid_located);
+				}
+			}
+
+			for (Tag t : tagList) {
+				System.out.println(t.getTagID() + " left");
+				getContextService().addContextItem(t.getTagID(), rfid_located,
 						display);
-				System.out.println("Entered : " +  t.getTagID());
 			}
-			for (Tag t : diff) {
-				getContextService().removeContextItem(t.toString(),
-						rfid_located);
-				System.out.println("Left : " + t.getTagID()); 
-			}
+			System.out.println(currentTAGS);
 
-			// System.out.println("getContextService().getAllEntityIds(): "
-			// + getContextService().getAllEntityIds());
-
-			// bind Visitor with context
-			// TODO: also remove people - andreas mentioned something with
-			// comparing sets :
-			// getContextService().removeContextItem(entity_id, relation)
-
-			// System.out.println("ID:" + tag.getTagID()
+			currentTAGS = tagList;
 		}
 		// Close the connection
 		reader.close();
-
 		//
 	}
 
@@ -136,18 +113,15 @@ public class RFIDMonitor extends AbstractMonitor {
 			Thread t = new Thread();
 			t.start();
 			try {
-				System.out
-						.println("RFIDMonitor: thread in rfid monitor startet and reading done");
+				System.out.println("RFIDMonitor: thread in rfid monitor startet and reading done");
 				getRFIDTags();
 				t.sleep(5000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (AlienReaderException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 		}
