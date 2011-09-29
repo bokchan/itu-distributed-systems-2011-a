@@ -80,5 +80,6 @@ public class Workshop extends Room {
 	@Override
 	public int hashCode() {
 		return this.getId().hashCode();
-	};
+	}
+
 }
