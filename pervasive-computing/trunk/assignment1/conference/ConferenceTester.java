@@ -8,7 +8,7 @@ import assignment1.conference.entity.Display;
 import assignment1.conference.entity.Participant;
 import assignment1.conference.entity.Workshop;
 import assignment1.conference.eventbus.TerminalListener;
-import assignment1.conference.gui.ConferenceDisplaySWT;
+import assignment1.conference.gui.InfoDisplay;
 import assignment1.conference.monitor.BLIPMonitor;
 import assignment1.conference.monitor.RFIDMonitor;
 import assignment1.conference.relationship.Located;
@@ -25,7 +25,7 @@ import dk.pervasive.jcaf.util.AbstractContextClient;
 
 public class ConferenceTester extends AbstractContextClient {
 
-	private ConferenceDisplaySWT window;
+	private InfoDisplay window;
 
 	private RemoteEntityListenerImpl display_listener;
 	private RemoteEntityListenerImpl workshop_listener;
@@ -84,12 +84,9 @@ public class ConferenceTester extends AbstractContextClient {
 					located);
 			Thread t = new Thread(rfid_monitor);
 			t.start();
-
 		} catch (RemoteException e) {
 			
 		}
-		
-		
 		
 		try {
 			workshop_listener = new RemoteEntityListenerImpl();
@@ -152,7 +149,27 @@ public class ConferenceTester extends AbstractContextClient {
 		load();
 		//test();
 
-		window = new ConferenceDisplaySWT();
+		window = new InfoDisplay(true);
+		window.change();
+		
+		
+//		Calendar cal = new java.util.GregorianCalendar(); 
+//		SimpleDateFormat format = new  SimpleDateFormat("dd-MMMM");
+//		
+//		ArrayList<String[]> events = new ArrayList<String[]>();
+//		String event1[] = {"Ubicomp conference", "13th International Conference on Ubiquitous Computing (UbiComp 2011) at ITU Copenhagen", format.format(cal.getTime())};		
+//		String event4[] = {"Second International Workshop on Ubiquitous Crowdsourcing: Towards a Platform for Crowd Computing", "", format.format(cal.getTime())};
+//		String event5[] = {"Trajectory Data Mining and Analysis", "Some content", format.format(cal.getTime())};		
+//		String event2[] = {"Annual party 2011", "Students and employees we hope to see you at this festive occasion. Invitation is sent to your mailbox. Buy tickets now at the Information desk.", format.format(cal.getTime())};
+//		String event3[] = {"ITU.Film and Analog present: True Grit at 14:00 in Analog", "Drop by Analog at 14:00 and watch this great western from the Coen Brothers (Big Lebowski, Fargo). All are welcome, and there will be free popcorn as well!", format.format(cal.getTime())};
+//		
+//		events.add(event1);
+//		events.add(event2);
+//		events.add(event3);
+//		events.add(event4);
+//		events.add(event5);
+		
+		
 	}
 
 	public void load() {
