@@ -1,0 +1,24 @@
+=Notat om NO2 forurening i Danmark =
+
+==Omregning==
+1ppm = 1880 µg/m3;  1mg/m3  = 0,53ppm;  1µg/m3  = 5,32 x10-4ppm.
+
+==Grænseværdier==
+Et af EU og WHO udstedt direktiv opridser grænseværdierne:
+
+200 µg/m3 (0,1064 ppm) må ikke overskrides i en time mere end 18 gange årligt. Det bliver det heller aldrig.
+
+40 µg/m3 (0,02128 ppm) er årsmiddelgrænseværdien som konstant overskrides for både Jagtvej og HC Andersens Boulevard (Se DMU: NO2 og NO tendenser for årsmiddelværdier) 
+
+===Diskussion af grænseværdierne===
+_”WHO (1999) har som nævnt (se afsnit 1) anbefalet en værdi på 200 µg/m3som 1-times værdi, begrundet i lette lungefunktionsforandringer hos astmatikere ved et niveau på 365-565 µg/m3, dvs. et såkaldt LOAEL. Der er brugt en usikkerhedsfaktor på 2, dvs. at der ikke er kalkuleret med den grad af beskyttelse, som normalt tilstræbes ved befolkningens udsættelse for miljøfremmede stoffer (hvor der oftest anvendes en usikkerhedsfaktor på 10 eller mere).
+Skal der indlægges det sædvanlige sikkerhedsniveau, bør grænseværdien ligge væsentligt lavere end de foreslåede 200 µg/m3, fx 50 µg/m3. Et højt beskyttelsesniveau er bl.a. relevant pga. den tilsyneladende stigning i forekomsten i Danmark af personer med astma.”_ 
+(Se Miljøstyrelsens skrift om udendørs luftforurening på: http://www.mst.dk/Virksomhed_og_myndighed/Luft/Hvad_er_luftforurening/effekter_paa_mennesker_og_miljoe/Arbejdsgruppe_om_udendoers_luftforurening/05040104.htm)
+
+==Risikogrupper==
+_”Både børn, astmatikere og personer med kronisk obstruktive lungesygdomme må betragtes som en særlig følsom gruppe.
+Ud over grupper med særlig følsomhed er grupper, der er særligt udsatte for NO2-forureningen, også potentielle risikogrupper. Dette inkluderer bl.a. personer, der arbejder eller af anden grund opholder sig i længere tid i miljøer med tæt trafik, fx chauffører, cykelbude, gadehandlere, sportsfolk/motionister og legende børn.”_
+(Miljøstyrelsens skrift om udendørs luftforurening)
+
+==Vores tilgang==
+Et eventuelt skel mellem værdierne vil dermed kunne lægges ved 0-35µg/m3 er ren luft, 35-45µg/m3 er let forurenet luft, 45+ µg/m3 er forurenet luft. Hvis vi indsætter en tekstbox når app'en tændes der siger at indikatoren på luftforureningen er grænsesat udfra EU's direktiv om årsmiddelværdien, så kan vi godt bruge de grænseværdier.
