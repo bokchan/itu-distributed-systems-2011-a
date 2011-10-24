@@ -1,0 +1,62 @@
+package dk.itu.spct;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
+public class ServerConnect extends Activity {
+	
+	private TextView info;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		info = (TextView) findViewById(R.id.info);
+	}
+	
+	public void onConnectClick(View view) {
+		info.setText("Connect to 10.25.253.236: 4569");
+		
+		serverConnect("10.25.253.236", 4569);
+	}
+	
+	public void onGotoGallery(View view) {
+		Intent intent = new Intent(this, GalleryActivity.class);
+		startActivity(intent);
+	}
+	
+	private void serverConnect(String server, int port) {
+		try {
+			Socket s = new Socket(server, port);
+			s.setReuseAddress(true);
+			
+			OutputStream os = s.getOutputStream();
+			PrintWriter pw = new PrintWriter(os);
+			pw.println("hello from android");
+			
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+//			String response = reader.readLine();
+//			info.setText("Response: " + response);
+			
+			pw.close();
+			//reader.close();
+			s.close();
+	
+		}
+		catch (UnknownHostException e) {
+			info.setText(e.getMessage());
+		}
+		catch (IOException e) {
+			info.setText(e.getMessage());
+		}
+	}
+}
