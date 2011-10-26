@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/hello"
+    />
+
+
+<Button android:text="Go to gallery" 
+		android:id="@+id/button1" 
+		android:onClick="goToGallery" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+
+
+<Button android:text="Send simple text message to tcp server" 
+		android:id="@+id/button2" 
+		android:onClick="goToTCPSendMessage" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+		
+<Button android:text="Go to a simple stand a lone image view" 
+		android:id="@+id/button3" 
+		android:onClick="goToImageView" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+
+
+
+<Button android:text="Go to tcp server activity" 
+		android:id="@+id/button4" 
+		android:onClick="goToTCPServer" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+
+<Button android:text="Go to server connect activity (bok version)" 
+		android:id="@+id/button5" 
+		android:onClick="goToServerConnect" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>		
+
+
+
+
+
+<!--
+
+todo: 
+might just be a start server etc..?
+ 
+<Button android:text="Go to and start server" 
+		android:id="@+id/button2" 
+		android:onClick="goToServer" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+
+ -->
+
+
+
+
+
+
+
+</LinearLayout>
