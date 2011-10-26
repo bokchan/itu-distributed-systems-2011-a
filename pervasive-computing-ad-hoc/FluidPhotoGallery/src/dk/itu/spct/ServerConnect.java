@@ -24,9 +24,9 @@ public class ServerConnect extends Activity {
 	}
 	
 	public void onConnectClick(View view) {
-		info.setText("Connect to 10.25.253.236: 4569");
+		info.setText("Connect to 188.94.218.188: 4569");
 		
-		serverConnect("10.25.253.236", 4569);
+		serverConnect("188.94.218.188", 4569);
 	}
 	
 	public void onGotoGallery(View view) {
