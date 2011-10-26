@@ -7,6 +7,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 
+
+
+/**
+ * 
+ * can serve multiple client connections
+ *
+ */
 public class TcpServer {
 
 	private int port;
