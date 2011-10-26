@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer
+        name="tcp_server_port"
+        >7656</integer>
+        
+    <integer
+        name="android_tcp_server_port"
+        >50299</integer>
+</resources>

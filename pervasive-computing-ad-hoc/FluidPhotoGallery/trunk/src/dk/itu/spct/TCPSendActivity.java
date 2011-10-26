@@ -5,19 +5,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 
-import dk.itu.spct.R;
-import dk.itu.spct.R.id;
-import dk.itu.spct.R.layout;
-
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -59,9 +53,14 @@ public class TCPSendActivity extends Activity {
         
         InetAddress receiversAddress;
 		try {
+			
+			// odd keeps raising change to sting etc...
+//			String tcp_server_ip_address = R.string.tcp_server_ip_address;
+//			receiversAddress = InetAddress.getByName(tcp_server_ip_address);
+			
 			receiversAddress = InetAddress.getByName("10.25.254.241");
 
-	        int receiversPort = 7656;
+	        int receiversPort = R.integer.tcp_server_port;
 			
 			// create a new socket
 			Socket socket = new Socket( receiversAddress, receiversPort );

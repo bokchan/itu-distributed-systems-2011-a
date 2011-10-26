@@ -5,4 +5,12 @@
     <string name="hello_activity_first">ActivityFirst! (just a plain sample activity)</string>
     <string name="hello_activity_second">ActivitySecond! (just a plain sample activity)</string>
     <string name="app_name">FluidPhotoGallery</string>
+ 
+ 	<!-- todo: having problems calling this one keeps raising error about change to string hmm -->   
+    <string name="tcp_server_ip_address">10.25.254.241</string>
+    
+
+        
+
+    
 </resources>
