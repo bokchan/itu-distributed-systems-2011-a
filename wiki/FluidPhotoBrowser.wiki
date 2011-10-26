@@ -3,3 +3,9 @@
 = Introduction =
 
 The application can be started by running the file FluuidPhotoBrowser.java
+
+
+
+= More =
+
+Read about the connected Android application FluidPhotoGallery.
