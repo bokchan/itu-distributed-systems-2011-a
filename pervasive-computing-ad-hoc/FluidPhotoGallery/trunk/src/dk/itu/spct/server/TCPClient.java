@@ -11,13 +11,13 @@ import android.util.Log;
 
 public class TCPClient {
 
-	private static final String TAG = "Fluidgallery - TCPClient";
+	private static final String TAG = "Fluidgallery";
     private static final boolean D = true;
 	
 	public static void send(String message) {
     
 	
-	if(D) Log.e(TAG, "called");
+	if(D) Log.d(TAG, "TCPClient called");
     
 
 
@@ -27,7 +27,7 @@ public class TCPClient {
     String DEVICEIP = null;
     
     
-    if(D) Log.e(TAG, "Device IP: " + DEVICEIP + " Message sent: " + message);
+    if(D) Log.d(TAG, "Device IP: " + DEVICEIP + " Message sent: " + message);
     
     
     
@@ -58,11 +58,11 @@ public class TCPClient {
 
 	
 	} catch (UnknownHostException e) {
-		if(D) Log.e(TAG, "error");
+		if(D) Log.d(TAG, "error");
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} catch (IOException e) {
-		if(D) Log.e(TAG, "error");
+		if(D) Log.d(TAG, "error");
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}

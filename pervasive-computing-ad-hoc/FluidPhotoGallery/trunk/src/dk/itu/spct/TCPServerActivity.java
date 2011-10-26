@@ -51,7 +51,7 @@ public class TCPServerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	
-    	if(D) Log.e(TAG, "TCPServerActivity onCreate called");
+    	if(D) Log.d(TAG, "TCPServerActivity onCreate called");
     	
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.serveractivity);
@@ -72,7 +72,7 @@ public class TCPServerActivity extends Activity {
                         @Override
                         public void run() {
                             serverStatus.setText("Listening on IP: " + SERVERIP);
-                            if(D) Log.e(TAG, "Listening on IP: " + SERVERIP);
+                            if(D) Log.d(TAG, "Listening on IP: " + SERVERIP);
                             
                         }
                     });
@@ -84,7 +84,7 @@ public class TCPServerActivity extends Activity {
                             @Override
                             public void run() {
                                 serverStatus.setText("Connected.");
-                                if(D) Log.e(TAG, "Connected.");
+                                if(D) Log.d(TAG, "Connected.");
                             }
                         });
 
@@ -100,7 +100,7 @@ public class TCPServerActivity extends Activity {
                               @Override
                               public void run() {
                               	
-                            	  if(D) Log.e(TAG, "inside run before serverStatus.setText(message);");
+                            	  if(D) Log.d(TAG, "inside run before serverStatus.setText(message);");
                             	  
                               	// do whatever you want to the front end
                                   // this is where you can be creative
@@ -108,7 +108,7 @@ public class TCPServerActivity extends Activity {
                               
                       			
                     			serverStatus.setText(message);
-                    			 if(D) Log.e(TAG, message);
+                    			 if(D) Log.d(TAG, message);
                               
                               
                               
@@ -141,7 +141,7 @@ public class TCPServerActivity extends Activity {
                                 @Override
                                 public void run() {
                                     serverStatus.setText("Oops. Connection interrupted. Please reconnect your phones.");
-                                    if(D) Log.e(TAG, "Oops. Connection interrupted. Please reconnect your phones.");
+                                    if(D) Log.d(TAG, "Oops. Connection interrupted. Please reconnect your phones.");
                                 }
                             });
                             e.printStackTrace();
@@ -152,7 +152,7 @@ public class TCPServerActivity extends Activity {
                         @Override
                         public void run() {
                             serverStatus.setText("Couldn't detect internet connection.");
-                            if(D) Log.e(TAG, "Couldn't detect internet connection.");
+                            if(D) Log.d(TAG, "Couldn't detect internet connection.");
                         }
                     });
                 }
@@ -180,7 +180,7 @@ public class TCPServerActivity extends Activity {
                 }
             }
         } catch (SocketException ex) {
-            if(D) Log.e(TAG, ex.toString());
+            if(D) Log.d(TAG, ex.toString());
         }
         return null;
     }

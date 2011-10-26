@@ -32,12 +32,12 @@ public class GalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
         
-        if(D) Log.e(TAG, "GalleryActivity onCreate called");
+        if(D) Log.d(TAG, "GalleryActivity onCreate called");
         
         Gallery g = (Gallery) findViewById(R.id.gallery);
         g.setAdapter(new ImageAdapter(this));
 
-        if(D) Log.e(TAG, "GalleryActivity onCreate called - adapter set");
+        if(D) Log.d(TAG, "GalleryActivity onCreate called - adapter set");
         
         g.setOnItemClickListener(new OnItemClickListener() {
         	@Override
@@ -46,7 +46,7 @@ public class GalleryActivity extends Activity {
         		Toast.makeText(GalleryActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 
         		
-        		if(D) Log.e(TAG, "long id: "+id);
+        		if(D) Log.d(TAG, "long id: "+id);
         		
         		// todo: find out how to get the 'real image'
         		// niecetohave: send part should probably be done in a async

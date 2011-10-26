@@ -18,13 +18,13 @@ public class FluidPhotoGalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fluidphotogallery);
         
-        if(D) Log.e(TAG, "FluidPhotoGalleryActivity onCreate called");
+        if(D) Log.d(TAG, "FluidPhotoGalleryActivity onCreate called");
         
     }
     
     public void goToGallery(View view) {
     	
-    	if(D) Log.e(TAG, "FluidPhotoGalleryActivity goToGallery called");
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToGallery called");
 //    	startActivity(new Intent(this, ActivitySecond.class));
     	startActivity(new Intent(this, GalleryActivity.class));
     	
@@ -32,7 +32,7 @@ public class FluidPhotoGalleryActivity extends Activity {
     
     public void goToTCPSendMessage(View view) {
     	
-    	if(D) Log.e(TAG, "FluidPhotoGalleryActivity goToTCPSendMessage called");
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToTCPSendMessage called");
     	startActivity(new Intent(this, TCPSendActivity.class));
     	
     }
@@ -41,7 +41,7 @@ public class FluidPhotoGalleryActivity extends Activity {
     
     public void goToImageView(View view) {
     	
-    	if(D) Log.e(TAG, "FluidPhotoGalleryActivity goToImageView called");
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToImageView called");
 //    	startActivity(new Intent(this, ActivitySecond.class));
     	startActivity(new Intent(this, ImageActivity.class));
     	
@@ -50,7 +50,7 @@ public class FluidPhotoGalleryActivity extends Activity {
 
     public void goToTCPServer(View view) {
     	
-    	if(D) Log.e(TAG, "FluidPhotoGalleryActivity goToTCPServer called");
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToTCPServer called");
     	startActivity(new Intent(this, TCPServerActivity.class));
     	
     }    
@@ -58,7 +58,7 @@ public class FluidPhotoGalleryActivity extends Activity {
 
     public void goToServerConnect(View view) {
     	
-    	if(D) Log.e(TAG, "FluidPhotoGalleryActivity goToServerConnect called");
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToServerConnect called");
     	startActivity(new Intent(this, ServerConnect.class));
     	
     }        

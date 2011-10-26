@@ -19,7 +19,7 @@ import android.widget.TextView;
 public class TCPSendActivity extends Activity {
 
 	
-    private static final String TAG = "Fluidgallery - TCPSendActivity";
+    private static final String TAG = "Fluidgallery";
     private static final boolean D = true;
 	
     private TextView serverStatus;
@@ -39,7 +39,7 @@ public class TCPSendActivity extends Activity {
         
         setContentView(R.layout.activitytcpclient);
 
-        if(D) Log.e(TAG, "onCreate called");
+        if(D) Log.d(TAG, "TCPSendActivity onCreate called");
         
         serverStatus = (TextView) findViewById(R.id.server_status);
 
@@ -107,7 +107,7 @@ public class TCPSendActivity extends Activity {
                 }
             }
         } catch (SocketException ex) {
-            if(D) Log.e(TAG, ex.toString());
+            if(D) Log.d(TAG, ex.toString());
         }
         return null;
     }

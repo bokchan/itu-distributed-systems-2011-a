@@ -21,7 +21,7 @@ public class ImageActivity extends Activity {
 		setContentView(R.layout.imageactivity);
 
 		if (D)
-			Log.e(TAG, "ImageActivity onCreate called");
+			Log.d(TAG, "ImageActivity onCreate called");
 
 		// quick fix for button listener - couldn't get the more elegant solution bellow to work
 		// could it be api level related ?
@@ -36,7 +36,7 @@ public class ImageActivity extends Activity {
 				//imageView.setImageResource(R.drawable.sample_0);
 				
 				
-				if (D) Log.e(TAG, "ImageActivity onClick called");
+				if (D) Log.d(TAG, "ImageActivity onClick called");
 				String message = "ImageActivity button hit - shold be send";
 				TCPClient.send(message);
 
@@ -54,9 +54,9 @@ public class ImageActivity extends Activity {
 	// public void onClick(View v) {
 	// // TODO Auto-generated method stub
 	//
-	// if (D) Log.e(TAG, "ImageActivity onClick called");
+	// if (D) Log.d(TAG, "ImageActivity onClick called");
 	//
-	// if (D) Log.e(TAG, "v.getId(): " + v.getId());
+	// if (D) Log.d(TAG, "v.getId(): " + v.getId());
 	//
 	// switch (v.getId()) {
 	//
@@ -64,7 +64,7 @@ public class ImageActivity extends Activity {
 	//
 	// case R.id.send_image_to_tcp_server: {
 	//
-	// if (D) Log.e(TAG, "case R.id.send_image_to_tcp_server");
+	// if (D) Log.d(TAG, "case R.id.send_image_to_tcp_server");
 	//
 	// // String message = "ImageActivity button hit - shold be send";
 	// // TCPClient.send(message);
