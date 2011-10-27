@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<customgestures>
+	<filename>customgestures.dat</filename>
+	</customgestures>
+	<server>
+		<receiver>
+			<port>
+			456
+			</port>
+			<host>localhost
+			</host>
+		</receiver>
+		<tabletop>
+		<port>123</port>
+		<host>localhost</host>
+		</tabletop>
+	</server>
+	
+	<imagefolder>
+		images\\
+	</imagefolder>
+	<systemfolder>
+	system\\
+	</systemfolder>
+	<canvas>
+		<backgroundcolor>
+			BLACK
+		</backgroundcolor>
+		
+	</canvas>
+	</settings>
