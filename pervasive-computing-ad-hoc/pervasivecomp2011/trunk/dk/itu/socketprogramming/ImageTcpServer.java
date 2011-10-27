@@ -77,7 +77,7 @@ public class ImageTcpServer {
 			DataInputStream dataInputStream = new DataInputStream( inputStream );
 
 			
-			byte buffer[] = new byte[1024 * 15];
+			byte buffer[] = new byte[1024 * 400];
 //			byte buffer[] = new byte[1024 * 300];
 			
 			// here the data input stream bytes is read/stored into the buffer array

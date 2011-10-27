@@ -61,7 +61,7 @@ public class ImageTcpClient {
 
 	public static void main(String args[]) throws Exception {
 
-//		String image = imagePath + "IMAG1168_small.jpg";
+		
 		String image = imagePath + "IMAG1168_tiny_12k.jpg";
 //		String image = imagePath + "image_sample_1.jpg";
 		
@@ -70,18 +70,17 @@ public class ImageTcpClient {
 //		System.out.println(readImageFromFile(image));
 		
 		  // local machine easiest
-		  InetAddress serverAddress = InetAddress.getByName("localhost");
-		  int serverPort = 7656;
+//		  InetAddress serverAddress = InetAddress.getByName("localhost");
+//		  int serverPort = 7656;
 		
 		 //itu
-		 // InetAddress serverAddress =
-InetAddress.getByName("10.25.254.241");
+		 // InetAddress serverAddress =InetAddress.getByName("10.25.254.241");
 		 // int serverPort = 7656;
 		
 		
 //		 // android device
-//		 InetAddress serverAddress = InetAddress.getByName("10.25.253.150");
-//		 int serverPort = 50299;
+		 InetAddress serverAddress = InetAddress.getByName("10.25.253.150");
+		 int serverPort = 50230;
 		
 //		// 'home'
 //		InetAddress serverAddress = InetAddress.getByName("10.0.1.12");
@@ -89,7 +88,7 @@ InetAddress.getByName("10.25.254.241");
 		 
 
 
-//		 String message = "A Secret Message";
+		 String message = "A Secret Message";
 		
 		 // create a new socket
 		 Socket socket = new Socket( serverAddress, serverPort );
@@ -103,12 +102,15 @@ InetAddress.getByName("10.25.254.241");
 		 
 		 
 		 InputStream input = new FileInputStream(image);
-//		 input.read(b, off, len)
+
+//		 // try out reading length 
+//		 InputStream input2 = new FileInputStream(image);
+//		 byte[] buffer2 = null;
+//		 int byte_length = input2.read(buffer2);
+//		 System.out.println("byte_length: " + byte_length);
 		 
-		 // todo: figure out the right way to bet buffer length : 
 		 
-		 byte[] buffer=new byte[1024*15]; // have seen variants byte[1024*2]
-//		 byte[] buffer=new byte[1024*200]; // have seen variants byte[1024*2]
+		 byte[] buffer=new byte[1024*400]; // have seen variants byte[1024*2]  
 		 int readData;
 		 while((readData=input.read(buffer))!=-1){
 			 dataOutputStream.write(buffer,0,readData);
