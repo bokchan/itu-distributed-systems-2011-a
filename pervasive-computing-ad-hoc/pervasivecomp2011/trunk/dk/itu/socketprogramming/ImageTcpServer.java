@@ -49,7 +49,10 @@ public class ImageTcpServer{
 
 		//String message = dataInputStream.readUTF(); // blocking call
 
-		byte buffer[] = new byte[1024 * 12];
+		// todo: figure out the right way to bet buffer length : 
+		
+		byte buffer[] = new byte[1024 * 15];
+//		byte buffer[] = new byte[1024 * 300];
 		
 		// here the data input stream bytes is read/stored into the buffer array
 		dataInputStream.read(buffer); // blocking call

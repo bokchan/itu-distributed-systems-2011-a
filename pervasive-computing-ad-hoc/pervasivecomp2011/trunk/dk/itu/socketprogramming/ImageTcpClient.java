@@ -61,7 +61,7 @@ public class ImageTcpClient {
 
 	public static void main(String args[]) throws Exception {
 
-		
+//		String image = imagePath + "IMAG1168_small.jpg";
 		String image = imagePath + "IMAG1168_tiny_12k.jpg";
 //		String image = imagePath + "image_sample_1.jpg";
 		
@@ -89,7 +89,7 @@ InetAddress.getByName("10.25.254.241");
 		 
 
 
-		 String message = "A Secret Message";
+//		 String message = "A Secret Message";
 		
 		 // create a new socket
 		 Socket socket = new Socket( serverAddress, serverPort );
@@ -103,7 +103,12 @@ InetAddress.getByName("10.25.254.241");
 		 
 		 
 		 InputStream input = new FileInputStream(image);
-		 byte[] buffer=new byte[1024*12]; // have seen variants byte[1024*2]  
+//		 input.read(b, off, len)
+		 
+		 // todo: figure out the right way to bet buffer length : 
+		 
+		 byte[] buffer=new byte[1024*15]; // have seen variants byte[1024*2]
+//		 byte[] buffer=new byte[1024*200]; // have seen variants byte[1024*2]
 		 int readData;
 		 while((readData=input.read(buffer))!=-1){
 			 dataOutputStream.write(buffer,0,readData);
