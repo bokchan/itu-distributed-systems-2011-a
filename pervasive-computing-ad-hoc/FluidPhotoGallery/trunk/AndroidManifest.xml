@@ -37,12 +37,26 @@
 
 		<activity android:name=".TCPServerActivity" 
 		          android:launchMode="singleInstance"></activity>
+
+
+		<activity android:name=".TCPImageServerActivity" 
+		          android:launchMode="singleInstance"></activity>
+
+
 		          
 		<activity android:name=".server.ServerConnect" 
 		          android:launchMode="singleInstance"></activity>
 
         <activity android:name=".ImageActivity" 
 		          android:launchMode="singleInstance"></activity>    
+
+
+
+
+
+
+
+
 
         <activity android:name=".tryouts.ActivitySecond" 
 		          android:launchMode="singleInstance"></activity>    

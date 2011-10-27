@@ -32,11 +32,19 @@
 
 
 
-<Button android:text="Go to tcp server activity" 
+<Button android:text="Go to tcp text message server activity" 
 		android:id="@+id/button4" 
 		android:onClick="goToTCPServer" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"></Button>
+		
+		
+<Button android:text="Go to tcp image server activity" 
+		android:id="@+id/button6" 
+		android:onClick="goToTCPImageServer" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+		
 
 <Button android:text="Go to server connect activity (bok version)" 
 		android:id="@+id/button5" 

@@ -62,6 +62,16 @@ public class FluidPhotoGalleryActivity extends Activity {
     	startActivity(new Intent(this, ServerConnect.class));
     	
     }        
+
+    
+    public void goToTCPImageServer(View view) {
+    	
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToTCPImageServer called");
+    	startActivity(new Intent(this, TCPImageServerActivity.class));
+    	
+    }        
+    
+    
     
     
 }
