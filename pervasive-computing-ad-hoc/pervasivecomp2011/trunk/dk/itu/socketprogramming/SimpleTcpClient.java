@@ -4,37 +4,49 @@ import java.net.*;
 import java.io.*;
 
 public class SimpleTcpClient {
+	
+	
+	public SimpleTcpClient(String serverIPNumber, int portNumber, String message) throws IOException {
+
+		Socket socket = null;
+		
+        try {
+			InetAddress serverAddress = InetAddress.getByName(serverIPNumber);
+			int serverPort = portNumber;
+
+			// create a new socket
+			socket = new Socket( serverAddress, serverPort );
+			
+			OutputStream os = socket.getOutputStream();
+			// could have gotten an InputStream as well
+			
+			DataOutputStream dos = new DataOutputStream( os );
+			
+			dos.writeUTF(message);
+			
+			dos.flush();
+			
+			socket.close();
+
+			
+        } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			// ensure socket is closed
+			if (socket!=null) socket.close();
+		} 
+		
+	}
+	
+	
 	public static void main (String args[]) throws Exception{
-		
-		
-		// local machine easiest
-//        InetAddress serverAddress = InetAddress.getByName("localhost");
-		// int serverPort = 3333;
-		
-		//itu
-//        InetAddress serverAddress = InetAddress.getByName("10.25.254.241");
-//        int serverPort = 7656;
-        
-		
-		// android device
-        InetAddress serverAddress = InetAddress.getByName("10.25.253.150");
-        int serverPort = 50299;
-		
-		
-		String message = "A Secret Message";
-		
-		// create a new socket
-		Socket socket = new Socket( serverAddress, serverPort );
-		
-		OutputStream os = socket.getOutputStream();
-		// could have gotten an InputStream as well
-		
-		DataOutputStream dos = new DataOutputStream( os );
-		
-		dos.writeUTF(message);
-		
-		dos.flush();
-		
-		socket.close();
+
+		SimpleTcpClient client = new SimpleTcpClient("localhost", 7656, "A Secret Message");
+
+		SimpleTcpClient client2 = new SimpleTcpClient("localhost", 7656, "Another Secret Message");
+
+		SimpleTcpClient client3 = new SimpleTcpClient("10.25.253.150", 50299, "Hi android message from osx");
+
 	}	
 }
