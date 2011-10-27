@@ -1,5 +1,8 @@
 package dk.itu.spct;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -53,9 +56,11 @@ public class ImageTcpSendActivity extends Activity {
 //				Bitmap bitmapImage = BitmapFactory.decodeResource(v.getResources(),
 //                        R.drawable.tiny_12_k);
 				
+				
+// bit map try out 1
 				Bitmap bitmapImage = BitmapFactory.decodeResource(v.getResources(),
                         R.drawable.medium_145_k);
-				
+				TCPImageClient.send(bitmapImage);				
 				
 				
 //					Edit: Here a version where the image gets downloaded.
@@ -71,12 +76,18 @@ public class ImageTcpSendActivity extends Activity {
 				
 				
 				
-				
+
 				
 				if (D) Log.d(TAG, "ImageActivity onClick called");
 				String message = "ImageActivity button hit - shold be send";
-				TCPImageClient.send(bitmapImage);
 
+				
+				// alternative image send try out -
+//				TCPImageClient.send(v);
+
+				
+
+				
 				
 				
 				
