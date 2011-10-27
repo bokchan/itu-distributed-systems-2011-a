@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1">
+    
+    
+    <!-- <ImageView android:src="@drawable/tiny_12_k" 
+    		   android:layout_height="wrap_content" 
+    		   android:layout_width="wrap_content" 
+    		   android:id="@+id/imageView1"></ImageView> -->
+    <ImageView android:layout_weight="1" 
+    android:id="@+id/imageView1" 
+    android:src="@drawable/medium_145_k" 
+    android:layout_width="match_parent" android:layout_height="wrap_content"></ImageView>
+
+
+<Button android:text="Send image to tcp server" 
+		android:id="@+id/send_image_to_tcp_server" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+
+
+<!-- <Button android:id="@+id/start_button" 
+    android:text="@string/start_button_label" 
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"/>  -->
+
+
+</LinearLayout>

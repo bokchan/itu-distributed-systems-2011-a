@@ -11,6 +11,11 @@ import dk.itu.spct.server.TCPImageClient;
 
 //public class ImageActivity extends Activity implements OnClickListener {
 
+
+/*
+ * client tcp
+ * 
+ */
 public class ImageTcpSendActivity extends Activity {
 
 	private static final String TAG = "Fluidgallery";
@@ -45,8 +50,14 @@ public class ImageTcpSendActivity extends Activity {
 //				final Bitmap bitmap = BitmapFactory.decodeResource(R.drawable, sample_0);
 				
 				
+//				Bitmap bitmapImage = BitmapFactory.decodeResource(v.getResources(),
+//                        R.drawable.tiny_12_k);
+				
 				Bitmap bitmapImage = BitmapFactory.decodeResource(v.getResources(),
-                        R.drawable.tiny_12_k);
+                        R.drawable.medium_145_k);
+				
+				
+				
 //					Edit: Here a version where the image gets downloaded.
 //					
 //					String name = c.getString(str_url);
