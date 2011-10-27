@@ -20,20 +20,22 @@ public final class R {
         public static final int sample_5=0x7f020006;
         public static final int sample_6=0x7f020007;
         public static final int sample_7=0x7f020008;
+        public static final int tiny_12_k=0x7f020009;
     }
     public static final class id {
         public static final int GoToFirstButton=0x7f060001;
         public static final int button1=0x7f060000;
         public static final int button2=0x7f060003;
         public static final int button3=0x7f060004;
-        public static final int button4=0x7f060005;
-        public static final int button5=0x7f060007;
-        public static final int button6=0x7f060006;
-        public static final int gallery=0x7f060008;
-        public static final int imageView1=0x7f060009;
-        public static final int image_from_client=0x7f06000b;
-        public static final int info=0x7f06000c;
-        public static final int send_image_to_tcp_server=0x7f06000a;
+        public static final int button4=0x7f060006;
+        public static final int button5=0x7f060008;
+        public static final int button6=0x7f060007;
+        public static final int button7=0x7f060005;
+        public static final int gallery=0x7f060009;
+        public static final int imageView1=0x7f06000a;
+        public static final int image_from_client=0x7f06000c;
+        public static final int info=0x7f06000d;
+        public static final int send_image_to_tcp_server=0x7f06000b;
         public static final int server_status=0x7f060002;
     }
     public static final class integer {

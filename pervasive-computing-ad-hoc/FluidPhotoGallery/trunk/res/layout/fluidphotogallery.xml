@@ -31,6 +31,12 @@
 		android:layout_height="wrap_content"></Button>
 
 
+<Button android:text="Go to a simple stand a lone image view (send with tcp)" 
+		android:id="@+id/button7" 
+		android:onClick="goToImageTcpSendView" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+
 
 <Button android:text="Go to tcp text message server activity" 
 		android:id="@+id/button4" 

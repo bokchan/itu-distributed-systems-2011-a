@@ -50,11 +50,8 @@
         <activity android:name=".ImageActivity" 
 		          android:launchMode="singleInstance"></activity>    
 
-
-
-
-
-
+        <activity android:name=".ImageTcpSendActivity" 
+		          android:launchMode="singleInstance"></activity>
 
 
 

@@ -1,6 +1,6 @@
 package dk.itu.spct;
 
-import android.app.Activity; 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +46,15 @@ public class FluidPhotoGalleryActivity extends Activity {
     	startActivity(new Intent(this, ImageActivity.class));
     	
     }    
+    
+    public void goToImageTcpSendView(View view) {
+    	
+    	if(D) Log.d(TAG, "FluidPhotoGalleryActivity goToImageView called");
+//    	startActivity(new Intent(this, ActivitySecond.class));
+    	startActivity(new Intent(this, ImageTcpSendActivity.class));
+    	
+    }        
+    
     
 
     public void goToTCPServer(View view) {
