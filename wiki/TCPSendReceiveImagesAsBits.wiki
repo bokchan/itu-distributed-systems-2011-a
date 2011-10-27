@@ -9,9 +9,9 @@ Send/receive images as bits is required when send/receive images to applications
 
 There is currently 2 files 
 
-- a client ImageTcpClient.java
+- a client ImageTcpClient.java - http://code.google.com/p/itu-distributed-systems-2011-a/source/browse/pervasive-computing-ad-hoc/pervasivecomp2011/trunk/dk/itu/socketprogramming/ImageTcpClient.java
 
-- a server ImageTcpServer.java
+- a server ImageTcpServer.java - http://code.google.com/p/itu-distributed-systems-2011-a/source/browse/pervasive-computing-ad-hoc/pervasivecomp2011/trunk/dk/itu/socketprogramming/ImageTcpServer.java
 
 
 = Do =
