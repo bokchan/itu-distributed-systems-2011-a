@@ -34,9 +34,10 @@ public final class R {
         public static final int button7=0x7f060005;
         public static final int gallery=0x7f060009;
         public static final int imageView1=0x7f06000a;
-        public static final int image_from_client=0x7f06000c;
-        public static final int info=0x7f06000d;
+        public static final int image_from_client=0x7f06000d;
+        public static final int info=0x7f06000e;
         public static final int send_image_to_tcp_server=0x7f06000b;
+        public static final int send_image_to_tcp_server_image=0x7f06000c;
         public static final int server_status=0x7f060002;
     }
     public static final class integer {

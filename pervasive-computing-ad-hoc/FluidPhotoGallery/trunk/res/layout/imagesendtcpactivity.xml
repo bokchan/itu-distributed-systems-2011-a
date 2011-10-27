@@ -11,9 +11,13 @@
     		   android:layout_width="wrap_content" 
     		   android:id="@+id/imageView1"></ImageView> -->
     <ImageView android:layout_weight="1" 
-    android:id="@+id/imageView1" 
+    android:id="@+id/send_image_to_tcp_server_image" 
     android:src="@drawable/medium_145_k" 
     android:layout_width="match_parent" android:layout_height="wrap_content"></ImageView>
+
+<!-- 	<TextView android:text="Click on the screen to start playing"
+		android:id="@+id/textView1" android:layout_width="fill_parent"
+		android:layout_height="fill_parent"></TextView> -->
 
 
 <Button android:text="Send image to tcp server" 
