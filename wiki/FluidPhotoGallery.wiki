@@ -10,17 +10,17 @@ The application can also receive image(s) from the FluidPhotoBrowser.
 This is the essential activities:
 
 
-*Image gallery overview - [GalleryActivity.java https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/GalleryActivity.java] *
+*Image gallery overview - [https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/GalleryActivity.java GalleryActivity.java] *
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_1.png
 
 [Based upon this tutorial, Hello gallery http://developer.android.com/resources/tutorials/views/hello-gallery.html]
 
-*Image item view - gesture scroll down sends image to server / table top - [ImageTcpSendActivity.java https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/ImageTcpSendActivity.java] *
+*Image item view - gesture scroll down sends image to server / table top - [https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/ImageTcpSendActivity.java ImageTcpSendActivity.java] *
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_2.png
 
-*Receive an image from table top [TCPImageServerActivity.java https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/TCPImageServerActivity.java] *
+*Receive an image from table top [https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/TCPImageServerActivity.java TCPImageServerActivity.java] *
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_3.png
 
