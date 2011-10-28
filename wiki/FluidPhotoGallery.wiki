@@ -5,29 +5,32 @@
 
 Android application that can show images and by certain gestures send an image to the FluidPhotoBrowser.
 
-The application can also receive image(s) from the FluidPhotoBrowser 
+The application can also receive image(s) from the FluidPhotoBrowser.
+
+This is the essential activities:
 
 
 
-Image gallery overview ()
+
+*Image gallery overview - [GalleryActivity.java https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/GalleryActivity.java]*
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_1.png
 
-Image item view - gesture scroll down sends image to server / table top
+[Based upon this tutorial, Hello gallery http://developer.android.com/resources/tutorials/views/hello-gallery.html]
+
+*Image item view - gesture scroll down sends image to server / table top - [ImageTcpSendActivity.java https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/ImageTcpSendActivity.java]*
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_2.png
 
-Receive an image from table top
+*Receive an image from table top [TCPImageServerActivity.java https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/FluidPhotoGallery/trunk/src/dk/itu/spct/TCPImageServerActivity.java]*
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_3.png
 
 
-
 All done in separate activities - proof of example should be done with Async tasks etc... - code is really raw due to the very limited time for the implementation.
 
+There are many other actives e.g.: send text message etc.:
 
-
-
-
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_fluid_gallery_0.png
 
 
 

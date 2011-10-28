@@ -39,6 +39,99 @@ todo: document the rest
 
 
 
+= eclipse additional install =
+
+
+== GWT ==
+
+tilføj til som update site
+ * http://dl.google.com/eclipse/inst/d2wbpro/latest/3.6 
+
+
+http://code.google.com/webtoolkit/download.html
+
+download GWT SDK
+http://www.eclipse.org/swt/
+download .jar
+
+
+org.eclipse.swt
+
+
+
+
+gwt (google) = swt ? (eclipse viderudvikling af swing)
+
+
+new osx go for swt-3.7.1-cocoa-macosx
+
+
+older macs need 64 bit of 
+
+
+
+ /System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/bin/java -Dfile.encoding=UTF-8 -classpath /Users/pelle/itu/eclipse_workspace/test_swt/bin:/Users/pelle/itu/eclipse_workspace/test_swt/libs/swt-debug_x86_64.jar:/Users/pelle/itu/eclipse_workspace/test_swt/libs/swt_x86_64.jar HelloWorld
+ 
+raised:
+ 
+::
+ 
+    WARNING: Display must be created on main thread due to Cocoa restrictions.
+
+
+set parameter arguments either in the eclipse execute as java ...
+
+-XstartOnFirstThread
+
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/bin/java -Dfile.encoding=UTF-8 -classpath /Users/pelle/itu/eclipse_workspace/test_swt/bin:/Users/pelle/itu/eclipse_workspace/test_swt/libs/swt-debug_x86_64.jar:/Users/pelle/itu/eclipse_workspace/test_swt/libs/swt_x86_64.jar -XstartOnFirstThread HelloWorld
+
+
+
+
+ConferenceDisplaySWT
+
+
+***WARNING: Display must be created on main thread due to Cocoa restrictions.
+org.eclipse.swt.SWTException: Invalid thread access
+	at org.eclipse.swt.SWT.error(SWT.java:4282)
+	at org.eclipse.swt.SWT.error(SWT.java:4197)
+	at org.eclipse.swt.SWT.error(SWT.java:4168)
+	at org.eclipse.swt.widgets.Display.error(Display.java:1065)
+	at org.eclipse.swt.widgets.Display.createDisplay(Display.java:822)
+	at org.eclipse.swt.widgets.Display.create(Display.java:805)
+	at org.eclipse.swt.graphics.Device.<init>(Device.java:130)
+	at org.eclipse.swt.widgets.Display.<init>(Display.java:696)
+	at org.eclipse.swt.widgets.Display.<init>(Display.java:687)
+	at org.eclipse.swt.widgets.Display.getDefault(Display.java:1383)
+	at assignment1.conference.gui.ConferenceDisplaySWT.open(ConferenceDisplaySWT.java:30)
+	at assignment1.conference.gui.ConferenceDisplaySWT.<init>(ConferenceDisplaySWT.java:10)
+	at assignment1.conference.gui.ConferenceDisplaySWT.main(ConferenceDisplaySWT.java:19)
+
+
+add argument:
+
+-XstartOnFirstThread
+
+to: <long path and lots of libs etc...>:framework/jcaf.v15.jar -XstartOnFirstThread assignment1.conference.gui.ConferenceDisplaySWT
+
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home/bin/java -Dfile.encoding=UTF-8 -classpath /Users/pelle/itu/eclipse_workspace/pervasive_computing_course/bin:/Users/pelle/Applications/eclipse361/plugins/org.junit_4.8.1.v4_8_1_v20100427-1100/junit.jar:/Users/pelle/Applications/eclipse361/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/lib/swt-debug_x86_64.jar:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/lib/swt_x86_64.jar:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/lib/ebwsclient.jar:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/lib/jetty-util-8.0.0.M0.jar:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/lib/AlienRFID.jar:/Users/pelle/itu/eclipse_workspace/pervasive_computing_course/framework/jcaf.v15.jar -XstartOnFirstThread assignment1.conference.gui.ConferenceDisplaySWT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 = How to get JCAF java doc shown =
 
