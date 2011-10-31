@@ -20,9 +20,11 @@ public class SimpleBarcodeResolverActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		final Button getResultFromCodeButton = (Button) findViewById(R.id.button);
+		final Button goMessagingServiceButton = (Button) findViewById(R.id.button2);
 
-		final Button btnFetch = (Button) findViewById(R.id.button);
-		btnFetch.setOnClickListener(new Button.OnClickListener() {
+		getResultFromCodeButton.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");								
@@ -30,10 +32,23 @@ public class SimpleBarcodeResolverActivity extends Activity {
 
 				// note: this part is essential - look up more examples here http://goo.gl/GYzbE
 				intent.putExtra("SCAN_MODE", "ONE_D_MODE"); // Decode only 1D barcodes.
-
+				
 				// could also have been 
 				// intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 				// for qr codes
+				
+				startActivityForResult(intent, 0);
+			}
+		});
+		
+		
+		goMessagingServiceButton.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+
+				Intent intent = new Intent("com.google.zxing.client.android.SCAN");								
+				intent.setPackage("com.google.zxing.client.android");
+
+				intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 				
 				startActivityForResult(intent, 0);
 			}
@@ -54,29 +69,48 @@ public class SimpleBarcodeResolverActivity extends Activity {
 				if (D)
 					Log.d(TAG, "scan contents: " + contents.toString());
 
-				if (D)
-					Log.d(TAG, "scan format: " + format.toString());
+				if (D) Log.d(TAG, "scan format: " + format.toString());
 
 				try {
 					
 					// probably make contents.toString() more fine graded ? has to be a isbn number etc...
 					// isbn can either 10 or 13 length
 					// || format.toString().equals("ISBN") 
-					if (format.toString().equals("EAN_13") || format.toString().equals("EAN_11")) {
-					
+					if (format.toString().equals("EAN_13") || format.toString().equals("EAN_10")) {
+				
+						if (D) Log.d(TAG, "format is EAN_13 or EAN_10");
+						
+						
 						String uri = "http://www.lookupbyisbn.com/Search/Book/" + contents.toString() + "/1";
 						
 						Log.d(TAG, "uri: " + uri);
 						
-					Intent openUriInBrowser = new Intent(Intent.ACTION_VIEW,
+						Intent openUriInBrowser = new Intent(Intent.ACTION_VIEW,
 							Uri.parse(uri));
-					
-					
-					startActivity(openUriInBrowser);
+
+						startActivity(openUriInBrowser);
+						
+					} else if (format.toString().equals("QR_CODE")) {
+						
+						// if its a  QR_CODE we go to a google app engine service
+
+						if (D) Log.d(TAG, "format is QR_CODE_MODE");
+						// 
+						
+						String uri2 = "http://spct-e2011-lab-classes-pk.appspot.com/guestbook.jsp?guestbookName=" + contents.toString();
+						
+						Log.d(TAG, "uri2: " + uri2);
+						
+						Intent openUriInBrowser = new Intent(Intent.ACTION_VIEW,
+							Uri.parse(uri2));
+
+						startActivity(openUriInBrowser);
+						
 					} else {
 						Toast.makeText(SimpleBarcodeResolverActivity.this,
-								"Error: it was not a qr code", Toast.LENGTH_LONG);						
-					}
+								"Error: it was not a qr code or a 1-d code - isbn code of 10 or 13 car", Toast.LENGTH_LONG);
+						
+					}					
 					
 				} catch (Exception e) {
 					Toast.makeText(SimpleBarcodeResolverActivity.this,
@@ -97,5 +131,6 @@ public class SimpleBarcodeResolverActivity extends Activity {
 			}
 		}
 	}
+
 
 }

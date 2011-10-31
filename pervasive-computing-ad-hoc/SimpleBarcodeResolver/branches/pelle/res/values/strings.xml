@@ -2,7 +2,8 @@
 <resources>
     <string name="hello">Hello World, SimpleBarcodeResolverActivity!</string>
     <string name="app_name">SimpleBarcodeResolver</string>
+
+    <string name="getResultFromCode">Get result from bar code</string>
+    <string name="goMessagingService">Go to messaging service (based on QR code)</string> 
     
-    
-    <string name="getResultFromQRCode">Get result from QR code</string>
 </resources>
