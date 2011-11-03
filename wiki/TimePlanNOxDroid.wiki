@@ -1,0 +1,10 @@
+=PLAN=
+
+==Deadlines==
+*Nov 8th* --- _ Knowing how to treat incoming sensor data_
+*Nov 10th* -- _ Read sensor data from ioio on Andoid_ and _Save GPS Coordinates (On-the-Fly) on Android_ ------------- _ + Running service_
+*Nov 12th* -- _Integration of GPS-data and sensor data into one App_
+*Nov 17th* -- _Prototype ready and test on group members and running modification begins_
+*Dec 5th* --- _ Test on testpersons begin_
+*Dec 11th* -- _ Prototype ready for show-off_
+*Dec 18th* -- _ Report done_
