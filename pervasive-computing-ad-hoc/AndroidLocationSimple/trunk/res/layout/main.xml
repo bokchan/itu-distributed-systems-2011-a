@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/current_location"
+    />
+
+<!-- <TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@+id/tvLatitude"
+    />    
+
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@+id/tvLongitude"
+    />    
+ -->
+
+    
+<!-- Longitude -->
+
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Longitude:"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@+id/tvLongitude"
+    />
+
+<!-- Latitude -->
+
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Latitude:"
+    />
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@+id/tvLatitude"
+    />    
+
+<!-- try out to make one where the stings are concationated -->
+
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/past_locations_newest_intop"
+    />
+
+
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@+id/text_view"
+    />       
+    
+    
+
+    
+    
+    
+<!-- TextView tvLatitude = (TextView)findViewById(R.id.tvLatitude); 
+TextView tvLongitude = (TextView)findViewById(R.id.tvLongitude); 
+ -->    
+    
+</LinearLayout>
