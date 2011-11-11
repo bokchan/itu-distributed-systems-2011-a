@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+<!--     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello" />
+ -->        
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/api_demo_level_1" />
+    
+    
+    <Button android:text="@string/go_to_local_service_activities" 
+		android:id="@+id/button1" 
+		android:onClick="goToLocalServiceActivities" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>    
+
+
+    <Button android:text="@string/go_to_local_service_activities_binding" 
+		android:id="@+id/button2" 
+		android:onClick="goToLocalServiceActivitiesBinding" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+        
+
+        <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/simple_stand_a_lone_service_w_not_binding" />
+        
+        
+      <!-- naive? are id names restricted to layout s? -->  
+    <Button android:id="@+id/start"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" 
+        android:text="@string/start_service">
+        <requestFocus />
+    </Button>
+
+    <Button android:id="@+id/stop"
+        android:layout_width="wrap_content" android:layout_height="wrap_content" 
+        android:text="@string/stop_service">
+    </Button>        
+
+        
+        
+        
+        
+</LinearLayout>

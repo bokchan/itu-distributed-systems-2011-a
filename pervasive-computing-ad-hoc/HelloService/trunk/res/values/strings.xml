@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, Main!</string>
+    <string name="app_name">HelloService</string>
+
+    
+	<!-- main -->
+	<string name="api_demo_level_1">api demo level 1 example</string>
+	<string name="go_to_local_service_activities_binding">Then go to local service activities binding</string>
+	<string name="simple_stand_a_lone_service_w_not_binding">Simple stand a lone service w not binding (can also be started/stopped from options menu in addition with other services - press "Menu" the android way)</string>
+        
+        
+        
+    <!--
+         note: not sure about this one ?! using in the Local service and 
+    	 was declares as type int but referenced to R.layout.strings..
+    -->
+    <!-- <string name="local_service_started">1</string> -->
+    <string name="local_service_started">local service started</string>
+    <string name="local_service_stopped">local service stopped</string>
+
+    <!-- todo: not sure about this one -->
+    <!-- <string name="stat_sample">stat_sample</string> -->
+
+    <string name="local_service_label">local_service_label</string>
+    <string name="local_service_controller">local_service_controller</string>
+    <string name="start_service">Start service</string>
+    <string name="stop_service">Stop service</string>
+    <string name="local_service_connected">local_service_connected</string>
+    <string name="local_service_disconnected">local_service_disconnected</string>
+    <string name="local_service_binding">local_service_binding</string>
+    <string name="bind_service">bind_service</string>
+    <string name="unbind_service">unbind_service</string>
+    <string name="go_to_local_service_activities">Go to local service activities (org api demo)</string>
+
+    <!-- the location service -->
+    <string name="start_location_service">Start location service</string>
+    <string name="stop_location_service">Stop location service</string>
+    <string name="location_service_started">Location service started</string>
+    <string name="location_service_stopped">Location service stopped</string>
+
+    <!-- <string name=""></string> -->
+
+</resources>
