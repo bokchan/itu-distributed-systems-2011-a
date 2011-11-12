@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="dk.itu.noxdroid.PreferencesActivity" >
+        <activity android:name=".setup.PreferencesActivity" >
         </activity>
         <service android:name=".service.NoxDroidService"></service>
         <activity android:name=".service.NoxDroidServiceActivities$Controller" android:label="@string/activity_local_service_controller">
@@ -45,6 +45,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name="IOIOSensorActivity"></activity>
+        <activity android:name=".ioio.IOIOSensorActivity"></activity>
     </application>
 </manifest>

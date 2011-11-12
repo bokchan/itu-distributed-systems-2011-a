@@ -20,7 +20,6 @@ public class NoxDroidGPSActivity extends Activity {
 		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 		if (!locationManager.isProviderEnabled(LOCATION_SERVICE)) {
-			
 			Intent gpsOptionsIntent = new Intent(
 			 android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 			 startActivity(gpsOptionsIntent);

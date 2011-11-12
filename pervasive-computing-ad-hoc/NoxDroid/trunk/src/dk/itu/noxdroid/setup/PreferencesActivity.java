@@ -1,5 +1,7 @@
-package dk.itu.noxdroid;
+package dk.itu.noxdroid.setup;
 
+import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.R.xml;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;

@@ -1,6 +1,9 @@
-package dk.itu.noxdroid;
+package dk.itu.noxdroid.ioio;
 
 
+import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.R.id;
+import dk.itu.noxdroid.R.layout;
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.DigitalOutput.Spec;

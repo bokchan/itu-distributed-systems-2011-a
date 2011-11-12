@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import dk.itu.noxdroid.service.NoxDroidService;
+import dk.itu.noxdroid.setup.PreferencesActivity;
 
 public class NoxDroidActivity extends Activity {
 	
@@ -23,7 +24,7 @@ public class NoxDroidActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		//startActivity(new Intent(this,IOIOSensorActivity.class));
-		//startActivity(new Intent(this,NoxDroidGPSActivity.class));
+		startActivity(new Intent(this,NoxDroidGPSActivity.class));
 	}
 
 	public void updateFeed(View view) {
