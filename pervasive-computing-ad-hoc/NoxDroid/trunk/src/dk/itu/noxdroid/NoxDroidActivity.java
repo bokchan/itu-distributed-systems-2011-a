@@ -77,19 +77,10 @@ public class NoxDroidActivity extends Activity {
 		}
 		return true;
 	}
-
-//	@Override
-//	public void startActivityForResult(Intent intent, int requestCode) {
-//		this.startActivityForResult(intent, requestCode);
-//	}
-//	
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		switch (requestCode) {
-//		case R.string.LOCATIONMANAGER_START: 
-//			if (resultCode == RESULT_OK) {
-//				Toast.makeText(this, "LOCATION MANAGERSTARTED", Toast.LENGTH_SHORT).show();
-//			}
-//		}
-//	}	
+	
+	@Override
+	public void onBackPressed() {
+		
+		moveTaskToBack (true);
+	}	
 }

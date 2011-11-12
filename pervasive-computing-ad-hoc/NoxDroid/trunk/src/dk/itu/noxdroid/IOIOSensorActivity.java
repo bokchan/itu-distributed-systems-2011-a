@@ -24,6 +24,7 @@ public class IOIOSensorActivity extends AbstractIOIOActivity {
 		super.onCreate(savedInstanceState);
 
 		addToDebug("OnCreate");
+		//doBindService();
 	}
 	
 	private ServiceConnection mConnection = new ServiceConnection() {
@@ -95,5 +96,10 @@ public class IOIOSensorActivity extends AbstractIOIOActivity {
 			};
 		});
 		
+	}
+	
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack (true); 
 	}
 }

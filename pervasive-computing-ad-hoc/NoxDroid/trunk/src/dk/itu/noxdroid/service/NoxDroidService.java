@@ -9,11 +9,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-import dk.itu.noxdroid.IOIOSensorActivity;
 import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
 
 public class NoxDroidService extends Service {
-	private IOIOSensorActivity sensorActivity;
 
 	NotificationManager nman;
 
@@ -24,6 +23,7 @@ public class NoxDroidService extends Service {
 		public NoxDroidService getService() {
 			return NoxDroidService.this;
 		}
+
 	}
 
 	@Override
@@ -32,12 +32,11 @@ public class NoxDroidService extends Service {
 		// Display a notification about us starting. We put an icon in the
 		// status bar.
 		showNotification();
-		 Intent intent = new Intent (getBaseContext(), IOIOSensorActivity.class);
-		 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		 getApplication().startActivity(intent);
-		 
-		 
-//		 Log.i(TAG, "started IOIOSensorActivity");
+		// ioiosensoradapter = new NoxDroidIOIOSensorAdapter_();
+		// new Thread(ioiosensoradapter, "NoxSensor").run();
+
+		new NoxDroidIOIOThread().start();
+
 	}
 
 	@Override
@@ -48,6 +47,7 @@ public class NoxDroidService extends Service {
 		// Tell the user we stopped.
 		Toast.makeText(this, R.string.noxdroid_service_stopped,
 				Toast.LENGTH_SHORT).show();
+
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class NoxDroidService extends Service {
 	 * Show a notification while this service is running.
 	 */
 	private void showNotification() {
-		
+
 		// In this sample, we'll use the same text for the ticker and the
 		// expanded notification
 		CharSequence text = getText(R.string.noxdroid_service_started);
@@ -97,5 +97,6 @@ public class NoxDroidService extends Service {
 
 		// Send the notification.
 		nman.notify(NOTIFICATION, notification);
-	}	
+	}
+
 }
