@@ -7,9 +7,18 @@ import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.api.exception.IncompatibilityException;
-import android.util.Log;
 
-public class NoxDroidIOIOThread extends Thread {
+import java.util.Map;
+
+import android.content.Context;
+import android.util.Log;
+import dk.itu.noxdroid.service.NoxDroidService;
+
+public class NoxDroidIOIOThread extends Thread  {
+	Context context;
+	
+	private java.util.Observable publisher;
+
 	private String TAG = "NoxDroidIOIOThread";
 	/** Subclasses should use this field for controlling the IOIO. */
 	protected IOIO ioio_;
@@ -20,8 +29,20 @@ public class NoxDroidIOIOThread extends Thread {
 	private AnalogInput input_;
 
 	private DigitalOutput led_;
-	private int pinLed = 9;
+	private int pinLed = 16;
 	private int pinIn = 40;
+	private Map<String, ?> app_prefs;
+	NoxDroidService service;
+
+	public NoxDroidIOIOThread(NoxDroidService service) {
+		this.service = service;
+		publisher = new NoxDroidObservable();
+		
+	}
+	
+	class NoxDroidObservable extends java.util.Observable {
+		
+	}
 
 	/** Not relevant to subclasses. */
 	@Override
@@ -89,10 +110,8 @@ public class NoxDroidIOIOThread extends Thread {
 			led_ = ioio_.openDigitalOutput(pinLed, Spec.Mode.NORMAL, true);
 
 		} catch (ConnectionLostException e) {
-
 			throw e;
 		}
-
 	}
 
 	/**
@@ -106,9 +125,11 @@ public class NoxDroidIOIOThread extends Thread {
 		addToDebug("Loop");
 		try {
 			final float reading = input_.read();
-			addToDebug(Float.toString(reading));
+			//addToDebug(Float.toString(reading));
 			led_.write(!flag);
 			flag = flag ? false : true;
+			Object obj = (Object) reading ;
+			service.update(this.getClass(), obj);
 			sleep(1000);
 		} catch (InterruptedException e) {
 			ioio_.disconnect();
@@ -125,6 +146,7 @@ public class NoxDroidIOIOThread extends Thread {
 	 * must not be used from within this method.
 	 */
 	protected void disconnected() throws InterruptedException {
+
 	}
 
 	/**
@@ -148,9 +170,18 @@ public class NoxDroidIOIOThread extends Thread {
 		}
 	}
 
+	public synchronized Float getReading() throws ConnectionLostException {
+		if (input_ != null) {
+			try {
+				return input_.read();
+			} catch (InterruptedException e) {
+				// ioio_.disconnect();
+			}
+		}
+		return null;
+	}
+
 	private void addToDebug(final String str) {
-
 		Log.i(TAG, str);
-
 	}
 }

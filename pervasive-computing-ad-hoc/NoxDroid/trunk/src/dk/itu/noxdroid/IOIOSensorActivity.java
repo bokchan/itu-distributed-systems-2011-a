@@ -14,7 +14,7 @@ import android.os.IBinder;
 import android.util.Log;
 import dk.itu.noxdroid.service.NoxDroidService;
 
-public class IOIOSensorActivity extends AbstractIOIOActivity {
+public class IOIOSensorActivity extends AbstractIOIOActivity{
 	
 	private NoxDroidService service;
 	private String TAG = "IOIOSensorActivity";  
@@ -102,4 +102,5 @@ public class IOIOSensorActivity extends AbstractIOIOActivity {
 	public void onBackPressed() {
 		moveTaskToBack (true); 
 	}
+
 }

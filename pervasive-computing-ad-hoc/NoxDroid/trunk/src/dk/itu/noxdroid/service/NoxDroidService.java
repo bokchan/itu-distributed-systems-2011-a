@@ -1,5 +1,10 @@
 package dk.itu.noxdroid.service;
 
+import ioio.lib.api.exception.ConnectionLostException;
+
+import java.util.Observable;
+import java.util.Observer;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,8 +17,10 @@ import android.widget.Toast;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
 
-public class NoxDroidService extends Service {
-
+public class NoxDroidService extends Service implements Observer {
+	
+	//SharedPreferences APP_PREFS;
+	private NoxDroidIOIOThread ioio_thread_; 
 	NotificationManager nman;
 
 	private String TAG = "NoxDroidService";
@@ -23,7 +30,6 @@ public class NoxDroidService extends Service {
 		public NoxDroidService getService() {
 			return NoxDroidService.this;
 		}
-
 	}
 
 	@Override
@@ -32,22 +38,38 @@ public class NoxDroidService extends Service {
 		// Display a notification about us starting. We put an icon in the
 		// status bar.
 		showNotification();
-		// ioiosensoradapter = new NoxDroidIOIOSensorAdapter_();
-		// new Thread(ioiosensoradapter, "NoxSensor").run();
+		//APP_PREFS =  PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		ioio_thread_ = new NoxDroidIOIOThread(this); 
+		ioio_thread_.start();		
+	}
+	
+	private void doReading()  {
+		while(true) {
+			try {
+				Log.i(TAG, "Received reading : " + ioio_thread_.getReading());
+				Thread.sleep(2000);
+			} catch (ConnectionLostException e) {
+				
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 
-		new NoxDroidIOIOThread().start();
-
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public void onDestroy() {
 		// Cancel the persistent notification.
 		nman.cancel(NOTIFICATION);
+		
+		if (ioio_thread_ != null && ioio_thread_.isAlive()) {
+			ioio_thread_.abort();
+		}
 
 		// Tell the user we stopped.
 		Toast.makeText(this, R.string.noxdroid_service_stopped,
 				Toast.LENGTH_SHORT).show();
-
 	}
 
 	@Override
@@ -97,6 +119,15 @@ public class NoxDroidService extends Service {
 
 		// Send the notification.
 		nman.notify(NOTIFICATION, notification);
+	}
+	
+	public void update(Class<?> sender,  Object data) {
+		Log.i(TAG, "Notified from " + sender.getName() + " : " +  String.valueOf(data));
+	}
+
+	@Override
+	public void update(Observable observable, Object data) {
+		Log.i("Notified from IOIO: ", String.valueOf(data));
 	}
 
 }

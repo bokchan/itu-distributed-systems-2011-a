@@ -16,6 +16,7 @@ import dk.itu.noxdroid.service.NoxDroidService;
 
 public class NoxDroidActivity extends Activity {
 	
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class NoxDroidActivity extends Activity {
 	}
 
 	public void goIOIO(View view) {
-		startActivity(new Intent(this, IOIOSensorActivity.class));
+		//startActivity(new Intent(this, IOIOSensorActivity.class));
 	}
 	
 	public void startService(View view) {

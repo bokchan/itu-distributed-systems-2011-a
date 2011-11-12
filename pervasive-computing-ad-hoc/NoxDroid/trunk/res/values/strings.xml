@@ -24,5 +24,10 @@
     <string name="noxdroid_service_autostart">NoxDroidService automatic startup</string>
     <string name="LOCATIONMANAGER_START">LOCATIONMANAGER_START</string>
     <string name="GPS_SERVICE_ERROR">GPS_SERVICE_ERROR</string>
-
+	<string name="IOIO_NO2_PIN">IOIO_NO2_PIN</string>
+	<string name="IOIO_TEMP_PIN">IOIO_TEMP_PIN</string>
+	<string name="IOIO_LED_GREEN_PIN">IOIO_LED_GREEN_PIN</string>
+	<string name="IOIO_LED_RED_PIN">IOIO_LED_RED_PIN</string>
+	<string name="IOIO_LED_YELLOW_PIN">IOIO_LED_YELLOW_PIN</string>
+	<string name="IOIO_UPDATE_INTERVAL">IOIO_UPDATE_INTERVAL</string>
 </resources>
