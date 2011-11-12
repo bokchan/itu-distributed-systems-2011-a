@@ -66,7 +66,9 @@ public class SimpleLocationWithListen extends Activity {
 
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+//		setContentView(R.layout.main);
+		setContentView(R.layout.simplelocationlistener);
+		
 		// find the TextViews
 		tvLatitude = (TextView) findViewById(R.id.tvLatitude);
 		tvLongitude = (TextView) findViewById(R.id.tvLongitude);
@@ -134,8 +136,8 @@ public class SimpleLocationWithListen extends Activity {
 			// get previous text
 			CharSequence text = textView.getText();
 			// concatenate with new location 
-	        textView.setText("\nlongitude: " + location.getLongitude() +
-	        				 "\n\nlatitude: " + location.getLatitude() +  
+	        textView.setText("\n\nlongitude: " + location.getLongitude() +
+	        				 "\nlatitude: " + location.getLatitude() +  
 	        				 text); 
 
 			
