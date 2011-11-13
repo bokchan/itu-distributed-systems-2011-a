@@ -10,6 +10,6 @@
 	<classpathentry kind="lib" path="assets/signpost-core-1.2.1.1.jar"/>
 	<classpathentry kind="lib" path="assets/signpost-jetty6-1.2.1.1.jar"/>
 	<classpathentry kind="lib" path="assets/JPachube.jar"/>
-	<classpathentry kind="lib" path="assets/JavaAPIforKml.jar"/>
+	<classpathentry kind="lib" path="assets/org.boehn.kmlframework_20090718.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
