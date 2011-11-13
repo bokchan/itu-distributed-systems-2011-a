@@ -40,6 +40,13 @@
     <string name="location_service_started">Location service started</string>
     <string name="location_service_stopped">Location service stopped</string>
 
-    <!-- <string name=""></string> -->
+    <!-- the location service db -->
+    <string name="start_location_service_db">Start location service (db)</string>
+    <string name="stop_location_service_db">Stop location service (db)</string>
+    <string name="location_service_db_started">Location service (db) started</string>
+    <string name="location_service_db_stopped">Location service (db) stopped</string>
+        
+        
+     <!-- <string name=""></string> -->
 
 </resources>

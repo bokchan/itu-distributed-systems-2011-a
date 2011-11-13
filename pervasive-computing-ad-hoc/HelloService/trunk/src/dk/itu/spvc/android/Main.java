@@ -28,6 +28,7 @@ import android.widget.Button;
 import dk.itu.spvc.android.apidemoexample.LocalServiceActivities.Binding;
 import dk.itu.spvc.android.apidemoexample.LocalServiceActivities.Controller;
 import dk.itu.spvc.android.locationservice.LocationService;
+import dk.itu.spvc.android.locationservice.LocationServiceDB;
 import dk.itu.spvc.android.standaloneservice.StandAloneLocalService;
 
 /**
@@ -42,6 +43,8 @@ public class Main extends Activity {
     private static final int STOP_SERVICE_ID = Menu.FIRST + 1;
     private static final int START_LOCATION_SERVICE_ID = Menu.FIRST + 2;
     private static final int STOP_LOCATION_SERVICE_ID = Menu.FIRST + 3;
+    private static final int START_LOCATION_SERVICE_DB_ID = Menu.FIRST + 4;
+    private static final int STOP_LOCATION_SERVICE_DB_ID = Menu.FIRST + 5;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +132,8 @@ public class Main extends Activity {
         menu.add(0, STOP_SERVICE_ID,1, R.string.stop_service);
         menu.add(0, START_LOCATION_SERVICE_ID,2, R.string.start_location_service);
         menu.add(0, STOP_LOCATION_SERVICE_ID,3, R.string.stop_location_service);
+        menu.add(0, START_LOCATION_SERVICE_DB_ID,4, R.string.start_location_service_db);
+        menu.add(0, STOP_LOCATION_SERVICE_DB_ID,5, R.string.stop_location_service_db);
         
         return true;
     }
@@ -155,8 +160,15 @@ public class Main extends Activity {
             // start stand-a-lone service
     		stopService(new Intent(Main.this, LocationService.class));
             return true;            
-
-            
+        // the location service w. db            
+        case START_LOCATION_SERVICE_DB_ID:
+            // start stand-a-lone service
+        	startService(new Intent(Main.this, LocationServiceDB.class));
+            return true;
+    	case STOP_LOCATION_SERVICE_DB_ID:
+            // start stand-a-lone service
+    		stopService(new Intent(Main.this, LocationServiceDB.class));
+            return true;            
         }
         
         return super.onMenuItemSelected(featureId, item);

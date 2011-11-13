@@ -52,14 +52,20 @@ public final class R {
          */
         public static final int local_service_started=0x7f040005;
         public static final int local_service_stopped=0x7f040006;
+        public static final int location_service_db_started=0x7f040017;
+        public static final int location_service_db_stopped=0x7f040018;
         public static final int location_service_started=0x7f040013;
         public static final int location_service_stopped=0x7f040014;
         public static final int simple_stand_a_lone_service_w_not_binding=0x7f040004;
         /**  the location service 
          */
         public static final int start_location_service=0x7f040011;
+        /**  the location service db 
+         */
+        public static final int start_location_service_db=0x7f040015;
         public static final int start_service=0x7f040009;
         public static final int stop_location_service=0x7f040012;
+        public static final int stop_location_service_db=0x7f040016;
         public static final int stop_service=0x7f04000a;
         public static final int unbind_service=0x7f04000f;
     }

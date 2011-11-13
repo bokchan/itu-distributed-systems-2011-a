@@ -32,7 +32,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 import dk.itu.spvc.android.R;
 import dk.itu.spvc.android.apidemoexample.LocalServiceActivities;
@@ -74,11 +73,17 @@ public class LocationServiceDB extends Service {
 	private Double latitude;
 	private Double longitude;
 
+	
+	// TODO: get rid of this hashmap
 	// hmm probably better just make a stack since we have to put and then later pop it!
 	// dog a fifo queue of course !
 	// - key should be a string 
 	HashMap<Integer,Double> map = new HashMap<Integer,Double>();
-    
+
+	private LocationDbAdapter mDbHelper;
+	long rowId;
+	int trackId = 3; // one track id per tour/track recording
+	// TODO: figure out how to set and increment id // +1 from last records
     
     /**
      * Class for clients to access.  Because we know this service always
@@ -115,7 +120,7 @@ public class LocationServiceDB extends Service {
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
 		
-		// Note: we migth wanna enable other then gps? 
+		// Note: we might wanna enable other then gps? 
 		//
 		// possible criteria's:
 		// power requirement
@@ -144,17 +149,31 @@ public class LocationServiceDB extends Service {
 		// 
 		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+		// Set up data base 
+        mDbHelper = new LocationDbAdapter(this);
+        mDbHelper.open();
 		
 		Log.d(TAG, "lm: " + lm);
 		Log.d(TAG, "loc: " + loc);
 
+		
+		// TODO: figure out to set a track id thats unique only for one track (start / stop)
+				
 		if (loc != null) {
 			Log.d(TAG, "Latitude is " + Double.toString(loc.getLatitude()));
 			Log.d(TAG, "Longitude is " + Double.toString(loc.getLongitude()));
+			
+			rowId = mDbHelper.createTrack(trackId, loc.getLatitude(), loc.getLongitude());
 		} else {
+			// no last known location - set latitude and longitude to 0
 			Log.d(TAG, "lm.getLastKnownLocation(\"gps\") is " + loc);
+			rowId = mDbHelper.createTrack(trackId, 0.0, 0.0);
+			// or trackId = mDbHelper.createTrack(0, 0);
 		}
 
+		// try out
+		mDbHelper.createTrackId();
+		
 		// ask the Location Manager to send us location updates
 		locListenD = new DispLocListener();        
 		// bind to location manager
@@ -183,8 +202,11 @@ public class LocationServiceDB extends Service {
         // Location: close down / unsubscribe  the location updates
         lm.removeUpdates(locListenD);
         
+        // close database
+        mDbHelper.close();
+        
         // Tell the user we stopped.
-        Toast.makeText(this, R.string.location_service_stopped, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.location_service_db_stopped, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -201,7 +223,7 @@ public class LocationServiceDB extends Service {
      */
     private void showNotification() {
         // In this sample, we'll use the same text for the ticker and the expanded notification
-        CharSequence text = getText(R.string.location_service_started);
+        CharSequence text = getText(R.string.location_service_db_started);
 
         // Set the icon, scrolling text and timestamp
         Notification notification = new Notification(R.drawable.stat_sample, text,
@@ -251,6 +273,16 @@ public class LocationServiceDB extends Service {
 			
 			Log.d(TAG, "put data in a map - with hashcode:" + Integer.toString(hashCode));
 			map.put(hashCode, latitude);
+						
+			// save to database
+//			mDbHelper.
+//			updateNote(trackId, latitude, longitude);
+			
+//			mDbHelper.updateNote(trackId, latitude, longitude);
+			
+			
+			rowId = mDbHelper.createTrack(trackId, latitude, longitude);
+			
 			
 			
 		}
