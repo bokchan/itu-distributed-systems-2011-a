@@ -124,46 +124,31 @@ public class LocationDbAdapter {
     }
 
 
-    
-    public int createTrackId() {
-    	
-    	//select track_id from tracks order by track_id desc limit 1;
-    	
+    /**
+     * 
+     * 
+     * 
+     * @return a track id 
+     */
+    public long createTrackId() {
+
+    	long trackId;
     	String sql = "select track_id from " + DATABASE_TABLE + " order by track_id desc limit 1";
-    	//int lastTrackId = mDb.execSQL(sql);
-    	
-//    	mDb.execSQL(sql);
-//    	
-//    	
-//    	selectionArgs
-//    	
     	
     	String[] selectionArgs = null; 
-    	Cursor test = mDb.rawQuery(sql, selectionArgs);
-    	Log.w(TAG, "=====================================================================" );
-    	Log.w(TAG, "createTrackId called and cursor = " + test );
-    	// prints: W/LocationDbAdapter(  745): createTrackId called and cursor = android.database.sqlite.SQLiteCursor@44f08918
-    	
-    	Cursor listCursor = test;
+    	Cursor listCursor = mDb.rawQuery(sql, selectionArgs);
+
     	listCursor.moveToFirst();
     	if(! listCursor.isAfterLast()) {
-    		do {
-    			
-    			long id = listCursor.getLong(0);
-//    			int track_id = listCursor.getLong(1);
-    	
-    			Log.w(TAG, "listCursor.getLong(0): " + id );
-    			
-//    			Long id = listCursor.getLong(0);
-//    			String name= listCursor.getString(1);
-//    			t = new Food(name);
-//    			foods.add(t);
+    		do {    			
+    			trackId = listCursor.getLong(0);
     		} while (listCursor.moveToNext());
-    	} 
+    	} else {
+    		trackId = 0;
+    	}
     	listCursor.close();
-    	Log.w(TAG, "=====================================================================" );
     	
-    	return 2;
+    	return trackId + 1;
     }
     
     
@@ -182,7 +167,7 @@ public class LocationDbAdapter {
      * @param longitude
      * @return
      */
-    public long createTrack(int trackId, double latitude, double longitude) {
+    public long createTrack(long trackId, double latitude, double longitude) {
         ContentValues initialValues = new ContentValues();
         
         initialValues.put(KEY_TRACKID, trackId);
@@ -253,7 +238,7 @@ public class LocationDbAdapter {
      * @param longitude value to set track longitude to
      * @return true if a track was successfully updated, false otherwise
      */
-    public boolean updateNote(int rowId, int trackId, double latitude, double longitude) {
+    public boolean updateNote(int rowId, long trackId, double latitude, double longitude) {
         ContentValues args = new ContentValues();
         
         args.put(KEY_TRACKID, trackId);

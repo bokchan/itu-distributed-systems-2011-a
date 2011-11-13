@@ -82,8 +82,7 @@ public class LocationServiceDB extends Service {
 
 	private LocationDbAdapter mDbHelper;
 	long rowId;
-	int trackId = 3; // one track id per tour/track recording
-	// TODO: figure out how to set and increment id // +1 from last records
+	long trackId = 0;
     
     /**
      * Class for clients to access.  Because we know this service always
@@ -157,6 +156,12 @@ public class LocationServiceDB extends Service {
 		Log.d(TAG, "loc: " + loc);
 
 		
+		
+		// Set a current track id
+		// for now 
+		trackId = mDbHelper.createTrackId();
+		
+		
 		// TODO: figure out to set a track id thats unique only for one track (start / stop)
 				
 		if (loc != null) {
@@ -171,8 +176,7 @@ public class LocationServiceDB extends Service {
 			// or trackId = mDbHelper.createTrack(0, 0);
 		}
 
-		// try out
-		mDbHelper.createTrackId();
+
 		
 		// ask the Location Manager to send us location updates
 		locListenD = new DispLocListener();        
