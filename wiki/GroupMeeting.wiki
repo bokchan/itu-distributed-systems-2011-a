@@ -34,4 +34,4 @@ A closer view
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/dataprocessing_2.jpg
 
-Dataprocessing after talking to [http://itu.academia.edu/AfsanehDoryab Afsaneh Doryab]
+Dataprocessing approach after talking to [http://itu.academia.edu/AfsanehDoryab Afsaneh Doryab]
