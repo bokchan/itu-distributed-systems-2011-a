@@ -1,0 +1,13 @@
+#summary Notes from group meeting
+
+= Introduction =
+
+Sketches of GUI, Dataprocessing and Prototype
+
+= Details =
+
+Add your content here.  Format your content with:
+
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
