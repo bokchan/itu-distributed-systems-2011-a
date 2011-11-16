@@ -5,8 +5,6 @@ import org.apache.http.client.methods.HttpGet;
 public class DataSet {
 	class UpdateDataSet extends HttpGet {
 		
-		
-		
 	} 
 	
 }

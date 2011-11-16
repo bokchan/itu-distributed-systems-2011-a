@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:key="server_prefs" android:title="Webservice Preferences">
-        <EditTextPreference android:summary="Url to data webservice" android:key="server_url" android:title="Server Url"/>
-        <EditTextPreference android:summary="Api Key for data webservice" android:key="api_key" android:title="ApiKey"/>
-        <CheckBoxPreference android:title="@string/noxdroid_service_autostart" android:key="@string/noxdroid_service_autostart"/>
+        <EditTextPreference android:summary="Url to data webservice" android:key="server_url" android:title="Server Url" android:defaultValue="localhost"/>
+        <EditTextPreference android:summary="Api Key for data webservice" android:key="api_key" android:title="ApiKey" android:defaultValue="empty"/>
+        <CheckBoxPreference android:title="@string/noxdroid_service_autostart" android:key="@string/noxdroid_service_autostart" android:defaultValue="true"/>
     </PreferenceCategory>
     <PreferenceCategory android:key="ioio_prefs" android:title="IOIO Preferences">
-        <EditTextPreference  android:title="IOIO NO2 pin" android:key="IOIO_NO2_PIN" android:inputType="number" android:defaultValue="40"/>
-        <EditTextPreference android:title="IOIO Temp pin" android:key="IOIO_TEMP_PIN" android:inputType="number" android:defaultValue="42"/>
-        <EditTextPreference android:title="IOIO Green pin" android:key="IOIO_LED_GREEN_PIN" android:inputType="number" android:defaultValue="16"/>
-        <EditTextPreference android:title="IOIO Yellow pin" android:key="IOIO_LED_YELLOW_PIN" android:inputType="number" android:defaultValue="18"/>
-        <EditTextPreference android:title="IOIO Red pin" android:key="IOIO_LED_RED_PIN" android:inputType="number" android:defaultValue="20"/>
-        <EditTextPreference android:title="IOIO Update Interval (ms)" android:key="IOIO_UPDATE_INTERVAL" android:inputType="number" android:defaultValue="2000"/>
+        <EditTextPreference android:title="IOIO NO2 pin" android:key="@string/IOIO_NO2_PIN" android:defaultValue="40"/>
+        <EditTextPreference android:title="IOIO Temp pin" android:key="@string/IOIO_TEMP_PIN"  android:defaultValue="42"/>
+        <EditTextPreference android:title="IOIO Green pin" android:key="@string/IOIO_LED_GREEN_PIN"  android:defaultValue="16"/>
+        <EditTextPreference android:title="IOIO Yellow pin" android:key="@string/IOIO_LED_YELLOW_PIN"  android:defaultValue="18"/>
+        <EditTextPreference android:title="IOIO Red pin" android:key="@string/IOIO_LED_RED_PIN"  android:defaultValue="20"/>
+        <EditTextPreference android:title="IOIO Update Interval (ms)" android:key="@string/IOIO_UPDATE_INTERVAL"  android:defaultValue="2000"/>
     </PreferenceCategory>
-
 </PreferenceScreen>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/relLayoutWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true" >
+
+        <ImageButton
+            android:id="@+id/imgBtnStart"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/play_disabled" />
+
+        <RelativeLayout
+            android:id="@+id/relLayoutGPS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp" >
+
+            <ImageButton
+                android:id="@+id/imgBtnGPS"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/circle_grey" />
+
+            <ImageView
+                android:id="@+id/imgGPS"
+                android:layout_width="26dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/bulbgrey2" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relLayoutIOIO"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp" >
+
+            <ImageButton
+                android:id="@+id/imgBtnIOIO"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/circle_grey" />
+
+            <ImageView
+                android:id="@+id/imgIOIO"
+                android:layout_width="63dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/ioio_logo2" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relLayoutConnection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp" >
+
+            <ImageButton
+                android:id="@+id/imgBtnConn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/circle_grey" />
+
+            <ImageView
+                android:id="@+id/imgConn"
+                android:layout_width="44dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:src="@drawable/wifi_signal_white" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

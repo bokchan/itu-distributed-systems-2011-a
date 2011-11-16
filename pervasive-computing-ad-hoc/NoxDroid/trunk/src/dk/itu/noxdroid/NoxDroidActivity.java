@@ -17,12 +17,11 @@ import Pachube.Feed;
 import Pachube.Pachube;
 import Pachube.PachubeException;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -38,19 +37,27 @@ import dk.itu.noxdroid.setup.PreferencesActivity;
 public class NoxDroidActivity extends Activity {
 
 	private String TAG = this.getClass().getSimpleName();
-	
+
 	private String login = "noxdroid";
-    private String password = "noxdroid";
+	private String password = "noxdroid";
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		// startActivity(new Intent(this,IOIOSensorActivity.class));
-		// startActivity(new Intent(this,NoxDroidGPSActivity.class));
-		testDependencies();
-		testHTTP();
+
+
+		try {
+			
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
+			Log.i(TAG, prefs.getAll().toString());
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+			Log.e(TAG, e.getCause().getMessage());
+		}
+		// testHTTP();
 	}
 
 	public void updateFeed(View view) {
@@ -114,22 +121,16 @@ public class NoxDroidActivity extends Activity {
 		gps.setChecked(locationManager
 				.isProviderEnabled(LocationManager.GPS_PROVIDER));
 
-		final ConnectivityManager connMan = (ConnectivityManager) this
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final NetworkInfo wifiInfo = connMan
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		final NetworkInfo mobileInfo = connMan
-				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		wifi.setChecked(wifiInfo.isAvailable());
-		mobile.setChecked(mobileInfo.isAvailable());
 	}
 
 	private void testHTTP() {
-		OAuthConsumer consumer = new CommonsHttpOAuthConsumer("C2fq1JGYSJ7JVTfsOQir", "IU7koQxuG1qSVf6E3z7zbR9QRZuBtiC9pCD1uAjM");
+		OAuthConsumer consumer = new CommonsHttpOAuthConsumer(
+				"C2fq1JGYSJ7JVTfsOQir",
+				"IU7koQxuG1qSVf6E3z7zbR9QRZuBtiC9pCD1uAjM");
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet("http://geocommons.com/maps/111886.json");
-		
-		//addAuthentication(request);
+
+		// addAuthentication(request);
 		HttpEntity results = null;
 
 		try {
@@ -149,21 +150,18 @@ public class NoxDroidActivity extends Activity {
 		}
 
 	}
-	
-    /**
-     * Add basic authentication header to request
-     *
-     * @param request
-     */
-    private void addAuthentication(HttpRequestBase request) {
-        String usernamePassword = login + ":" + password;
-        String encodedUsernamePassword = Base64.encodeToString(usernamePassword.getBytes(), Base64.DEFAULT);
-        
-        request.addHeader("Authorization", "Basic " + encodedUsernamePassword);
-    }
-	//
-	// @Override
-	// public void onBackPressed() {
-	// moveTaskToBack (true);
-	// }
+
+	/**
+	 * Add basic authentication header to request
+	 * 
+	 * @param request
+	 */
+	private void addAuthentication(HttpRequestBase request) {
+		String usernamePassword = login + ":" + password;
+		String encodedUsernamePassword = Base64.encodeToString(
+				usernamePassword.getBytes(), Base64.DEFAULT);
+
+		request.addHeader("Authorization", "Basic " + encodedUsernamePassword);
+	}
+
 }

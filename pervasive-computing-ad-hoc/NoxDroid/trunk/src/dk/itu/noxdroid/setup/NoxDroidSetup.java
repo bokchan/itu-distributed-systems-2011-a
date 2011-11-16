@@ -21,7 +21,6 @@ public class NoxDroidSetup extends Activity {
 		flipper = (ViewFlipper) findViewById(R.id.viewFlipper);
 		flipper.setInAnimation(this, android.R.anim.fade_in);
 		flipper.setOutAnimation(this, android.R.anim.fade_out);
-		
 	}
 	
 	public void clickHandler(View view) {

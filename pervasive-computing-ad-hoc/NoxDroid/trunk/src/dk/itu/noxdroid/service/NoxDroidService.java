@@ -2,7 +2,6 @@ package dk.itu.noxdroid.service;
 
 import ioio.lib.api.exception.ConnectionLostException;
 
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,14 +12,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
 
 public class NoxDroidService extends Service implements Observer {
-	public Map<String,?> APP_PREFS; 
+
 	//
 	private NoxDroidIOIOThread ioio_thread_; 
 	NotificationManager nman;
@@ -41,20 +39,9 @@ public class NoxDroidService extends Service implements Observer {
 		// status bar.
 		
 		showNotification();
-		try {
-			//TODO : Make preferences accessible from Service
-			APP_PREFS =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getAll();
-			Log.e(TAG, "Got SharedPreferences ");
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
 		
 		ioio_thread_ = new NoxDroidIOIOThread(this); 
-		ioio_thread_.start();		
-	}
-	
-	public synchronized Map<String, ?> getPrefs() {
-		return this.APP_PREFS;
+		ioio_thread_.start();
 	}
 	
 	private void doReading()  {
@@ -143,5 +130,4 @@ public class NoxDroidService extends Service implements Observer {
 	public void update(Observable observable, Object data) {
 		Log.i("Notified from IOIO: ", String.valueOf(data));
 	}
-
 }

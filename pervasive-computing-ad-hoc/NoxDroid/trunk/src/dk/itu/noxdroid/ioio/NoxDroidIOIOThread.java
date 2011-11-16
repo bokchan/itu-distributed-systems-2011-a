@@ -8,11 +8,13 @@ import ioio.lib.api.IOIOFactory;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.api.exception.IncompatibilityException;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
 
-public class NoxDroidIOIOThread extends Thread  {
+public class NoxDroidIOIOThread extends Thread {
 	Context context;
 
 	private String TAG = "NoxDroidIOIOThread";
@@ -29,17 +31,23 @@ public class NoxDroidIOIOThread extends Thread  {
 	private DigitalOutput ledRed_;
 	private int pinGreen = 16;
 	private int pinYellow = 18;
-	private int pinledRed = 20;
+	private int pinRed = 20;
 	private int pinAnalogIn = 40;
-	NoxDroidService service;
+	private NoxDroidService service;
+	private SharedPreferences prefs;
 
 	public NoxDroidIOIOThread(NoxDroidService service) {
 		this.service = service;
-		
-//		pinGreen = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_GREEN_PIN);
-//		pinYellow = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_YELLOW_PIN);
-//		pinledRed = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_RED_PIN);
-//		pinAnalogIn =  (Integer) service.APP_PREFS.get(R.string.IOIO_NO2_PIN);
+
+		try {
+			prefs = PreferenceManager.getDefaultSharedPreferences(service);
+			pinGreen = prefs.getInt("IOIO_LED_GREEN_PIN", pinGreen);
+			pinYellow = prefs.getInt("IOIO_LED_YELLOW_PIN", pinYellow);
+			pinRed = prefs.getInt("IOIO_LED_RED_PIN", pinRed);
+			pinAnalogIn = (Integer) prefs.getInt("IOIO_NO2_PIN", pinAnalogIn);
+		} catch (Exception e) {
+			
+		}
 	}
 
 	/** Not relevant to subclasses. */
@@ -105,9 +113,11 @@ public class NoxDroidIOIOThread extends Thread  {
 		addToDebug("Setup()");
 		try {
 			input_ = ioio_.openAnalogInput(pinAnalogIn);
-			ledGreen_ = ioio_.openDigitalOutput(pinGreen, Spec.Mode.NORMAL, true);
-			ledYellow_ = ioio_.openDigitalOutput(pinYellow, Spec.Mode.NORMAL, true);
-			ledRed_ = ioio_.openDigitalOutput(pinledRed, Spec.Mode.NORMAL, true);
+			ledGreen_ = ioio_.openDigitalOutput(pinGreen, Spec.Mode.NORMAL,
+					true);
+			ledYellow_ = ioio_.openDigitalOutput(pinYellow, Spec.Mode.NORMAL,
+					true);
+			ledRed_ = ioio_.openDigitalOutput(pinRed, Spec.Mode.NORMAL, true);
 		} catch (ConnectionLostException e) {
 			throw e;
 		}
@@ -124,12 +134,12 @@ public class NoxDroidIOIOThread extends Thread  {
 		addToDebug("Loop");
 		try {
 			final float reading = SensorDataUtil.muAtoMuGrames(input_.read());
-			//addToDebug(Float.toString(reading));
+			// addToDebug(Float.toString(reading));
 			ledGreen_.write(!flag);
 			ledYellow_.write(!flag);
 			ledRed_.write(flag);
 			flag = flag ? false : true;
-			Object obj = (Object) reading ;
+			Object obj = (Object) reading;
 			service.update(this.getClass(), obj);
 			sleep(1000);
 		} catch (InterruptedException e) {
