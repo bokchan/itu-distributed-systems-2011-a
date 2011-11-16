@@ -1,5 +1,7 @@
 package dk.itu.noxdroid;
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.content.Context;
 import android.location.LocationManager;
@@ -15,7 +17,7 @@ import android.widget.RelativeLayout;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread.STATUS;
 
-public class NoxDroidMainActivity extends Activity {
+public class NoxDroidMainActivity extends Activity{
 
 	private final int IOIOCONNECTIONTEST = 0;
 
@@ -32,12 +34,13 @@ public class NoxDroidMainActivity extends Activity {
 	private ImageView imgConn;
 	private ProgressBar pb;
 	private RelativeLayout.LayoutParams lp;
+	private HashMap<Class<?>, Boolean> tests;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main2);
-
+		
 		/********** INITIALIZES *************/
 		imgBtnStart = (ImageButton) findViewById(R.id.imgBtnStart);
 		imgBtnGPS = (ImageButton) findViewById(R.id.imgBtnGPS);
@@ -51,11 +54,12 @@ public class NoxDroidMainActivity extends Activity {
 		layoutIOIO = (RelativeLayout) findViewById(R.id.relLayoutIOIO);
 
 		/* Please visit http://www.ryangmattison.com for updates */
-
 		((ImageView) findViewById(R.id.imgIOIO)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgGPS)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgConn)).setAlpha(80);
-
+		
+		tests = new HashMap<Class<?>, Boolean>();
+	
 		lp = new RelativeLayout.LayoutParams(
 				RelativeLayout.LayoutParams.WRAP_CONTENT,
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -67,7 +71,6 @@ public class NoxDroidMainActivity extends Activity {
 		testDependencies();
 	}
 	
-
 	private void showLoaders() {
 		ImageView[] iv = { imgConn, imgGPS, imgIOIO };
 		for (ImageView i : iv) {
@@ -92,9 +95,8 @@ public class NoxDroidMainActivity extends Activity {
 
 		IOIOConnectionTest ioiotest = new IOIOConnectionTest();
 		ioiotest.execute(new Void[] {});
-
 	}
-
+	
 	class ConnectivityTest extends AsyncTask<Void, Void, Boolean> {
 
 		@Override
@@ -129,8 +131,8 @@ public class NoxDroidMainActivity extends Activity {
 			}
 			imgConn.setVisibility(View.VISIBLE);
 			pb.setVisibility(View.GONE);
+			update(this.getClass(), result);
 		}
-
 	}
 
 	class GPSConnectionTest extends AsyncTask<Void, Void, Boolean> {
@@ -161,12 +163,14 @@ public class NoxDroidMainActivity extends Activity {
 			}
 			this.pb.setVisibility(View.GONE);
 			imgGPS.setVisibility(View.VISIBLE);
+			update(this.getClass(), result);
 		}
 	}
 
 	class IOIOConnectionTest extends AsyncTask<Void, Void, Boolean> {
+		
 		protected void disconnected() throws InterruptedException {
-
+			
 		}
 
 		/**
@@ -219,6 +223,20 @@ public class NoxDroidMainActivity extends Activity {
 			}
 			this.pb.setVisibility(View.GONE);
 			imgIOIO.setVisibility(View.VISIBLE);
+			update(this.getClass(), result);
+		}
+	}
+
+	public void update(Class<?> c, boolean flag) {
+		tests.put(c, flag);
+		if (tests.size() == 3) {
+			boolean f = true;
+			for (Boolean val : tests.values()) {
+				f &= val;
+				if (!f) break;
+			}
+			if (f) imgBtnStart.setImageResource(R.drawable.play);
+			tests.clear();
 		}
 	}
 }
