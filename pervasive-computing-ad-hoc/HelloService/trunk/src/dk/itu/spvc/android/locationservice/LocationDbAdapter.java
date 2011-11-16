@@ -56,16 +56,25 @@ public class LocationDbAdapter {
     /**
      * Database creation sql statement
      * 
-     * NB! more on sql lite 3 datatypes http://www.sqlite.org/datatype3.html 
+     * NB! more on sql lite 3 datatypes:
+     * http://www.sqlite.org/datatype3.html 
      * 
      * if the sql statement get complex its possible to move to an xml file
      * but for this simple example we keep it here.
      * TODO: look up reference for that
      * 
+     * previously had time: date_time datetime default current_date
+     * 
+     * 
+     * RECORD_TIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+     * nb set the utc time
+     * if should be get as local time then
+     * 
+     * 
      */
     private static final String DATABASE_CREATE =
         "create table tracks (_id integer primary key autoincrement, "
-		+ "track_id integer not null, date_time datetime default current_date,"
+		+ "track_id text not null, time_stamp integer not null default current_timestamp,"
 		+ "latitude double not null, longitude double not null);";
     
     private static final String DATABASE_NAME = "locationservicedata.db";
@@ -126,7 +135,7 @@ public class LocationDbAdapter {
 
     /**
      * 
-     * 
+     * TODO: clean up remove
      * 
      * @return a track id 
      */
@@ -167,7 +176,7 @@ public class LocationDbAdapter {
      * @param longitude
      * @return
      */
-    public long createTrack(long trackId, double latitude, double longitude) {
+    public long createTrack(String trackId, double latitude, double longitude) {
         ContentValues initialValues = new ContentValues();
         
         initialValues.put(KEY_TRACKID, trackId);

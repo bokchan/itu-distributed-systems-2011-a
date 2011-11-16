@@ -17,6 +17,7 @@ package dk.itu.spvc.android.locationservice;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -82,7 +83,9 @@ public class LocationServiceDB extends Service {
 
 	private LocationDbAdapter mDbHelper;
 	long rowId;
-	long trackId = 0;
+	
+	// based on unique uuid per track
+	String trackId;
     
     /**
      * Class for clients to access.  Because we know this service always
@@ -159,7 +162,12 @@ public class LocationServiceDB extends Service {
 		
 		// Set a current track id
 		// for now 
-		trackId = mDbHelper.createTrackId();
+		//trackId = mDbHelper.createTrackId();
+		//
+		trackId = UUID.randomUUID().toString();
+		
+		
+		
 		
 		
 		// TODO: figure out to set a track id thats unique only for one track (start / stop)
