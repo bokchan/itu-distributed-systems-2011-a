@@ -1,9 +1,6 @@
 package dk.itu.noxdroid.ioio;
 
 
-import dk.itu.noxdroid.R;
-import dk.itu.noxdroid.R.id;
-import dk.itu.noxdroid.R.layout;
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.DigitalOutput.Spec;
@@ -12,15 +9,21 @@ import ioio.lib.util.AbstractIOIOActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+import dk.itu.noxdroid.R;
 
 public class IOIOActivity extends AbstractIOIOActivity {
 	private TextView textView_;
 	private TextView debug_;
 	private ToggleButton toggleButton_;
+	private String TAG;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
+				.getClass().getSimpleName());
+		
 		setContentView(R.layout.ioio);
 
 		textView_ = (TextView) findViewById(R.id.textView1);

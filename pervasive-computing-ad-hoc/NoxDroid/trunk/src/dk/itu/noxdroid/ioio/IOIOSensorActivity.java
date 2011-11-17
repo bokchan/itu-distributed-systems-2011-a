@@ -12,17 +12,20 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.service.NoxDroidService;
 
 public class IOIOSensorActivity extends AbstractIOIOActivity {
 	
 	private NoxDroidService service;
-	private String TAG = "IOIOSensorActivity";  
+	private String TAG;  
 	private boolean flag = true;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
+				.getClass().getSimpleName());
 		addToDebug("OnCreate");
 		//doBindService();
 	}

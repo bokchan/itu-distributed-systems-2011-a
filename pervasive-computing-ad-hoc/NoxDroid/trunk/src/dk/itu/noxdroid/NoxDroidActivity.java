@@ -37,7 +37,7 @@ import dk.itu.noxdroid.setup.PreferencesActivity;
 
 public class NoxDroidActivity extends Activity {
 
-	private String TAG = this.getClass().getSimpleName();
+	private String TAG;
 	
 	private String login = "noxdroid";
     private String password = "noxdroid";
@@ -46,6 +46,9 @@ public class NoxDroidActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
+				.getClass().getSimpleName());
 		setContentView(R.layout.main);
 		// startActivity(new Intent(this,IOIOSensorActivity.class));
 		// startActivity(new Intent(this,NoxDroidGPSActivity.class));

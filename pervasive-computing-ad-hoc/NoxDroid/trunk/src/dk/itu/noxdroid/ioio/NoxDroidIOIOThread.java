@@ -7,15 +7,19 @@ import ioio.lib.api.IOIO;
 import ioio.lib.api.IOIOFactory;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.api.exception.IncompatibilityException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import android.content.Context;
 import android.util.Log;
+import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
 
 public class NoxDroidIOIOThread extends Thread  {
-	Context context;
-
-	private String TAG = "NoxDroidIOIOThread";
+	private Context context;
+	private String TAG;
 	/** Subclasses should use this field for controlling the IOIO. */
 	protected IOIO ioio_;
 	private boolean flag = false;
@@ -31,10 +35,15 @@ public class NoxDroidIOIOThread extends Thread  {
 	private int pinYellow = 18;
 	private int pinledRed = 20;
 	private int pinAnalogIn = 40;
-	NoxDroidService service;
+	
+	ArrayList<IOIOEventListener> listeners = new ArrayList<IOIOEventListener>();
+	private NoxDroidService service;
 
 	public NoxDroidIOIOThread(NoxDroidService service) {
 		this.service = service;
+		listeners.add(service);
+		TAG = service.getString(R.string.LOGCAT_TAG, service.getString(R.string.app_name), this
+				.getClass().getSimpleName());
 		
 //		pinGreen = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_GREEN_PIN);
 //		pinYellow = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_YELLOW_PIN);
@@ -135,7 +144,10 @@ public class NoxDroidIOIOThread extends Thread  {
 		} catch (InterruptedException e) {
 			ioio_.disconnect();
 		} catch (ConnectionLostException e) {
-			throw e;
+			// Notify service;
+			Log.e(TAG, e.getMessage());
+			notifyEventchanged(R.string.ERROR_IOIO_CONNECTION_LOST);
+			//throw e;
 		}
 	}
 
@@ -184,5 +196,12 @@ public class NoxDroidIOIOThread extends Thread  {
 
 	private void addToDebug(final String str) {
 		Log.i(TAG, str);
+	}
+	
+	private void notifyEventchanged(int msg) {
+		Iterator<IOIOEventListener> it = listeners.iterator();
+		while(it.hasNext()) {
+			it.next().notify(msg);
+		}
 	}
 }

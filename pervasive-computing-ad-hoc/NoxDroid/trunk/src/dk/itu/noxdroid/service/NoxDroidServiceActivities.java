@@ -30,6 +30,7 @@ import android.widget.Toast;
 import dk.itu.noxdroid.R;
 
 public class NoxDroidServiceActivities  {
+	private static String TAG;
     /**
      * <p>Example of explicitly starting and stopping the local service.
      * This demonstrates the implementation of a service that runs in the same
@@ -44,6 +45,9 @@ public class NoxDroidServiceActivities  {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
+            TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
+    				.getClass().getSimpleName());
+            
             setContentView(R.layout.local_service_controller);
 
             // Watch for button clicks.
