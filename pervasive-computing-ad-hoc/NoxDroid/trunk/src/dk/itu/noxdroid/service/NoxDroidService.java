@@ -216,6 +216,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		
 		@Override
 		public void handleMessage(Message msg) {
+			Log.i(TAG, "Handling incoming message");
 			switch (msg.what) {
 			case MSG_REGISTER_CLIENT:
 				Log.i(TAG, "Added client: " + msg.replyTo);
@@ -236,7 +237,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		for (int i = 0; i < clients.size(); i++) {
 			try {
 			Log.i(TAG, "Sent message to : " + clients.get(i));
+			showNotification();
 				clients.get(i).send(Message.obtain(null,msg));
+				
 			} catch (RemoteException e) {
 				// If we get here, the client is dead, and we should remove it
 				// from the list
