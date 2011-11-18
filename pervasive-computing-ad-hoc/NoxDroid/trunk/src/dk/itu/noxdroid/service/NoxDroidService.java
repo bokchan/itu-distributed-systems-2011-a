@@ -19,14 +19,30 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import dk.itu.noxdroid.NoxDroidMainActivity;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.ioio.IOIOEventListener;
 import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
 
 public class NoxDroidService extends Service implements IOIOEventListener {
 	
-	public static int MSG_UNREGISTER_CLIENT = 3; 
-
+	public final static int ERROR_IOIO_CONNECTION_LOST = 0;
+	public final  static int MSG_REGISTER_CLIENT = 1;
+	public final static int STATUS_IOIO_STATUS_GREEN = 3; 
+	public final static int STATUS_IOIO_YELLOW = 4;
+	public final static int STATUS_IOIO_RED = 5;
+	public final static int MSG_IOIO_CONNECTED = 8;
+	public final static int ERROR_IOIO_INTERRUPTED = 9;
+	public final static int ERROR_IOIO_ABORTED = 10;
+	public final static int ERROR_IOIO_INCOMPATIBLE = 11;
+	
+	public final static int MSG_UNREGISTER_CLIENT = 2;
+	public final static int STATUS_SERVICE_STARTED = 6;
+	public final static int STATUS_SERVICE_STOPPED = 7;
+	public final static int STATUS_CONNECTIVITY_WAITING = 12;
+	public final static int STATUS_CONNECTIVITY_SUCCESS = 13;
+	public final static int STATUS_CONNECTIVITY_FAILURE = 14;
+	
 	public Map<String, ?> APP_PREFS;
 	//
 	private NoxDroidIOIOThread ioio_thread_;
@@ -64,8 +80,17 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			Log.e(TAG, e.getMessage());
 		}
 
+		
 		ioio_thread_ = new NoxDroidIOIOThread(this);
 		ioio_thread_.start();
+		try {
+			ioio_thread_.join(2000);
+		} catch (InterruptedException e) {
+			if (ioio_thread_.isAlive()) {
+				ioio_thread_.abort();
+			}
+		}
+
 
 	}
 
@@ -137,9 +162,13 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		// The PendingIntent to launch our activity if the user selects this
 		// notification
+//		PendingIntent contentIntent = PendingIntent
+//				.getActivity(this, 0, new Intent(this,
+//						NoxDroidServiceActivities.Controller.class), 0);
+		
 		PendingIntent contentIntent = PendingIntent
 				.getActivity(this, 0, new Intent(this,
-						NoxDroidServiceActivities.Controller.class), 0);
+						NoxDroidMainActivity.class), 0);
 		
 
 		// Set the info for the views that show in the notification panel.
@@ -159,6 +188,11 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 						+ String.valueOf(data));
 	}
 	
+	public void removeMessenger(Messenger m) {
+		clients.remove(m);
+		Log.i(TAG, "Removed messenger from NoxDroidService");
+	}
+	
 	public void addMessenger(Messenger m) {
 		clients.add(m);
 		Log.i(TAG, "Added Messenger to NoxDroidService");
@@ -170,7 +204,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			switch (msg.what) {
 			case R.string.MSG_REGISTER_CLIENT:
 				Log.i(TAG, "Added client: " + msg.replyTo);
-				//clients.add(msg.replyTo);
+				clients.add(msg.replyTo);
 			default:
 				super.handleMessage(msg);
 				break;
@@ -184,6 +218,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private void notifyClients(int msg) {
 		for (int i = 0; i < clients.size(); i++) {
 			try {
+				Log.e(TAG, "Sent message to : " + clients.get(i));
 				clients.get(i).send(Message.obtain(null,msg));
 			} catch (RemoteException e) {
 				// If we get here, the client is dead, and we should remove it
@@ -197,9 +232,12 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	@Override
 	public void notify(int msg) {
 		switch (msg) {
-		case (R.string.ERROR_IOIO_CONNECTION_LOST):
+		case (ERROR_IOIO_CONNECTION_LOST):
+			Log.e(TAG, "Received message: ");
 			notifyClients(msg);
 			break;
+		case ERROR_IOIO_ABORTED:
+			notifyClients(msg);
 		default:
 			break;
 		}

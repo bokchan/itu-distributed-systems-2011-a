@@ -30,11 +30,13 @@ import dk.itu.noxdroid.ioio.IOIOConnectedTestThread;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread.STATUS;
 import dk.itu.noxdroid.service.NoxDroidService;
 
-public class NoxDroidMainActivity extends Activity {
+public class NoxDroidMainActivity extends Activity{
+	
 	private String TAG;
-	private NoxDroidService service;
 
 	/********** DECLARES *************/
+	
+		
 	private RelativeLayout layoutGPS;
 	private RelativeLayout layoutIOIO;
 	private RelativeLayout layoutConn;
@@ -51,12 +53,11 @@ public class NoxDroidMainActivity extends Activity {
 	private Hashtable<Class<?>, Boolean> tests;
 	private boolean isBound;
 	private Messenger msg_service;
-
 	private ServiceConnection mConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			service = null;
+			msg_service = null;
 		}
 
 		@Override
@@ -68,8 +69,8 @@ public class NoxDroidMainActivity extends Activity {
 
 			try {
 				msg_service = new Messenger(binder);
-				Message msg = Message
-						.obtain(null, R.string.MSG_REGISTER_CLIENT);
+				Message msg = Message.obtain(null,
+						NoxDroidService.MSG_REGISTER_CLIENT);
 				msg.replyTo = messenger;
 				msg_service.send(msg);
 				Log.i(TAG, "Registered messenger to NoxDroidService");
@@ -119,7 +120,7 @@ public class NoxDroidMainActivity extends Activity {
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -130,6 +131,7 @@ public class NoxDroidMainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		testDependencies();
+		updateGUI(NoxDroidService.STATUS_SERVICE_STARTED);
 	}
 
 	void doBindService() {
@@ -157,9 +159,9 @@ public class NoxDroidMainActivity extends Activity {
 				}
 			}
 
-	        // Detach our existing connection.
-	        unbindService(mConnection);
-	        isBound = false;
+			// Detach our existing connection.
+			unbindService(mConnection);
+			isBound = false;
 		}
 	}
 
@@ -202,6 +204,7 @@ public class NoxDroidMainActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
+			imgBtnConn.setImageResource(R.drawable.circle_grey);
 			imgConn.setVisibility(View.GONE);
 			pb = new ProgressBar(getBaseContext());
 			pb.setLayoutParams(lp);
@@ -222,12 +225,17 @@ public class NoxDroidMainActivity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			if (result) {
 				imgBtnConn.setImageResource(R.drawable.circle_green);
+				imgConn.setVisibility(View.VISIBLE);
+				update(this.getClass(), true);
 			} else {
 				imgBtnConn.setImageResource(R.drawable.circle_red);
+				imgConn.setVisibility(View.VISIBLE);
+				update(this.getClass(), false);
 			}
 			imgConn.setVisibility(View.VISIBLE);
 			pb.setVisibility(View.GONE);
 			update(this.getClass(), result);
+			
 		}
 	}
 
@@ -318,7 +326,6 @@ public class NoxDroidMainActivity extends Activity {
 				if (!isServiceRunning(NoxDroidService.class)) {
 					imgBtnStart.setImageResource(R.drawable.play);
 					imgBtnStart.setEnabled(true);
-
 					imgBtnStop.setVisibility(View.GONE);
 
 				} else {
@@ -363,6 +370,10 @@ public class NoxDroidMainActivity extends Activity {
 		onResume();
 	}
 
+	private void IOIO_Change_Status(int status) {
+		
+	}
+
 	/**
 	 * Section
 	 */
@@ -371,9 +382,22 @@ public class NoxDroidMainActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case R.string.ERROR_IOIO_CONNECTION_LOST:
+			case NoxDroidService.ERROR_IOIO_CONNECTION_LOST:
+				imgBtnIOIO.setEnabled(false);
+				imgBtnIOIO.setImageResource(R.drawable.circle_red);
 				Toast.makeText(getBaseContext(), "IOIO Lost connection",
 						Toast.LENGTH_LONG);
+				break;
+			case NoxDroidService.STATUS_IOIO_STATUS_GREEN:
+				break;
+			case NoxDroidService.STATUS_IOIO_YELLOW:
+				break;
+			case NoxDroidService.STATUS_IOIO_RED:
+				break;
+			case NoxDroidService.ERROR_IOIO_ABORTED: 
+				imgBtnIOIO.setEnabled(false);
+				imgBtnIOIO.setImageResource(R.drawable.circle_red);
+				break;
 			default:
 				super.handleMessage(msg);
 				break;
@@ -382,4 +406,25 @@ public class NoxDroidMainActivity extends Activity {
 	}
 
 	final Messenger messenger = new Messenger(new IncomingHandler());
+
+	
+	private void updateGUI(int status) {
+		switch (status)  { 
+			case NoxDroidService.STATUS_SERVICE_STARTED :
+				
+				break;
+			
+			case NoxDroidService.STATUS_CONNECTIVITY_SUCCESS :
+				imgBtnConn.setImageResource(R.drawable.circle_green);
+				imgConn.setVisibility(View.VISIBLE);
+				update(this.getClass(), true);
+			case NoxDroidService.STATUS_CONNECTIVITY_FAILURE:
+				imgBtnConn.setImageResource(R.drawable.circle_red);
+				imgConn.setVisibility(View.VISIBLE);
+				update(this.getClass(), false);
+				default :
+					break;
+		}
+							
+	}
 }

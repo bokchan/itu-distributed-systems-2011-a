@@ -17,7 +17,7 @@ import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
 
-public class NoxDroidIOIOThread extends Thread  {
+public class NoxDroidIOIOThread extends Thread {
 	private Context context;
 	private String TAG;
 	/** Subclasses should use this field for controlling the IOIO. */
@@ -35,20 +35,23 @@ public class NoxDroidIOIOThread extends Thread  {
 	private int pinYellow = 18;
 	private int pinledRed = 20;
 	private int pinAnalogIn = 40;
-	
+
 	ArrayList<IOIOEventListener> listeners = new ArrayList<IOIOEventListener>();
 	private NoxDroidService service;
 
 	public NoxDroidIOIOThread(NoxDroidService service) {
 		this.service = service;
 		listeners.add(service);
-		TAG = service.getString(R.string.LOGCAT_TAG, service.getString(R.string.app_name), this
-				.getClass().getSimpleName());
-		
-//		pinGreen = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_GREEN_PIN);
-//		pinYellow = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_YELLOW_PIN);
-//		pinledRed = (Integer) service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_RED_PIN);
-//		pinAnalogIn =  (Integer) service.APP_PREFS.get(R.string.IOIO_NO2_PIN);
+		TAG = service.getString(R.string.LOGCAT_TAG, service
+				.getString(R.string.app_name), this.getClass().getSimpleName());
+
+		// pinGreen = (Integer)
+		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_GREEN_PIN);
+		// pinYellow = (Integer)
+		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_YELLOW_PIN);
+		// pinledRed = (Integer)
+		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_RED_PIN);
+		// pinAnalogIn = (Integer) service.APP_PREFS.get(R.string.IOIO_NO2_PIN);
 	}
 
 	/** Not relevant to subclasses. */
@@ -59,11 +62,13 @@ public class NoxDroidIOIOThread extends Thread  {
 			try {
 				synchronized (this) {
 					if (abort_) {
+						notifyEventchanged(NoxDroidService.ERROR_IOIO_ABORTED);
 						break;
 					}
 					ioio_ = IOIOFactory.create();
 				}
 				ioio_.waitForConnect();
+
 				connected_ = true;
 				setup();
 				while (!abort_) {
@@ -71,23 +76,32 @@ public class NoxDroidIOIOThread extends Thread  {
 				}
 				ioio_.disconnect();
 			} catch (ConnectionLostException e) {
+				Log.e(TAG, e.getMessage());
 				if (abort_) {
+					
+					notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 					break;
 				}
 			} catch (InterruptedException e) {
+				notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
+				Log.e(TAG, e.getMessage());
 				ioio_.disconnect();
 				break;
 			} catch (IncompatibilityException e) {
 				Log.e("AbstractIOIOActivity", "Incompatible IOIO firmware", e);
+				notifyEventchanged(NoxDroidService.ERROR_IOIO_INCOMPATIBLE);
 				incompatible();
 				// nothing to do - just wait until physical disconnection
 				try {
 					ioio_.waitForDisconnect();
 				} catch (InterruptedException e1) {
+					
+					Log.e(TAG, e.getMessage());
 					ioio_.disconnect();
 				}
 			} catch (Exception e) {
 				Log.e("AbstractIOIOActivity", "Unexpected exception caught", e);
+				notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 				ioio_.disconnect();
 				break;
 			} finally {
@@ -99,6 +113,8 @@ public class NoxDroidIOIOThread extends Thread  {
 						}
 					}
 				} catch (InterruptedException e) {
+					Log.e(TAG, e.getMessage());
+					notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
 				}
 			}
 		}
@@ -111,13 +127,17 @@ public class NoxDroidIOIOThread extends Thread  {
 	 * {@link #ioio_} field.
 	 */
 	protected void setup() throws ConnectionLostException, InterruptedException {
-		addToDebug("Setup()");
 		try {
 			input_ = ioio_.openAnalogInput(pinAnalogIn);
-			ledGreen_ = ioio_.openDigitalOutput(pinGreen, Spec.Mode.NORMAL, true);
-			ledYellow_ = ioio_.openDigitalOutput(pinYellow, Spec.Mode.NORMAL, true);
-			ledRed_ = ioio_.openDigitalOutput(pinledRed, Spec.Mode.NORMAL, true);
+			ledGreen_ = ioio_.openDigitalOutput(pinGreen, Spec.Mode.NORMAL,
+					true);
+			ledYellow_ = ioio_.openDigitalOutput(pinYellow, Spec.Mode.NORMAL,
+					true);
+			ledRed_ = ioio_
+					.openDigitalOutput(pinledRed, Spec.Mode.NORMAL, true);
 		} catch (ConnectionLostException e) {
+			Log.e(TAG, e.getMessage());
+			notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 			throw e;
 		}
 	}
@@ -129,25 +149,25 @@ public class NoxDroidIOIOThread extends Thread  {
 	 * producing outputs.
 	 */
 	protected void loop() throws ConnectionLostException, InterruptedException {
-
-		addToDebug("Loop");
 		try {
 			final float reading = SensorDataUtil.muAtoMuGrames(input_.read());
-			//addToDebug(Float.toString(reading));
+			// addToDebug(Float.toString(reading));
 			ledGreen_.write(!flag);
 			ledYellow_.write(!flag);
 			ledRed_.write(flag);
 			flag = flag ? false : true;
-			Object obj = (Object) reading ;
+			Object obj = (Object) reading;
 			service.update(this.getClass(), obj);
 			sleep(1000);
 		} catch (InterruptedException e) {
+			notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
+			Log.i(TAG, e.getMessage());
 			ioio_.disconnect();
 		} catch (ConnectionLostException e) {
+			notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 			// Notify service;
 			Log.e(TAG, e.getMessage());
-			notifyEventchanged(R.string.ERROR_IOIO_CONNECTION_LOST);
-			//throw e;
+			throw e;
 		}
 	}
 
@@ -181,6 +201,7 @@ public class NoxDroidIOIOThread extends Thread  {
 		if (connected_) {
 			interrupt();
 		}
+		notifyEventchanged(NoxDroidService.ERROR_IOIO_ABORTED);
 	}
 
 	public synchronized Float getReading() throws ConnectionLostException {
@@ -188,7 +209,8 @@ public class NoxDroidIOIOThread extends Thread  {
 			try {
 				return input_.read();
 			} catch (InterruptedException e) {
-				// ioio_.disconnect();
+				Log.e(TAG, e.getMessage());
+				abort();
 			}
 		}
 		return null;
@@ -197,10 +219,10 @@ public class NoxDroidIOIOThread extends Thread  {
 	private void addToDebug(final String str) {
 		Log.i(TAG, str);
 	}
-	
+
 	private void notifyEventchanged(int msg) {
 		Iterator<IOIOEventListener> it = listeners.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			it.next().notify(msg);
 		}
 	}
