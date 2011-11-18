@@ -140,6 +140,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	// This is the object that receives interactions from clients. See
 	// RemoteService for a more complete example.
 	private final IBinder mBinder = new ServiceBinder();
+	
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -199,12 +200,14 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	}
 
 	class IncomingHandler extends Handler {
+		
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case R.string.MSG_REGISTER_CLIENT:
+			case MSG_REGISTER_CLIENT:
 				Log.i(TAG, "Added client: " + msg.replyTo);
 				clients.add(msg.replyTo);
+				break;
 			default:
 				super.handleMessage(msg);
 				break;
@@ -216,9 +219,10 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public final Messenger messenger = new Messenger(new IncomingHandler());
 
 	private void notifyClients(int msg) {
+		Log.i(TAG, "Notifying clients # " + clients.size());
 		for (int i = 0; i < clients.size(); i++) {
 			try {
-				Log.e(TAG, "Sent message to : " + clients.get(i));
+			Log.i(TAG, "Sent message to : " + clients.get(i));
 				clients.get(i).send(Message.obtain(null,msg));
 			} catch (RemoteException e) {
 				// If we get here, the client is dead, and we should remove it

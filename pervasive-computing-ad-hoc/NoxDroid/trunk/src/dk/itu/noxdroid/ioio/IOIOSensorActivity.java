@@ -39,8 +39,8 @@ public class IOIOSensorActivity extends AbstractIOIOActivity {
 		
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder binder) {
-			service = ((NoxDroidService.ServiceBinder) binder).getService();
-			Log.i(TAG, "Connected to NoxDroidService");
+//			service = ((NoxDroidService.ServiceBinder) binder).getService();
+//			Log.i(TAG, "Connected to NoxDroidService");
 		}
 	};
 	
