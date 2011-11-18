@@ -23,6 +23,8 @@ import dk.itu.noxdroid.NoxDroidMainActivity;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.ioio.IOIOEventListener;
 import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
+import dk.itu.noxdroid.location.LocationService;
+import dk.itu.noxdroid.tracks.TracksService;
 
 public class NoxDroidService extends Service implements IOIOEventListener {
 	
@@ -91,6 +93,11 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			}
 		}
 
+		
+		// start additional services
+		startService(new Intent(this, LocationService.class));
+//		startService(new Intent(this, TracksService.class));
+		
 
 	}
 
@@ -125,6 +132,12 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Tell the user we stopped.
 		Toast.makeText(this, R.string.noxdroid_service_stopped,
 				Toast.LENGTH_SHORT).show();
+		
+		// stop additional services
+		stopService(new Intent(this, LocationService.class));
+//		stopService(new Intent(this, TracksService.class));
+		
+		
 	}
 
 	@Override

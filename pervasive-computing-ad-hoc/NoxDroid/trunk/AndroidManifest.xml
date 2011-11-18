@@ -6,43 +6,78 @@
 
     <uses-sdk android:minSdkVersion="8"/>
 
-    <uses-permission android:name="android.permission.INTERNET" >
-    </uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:icon="@drawable/no2_molecule"
         android:label="@string/app_name" >
+
         
         <activity android:name="dk.itu.noxdroid.NoxDroidActivity" >
+            <intent-filter >
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+		<activity android:name=".setup.PreferencesActivity" >
+        </activity>
+        
             
-        </activity>
-        <activity android:name=".setup.PreferencesActivity" >
-        </activity>
+		<!--         
+		Note:
+        the nox droid service is declared here - it dosen't use Controller/Binding approach
+        - its a stand-a-lone service
+        -->
         <service android:name=".service.NoxDroidService"></service>
+
+        <service android:name=".location.LocationService"></service>
+
+		<service android:name=".tracks.TracksService"></service>
+            
+             
+<!--          .service.NoxDroidServiceActivities$Controller / .service.NoxDroidServiceActivities$Binding are left overs right from the api demo example
+         TODO: remove -->
         <activity android:name=".service.NoxDroidServiceActivities$Controller" android:label="@string/activity_local_service_controller">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        
         <activity android:name=".service.NoxDroidServiceActivities$Binding" android:label="@string/activity_local_service_binding">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".setup.NoxDroidSetup">
-        </activity>
+        
+            
+        <activity android:name=".setup.NoxDroidSetup"></activity>
+        
         <activity android:name=".ioio.IOIOSensorActivity"></activity>
-        <activity android:name="NoxDroidMainActivity">
+        
+        <activity android:name=".NoxDroidMainActivity">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
         </activity>
+        
+            
+        <!-- Debug activity for simple try of services only - as stand alone -->
+        <activity android:name=".NoxDroidSimpleActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+            
+            
+            
+            
     </application>
 </manifest>

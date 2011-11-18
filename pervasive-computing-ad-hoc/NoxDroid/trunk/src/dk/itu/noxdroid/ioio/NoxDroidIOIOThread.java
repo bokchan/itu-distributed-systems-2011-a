@@ -13,6 +13,7 @@ import java.util.Iterator;
 
 import android.content.Context;
 import android.util.Log;
+import dk.itu.noxdroid.database.DbAdapter;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
@@ -35,7 +36,11 @@ public class NoxDroidIOIOThread extends Thread {
 	private int pinYellow = 18;
 	private int pinledRed = 20;
 	private int pinAnalogIn = 40;
-
+	
+	private DbAdapter mDbHelper;
+	private double nox;
+	private double temperature;
+	
 	ArrayList<IOIOEventListener> listeners = new ArrayList<IOIOEventListener>();
 	private NoxDroidService service;
 
@@ -135,9 +140,28 @@ public class NoxDroidIOIOThread extends Thread {
 					true);
 			ledRed_ = ioio_
 					.openDigitalOutput(pinledRed, Spec.Mode.NORMAL, true);
+
+			
+			/*
+			 * Set up data base
+			 * TODO: Not 100% sure about if service can be used as context ? 
+			 */
+	        mDbHelper = new DbAdapter(service);
+	        mDbHelper.open();
+	        
+			
 		} catch (ConnectionLostException e) {
+
+			
+			/* 
+			 * Close database - also done in other exceptions
+			 * TODO: verify when it should be closed
+			 */
+			mDbHelper.close();
+
 			Log.e(TAG, e.getMessage());
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
+
 			throw e;
 		}
 	}
@@ -156,9 +180,23 @@ public class NoxDroidIOIOThread extends Thread {
 			ledYellow_.write(!flag);
 			ledRed_.write(flag);
 			flag = flag ? false : true;
+			
+			// TODO: probably just disable this part
+			// because we are not going to send data directly back to the UI
 			Object obj = (Object) reading;
+			
 			service.update(this.getClass(), obj);
+			
+			
 			sleep(1000);
+			
+			// TODO: add right values
+	    	nox = 10101.0;
+	    	temperature = 38.8;
+			mDbHelper.createNox(nox, temperature);
+			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
+			
+
 		} catch (InterruptedException e) {
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
 			Log.i(TAG, e.getMessage());
@@ -179,7 +217,16 @@ public class NoxDroidIOIOThread extends Thread {
 	 * must not be used from within this method.
 	 */
 	protected void disconnected() throws InterruptedException {
-
+        
+        
+		/* 
+		 * Close database - also done in other exceptions
+		 * TODO: verify when it should be closed
+		 */
+//        mDbHelper.close();
+		// Temporarily disabled it crashed application - probably not the right place to stop or
+		
+		
 	}
 
 	/**
