@@ -39,5 +39,5 @@ https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/android_sa
 
 
 
-Its of course also possible to look up the samples code directly - go to the path where the adb is installed e.g. ~/Applications/android-sdk-<version> and search for samples directories. Or browse it here: http://developer.android.com/resources/samples/ApiDemos/index.html
+Its of course also possible to look up the samples code directly - go to the path where the adb is installed e.g. ~/Applications/android-sdk-[version] and search for samples directories. Or browse it here: http://developer.android.com/resources/samples/ApiDemos/index.html
 
