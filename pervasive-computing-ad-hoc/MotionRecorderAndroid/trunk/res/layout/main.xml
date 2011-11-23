@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+        
+	<Button android:id="@+id/buttonStartRecording" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Start recording"
+		android:onClick="startRecordingDialog"></Button>
+
+    <!-- start recording - done above for now -->
+    <!-- stop recording -->
+
+    <Button
+        android:id="@+id/buttonStopRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="stopRecording"
+        android:text="Stop recording" 
+        >
+    </Button>
+
+
+        
+
+
+
+<!-- TODO: enable when webservcie is up and run
+
+     <Button
+        android:id="@+id/buttonPostRecordingToWebservice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop recording and post to webservice" >
+    </Button> -->
+
+        
+        
+</LinearLayout>
