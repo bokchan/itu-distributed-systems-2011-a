@@ -25,6 +25,19 @@ NB! really raw needs clean up
 
 }}}
 
+
+= rm database =
+
+
+{{{
+    
+    adb -s 404D8E1812B3 shell
+    su
+    rm /data/data/dk.itu.spct.motionrecorderandroid/databases/motions.db
+
+}}}
+
+
 = some sqlite query examples=
 
 {{{
