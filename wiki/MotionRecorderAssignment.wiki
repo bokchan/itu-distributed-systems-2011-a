@@ -1,0 +1,38 @@
+#summary 
+
+
+= Android app code =
+
+
+https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/MotionRecorderAndroid/trunk
+
+NB! really raw needs clean up
+
+
+
+
+
+= get database from device =
+
+
+{{{
+    
+    adb -s 404D8E1812B3 shell
+    # copy db to sd card - at least required on the huwai devices
+    cat /data/data/dk.itu.spct.motionrecorderandroid/databases/motions.db > /sdcard/motions.db
+    # exit device - from computer do pull 
+    adb -s 404D8E1812B3 pull /sdcard/motions.db /tmp
+
+}}}
+
+= some sqlite query examples=
+
+{{{
+    
+    sqlite3 /tmp/motions.db 
+    sqlite> select * from motions;
+    # pic an uid (e.g.: a9db7906-c692-4629-8a0e-d9d169f6889f) and lookup recording for one motion sequence
+    sqlite> select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z from accelerometer, motions where motions.uuid="a9db7906-c692-4629-8a0e-d9d169f6889f" and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end);
+    
+}}}
+
