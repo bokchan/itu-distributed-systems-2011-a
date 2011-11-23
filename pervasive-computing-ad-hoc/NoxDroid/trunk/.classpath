@@ -2,20 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<!-- <classpathentry kind="lib" path="JPachube.jar"/> -->
-	
-    <classpathentry kind="lib" path="assets/JPachube.jar"/>
-    <classpathentry kind="lib" path="assets/ioiolib.jar"/>
-    <classpathentry kind="lib" path="assets/org.boehn.kmlframework_20090718.jar"/>
-    <classpathentry kind="lib" path="assets/signpost-commonshttp4-1.2.1.1.jar"/>
-    <classpathentry kind="lib" path="assets/signpost-core-1.2.1.1.jar"/>
-    <classpathentry kind="lib" path="assets/signpost-jetty6-1.2.1.1.jar"/>
-	
+	<classpathentry kind="lib" path="assets/JPachube.jar"/>
+	<classpathentry kind="lib" path="assets/ioiolib.jar"/>
+	<classpathentry kind="lib" path="assets/org.boehn.kmlframework_20090718.jar"/>
+	<classpathentry kind="lib" path="assets/signpost-commonshttp4-1.2.1.1.jar"/>
+	<classpathentry kind="lib" path="assets/signpost-core-1.2.1.1.jar"/>
+	<classpathentry kind="lib" path="assets/signpost-jetty6-1.2.1.1.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	
-	<!-- currently not used since we import jar -->
-	<!-- <classpathentry combineaccessrules="false" kind="src" path="/IOIOLib"/> -->
-	
+	<classpathentry kind="lib" path="assets/wpsapi.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

@@ -13,8 +13,8 @@ import java.util.Iterator;
 
 import android.content.Context;
 import android.util.Log;
-import dk.itu.noxdroid.database.DbAdapter;
 import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.database.DbAdapter;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
 
@@ -25,7 +25,7 @@ public class NoxDroidIOIOThread extends Thread {
 	protected IOIO ioio_;
 	private boolean flag = false;
 	private boolean abort_ = false;
-	private boolean connected_ = true;
+	private boolean connected_ = false;
 
 	private AnalogInput input_;
 
@@ -83,7 +83,6 @@ public class NoxDroidIOIOThread extends Thread {
 			} catch (ConnectionLostException e) {
 				Log.e(TAG, e.getMessage());
 				if (abort_) {
-					
 					notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 					break;
 				}
@@ -187,7 +186,6 @@ public class NoxDroidIOIOThread extends Thread {
 			
 			service.update(this.getClass(), obj);
 			
-			
 			sleep(1000);
 			
 			// TODO: add right values
@@ -217,8 +215,6 @@ public class NoxDroidIOIOThread extends Thread {
 	 * must not be used from within this method.
 	 */
 	protected void disconnected() throws InterruptedException {
-        
-        
 		/* 
 		 * Close database - also done in other exceptions
 		 * TODO: verify when it should be closed
@@ -272,5 +268,9 @@ public class NoxDroidIOIOThread extends Thread {
 		while (it.hasNext()) {
 			it.next().notify(msg);
 		}
+	}
+	
+	public boolean isConnected() {
+		return this.connected_;
 	}
 }

@@ -9,7 +9,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -24,7 +27,6 @@ import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.ioio.IOIOEventListener;
 import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
 import dk.itu.noxdroid.location.LocationService;
-import dk.itu.noxdroid.tracks.TracksService;
 
 public class NoxDroidService extends Service implements IOIOEventListener {
 	
@@ -33,7 +35,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public final static int STATUS_IOIO_STATUS_GREEN = 3; 
 	public final static int STATUS_IOIO_YELLOW = 4;
 	public final static int STATUS_IOIO_RED = 5;
-	public final static int MSG_IOIO_CONNECTED = 8;
+	public final static int STATUS_IOIO_CONNECTED = 8;
 	public final static int ERROR_IOIO_INTERRUPTED = 9;
 	public final static int ERROR_IOIO_ABORTED = 10;
 	public final static int ERROR_IOIO_INCOMPATIBLE = 11;
@@ -45,11 +47,14 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public final static int STATUS_CONNECTIVITY_SUCCESS = 13;
 	public final static int STATUS_CONNECTIVITY_FAILURE = 14;
 	
+	public final static int STATUS_LOCATION_SERVICE_STARTED = 15; 
+	
 	public Map<String, ?> APP_PREFS;
 	//
 	private NoxDroidIOIOThread ioio_thread_;
 	NotificationManager nman;
-
+	private Messenger messengerLocation;
+	private boolean locServiceIsBound = false;
 	private String TAG;
 	private int NOTIFICATION = R.string.noxdroid_service_started;
 
@@ -58,9 +63,34 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			return NoxDroidService.this;
 		}
 	}
-	
 
 	private ArrayList<Messenger> clients = new ArrayList<Messenger>();
+	
+	private ServiceConnection connLocationService = new ServiceConnection() {
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			messengerLocation = null;
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.i(TAG, "Connected to NoxDroidLocationService");
+
+			// service.addMessenger(messenger);
+
+			try {
+				messengerLocation = new Messenger(service);
+				Message msg = Message.obtain(null,
+						NoxDroidService.MSG_REGISTER_CLIENT);
+				msg.replyTo = messenger;
+				messengerLocation.send(msg);
+				
+			} catch (RemoteException e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+	};
 
 	@Override
 	public void onCreate() {
@@ -81,26 +111,24 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-
+		
 		
 		ioio_thread_ = new NoxDroidIOIOThread(this);
 		ioio_thread_.start();
 		try {
-			ioio_thread_.join(2000);
+			ioio_thread_.join(5000);
 		} catch (InterruptedException e) {
-			if (ioio_thread_.isAlive()) {
-				ioio_thread_.abort();
-			}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		
+				
+		doBindService();
 		// start additional services
-		startService(new Intent(this, LocationService.class));
+		//startService(new Intent(this, LocationService.class));
 //		startService(new Intent(this, TracksService.class));
 		
-
 	}
-
+	
 	public synchronized Map<String, ?> getPrefs() {
 		return this.APP_PREFS;
 	}
@@ -154,7 +182,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	// RemoteService for a more complete example.
 	private final IBinder mBinder = new ServiceBinder();
 	
-
 	@Override
 	public IBinder onBind(Intent intent) {
 		//return mBinder;
@@ -222,6 +249,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				Log.i(TAG, "Added client: " + msg.replyTo);
 				clients.add(msg.replyTo);
 				break;
+			case STATUS_LOCATION_SERVICE_STARTED :
+				notifyClients(msg.what);
+				break;
 			default:
 				super.handleMessage(msg);
 				break;
@@ -239,7 +269,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			Log.i(TAG, "Sent message to : " + clients.get(i));
 			showNotification();
 				clients.get(i).send(Message.obtain(null,msg));
-				
 			} catch (RemoteException e) {
 				// If we get here, the client is dead, and we should remove it
 				// from the list
@@ -258,8 +287,40 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			break;
 		case ERROR_IOIO_ABORTED:
 			notifyClients(msg);
+		case NoxDroidService.STATUS_LOCATION_SERVICE_STARTED : 
+			notifyClients(msg);
 		default:
 			break;
+		}
+	}
+	
+	void doBindService() {
+
+		bindService(new Intent(this, NoxDroidLocationService.class),  connLocationService,
+				Context.BIND_AUTO_CREATE);
+
+		Log.i(TAG, "doBindService");
+		locServiceIsBound = true;
+
+	}
+
+	void doUnbindService() {
+		if (locServiceIsBound) {
+			if (connLocationService!= null) {
+				try {
+					Message msg = Message.obtain(null,
+							NoxDroidService.MSG_UNREGISTER_CLIENT);
+					msg.replyTo = messenger;
+					messengerLocation.send(msg);
+				} catch (RemoteException e) {
+					// There is nothing special we need to do if the service
+					// has crashed.
+				}
+			}
+
+			// Detach our existing connection.
+			unbindService(connLocationService);
+			locServiceIsBound = false;
 		}
 	}
 }
