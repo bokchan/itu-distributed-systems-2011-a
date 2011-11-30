@@ -16,14 +16,18 @@ public class Main extends Activity {
 
 	private static final String TAG = "MotionRecorderMain";
 
+	public static final String MOTION_UUID = "uuid";
 	public static final String MOTION_TYPE = "motionType";
 
 	public static final String MOTION_TYPE_WALKING = "Walking";
 	public static final String MOTION_TYPE_SITTING = "Sitting";
 	public static final String MOTION_TYPE_STAIRS = "Stairs";
+	public static final String MOTION_TYPE_NONE = "None";
 
-	private Button buttonStartRecording, buttonStopRecording; // , buttonPostRecordingToWebservice;
+
+//    private static final int DIALOG_YES_NO_MESSAGE = 1;
 	
+	private Button buttonStartRecording, buttonStopRecording; // , buttonPostRecordingToWebservice;
 	
 	private Intent intent;
 	
@@ -64,13 +68,12 @@ public class Main extends Activity {
 //				MotionRecorderService.class);
 		stopService(intent);
 		
+		// show save / not save motion ?
+		showDialog(1);
 		
 		// make stop button click able again
 		buttonStartRecording.setEnabled(true);
 		buttonStopRecording.setEnabled(false);
-
-		
-		
 		
 	}
 	
@@ -89,14 +92,44 @@ public class Main extends Activity {
 		showDialog(10);
 	}
 
+	/*
+	 * 
+	 * yes/no dialog based upon:
+	 * android-8/ApiDemos/src/com/example/android/apis/app/AlertDialogSamples.java
+	 * 
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreateDialog(int)
+	 */
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
 		switch (id) {
+		
+//        case 1:
+//            return new AlertDialog.Builder(this)
+//                .setIcon(R.drawable.alert_dialog_icon)
+//                .setTitle(R.string.alert_dialog_two_buttons_title)
+//                .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                        /* User clicked OK so do some stuff */
+//                    }
+//                })
+//                .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                        /* User clicked Cancel so do some stuff */
+//                    }
+//                })
+//                .create();
+//         // end case DIALOG_YES_NO_MESSAGE
+
+		
+		
 		case 10:
 			// final CharSequence[]
 			final String[] motions = { MOTION_TYPE_SITTING,
-					MOTION_TYPE_WALKING, MOTION_TYPE_STAIRS };
+					MOTION_TYPE_WALKING, MOTION_TYPE_STAIRS, MOTION_TYPE_NONE };
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Pick a motion");
@@ -129,8 +162,13 @@ public class Main extends Activity {
 					});
 			AlertDialog dialog = builder.create();
 			dialog.show();
+			// end case 10			
+			
 		}
-		return super.onCreateDialog(id);
+		return null;
+//		previously returned 
+//		return super.onCreateDialog(id);
+//		that crashed app use return null based upon AlertDialogSamples.java		
 
 	}
 

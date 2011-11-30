@@ -11,18 +11,21 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int stat_sample=0x7f020001;
+        public static final int alert_dialog_icon=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
+        public static final int stat_sample=0x7f020002;
     }
     public static final class id {
         public static final int ScrollView01=0x7f050001;
         public static final int ScrollView02=0x7f050003;
         public static final int TabHost01=0x7f050000;
+        public static final int TextPostToCloudActivity=0x7f05000b;
         public static final int TextView01=0x7f050002;
         public static final int TextView02=0x7f050004;
         public static final int bind=0x7f050005;
         public static final int buttonStartRecording=0x7f050009;
         public static final int buttonStopRecording=0x7f05000a;
+        public static final int progressBar1=0x7f05000c;
         public static final int start=0x7f050007;
         public static final int stop=0x7f050008;
         public static final int unbind=0x7f050006;
@@ -32,14 +35,23 @@ public final class R {
         public static final int local_service_binding=0x7f030001;
         public static final int local_service_controller=0x7f030002;
         public static final int main=0x7f030003;
+        public static final int posttocloud=0x7f030004;
     }
     public static final class string {
+        public static final int alert_dialog_cancel=0x7f040023;
+        public static final int alert_dialog_hide=0x7f040021;
+        /**  the dialog box 
+         */
+        public static final int alert_dialog_ok=0x7f040020;
+        public static final int alert_dialog_something=0x7f040022;
+        public static final int alert_dialog_two_buttons_title=0x7f040024;
         /**  TODO: clean me up remove unused strings 
  main 
          */
         public static final int api_demo_level_1=0x7f040009;
         public static final int app_name=0x7f040001;
         public static final int bind_service=0x7f040015;
+        public static final int default_url_post=0x7f040025;
         public static final int go_to_local_service_activities=0x7f040017;
         public static final int go_to_local_service_activities_binding=0x7f04000a;
         public static final int hello=0x7f040000;
