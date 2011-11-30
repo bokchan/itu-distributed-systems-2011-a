@@ -6,13 +6,21 @@
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/MotionRecorderAndroid/trunk
 
-NB! really raw needs clean up
+
+== screen shots ==
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionRecorderAndroid-1.png
+
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionRecorderAndroid-2.png
+
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionRecorderAndroid-3.png
+
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionRecorderAndroid-4.png
+
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionRecorderAndroid-5.png
 
 
 
-
-
-= get database from device =
+== get database from Android device ==
 
 
 {{{
@@ -48,4 +56,76 @@ NB! really raw needs clean up
     sqlite> select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z from accelerometer, motions where motions.uuid="a9db7906-c692-4629-8a0e-d9d169f6889f" and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end);
     
 }}}
+
+== add/subtract of 5 seconds from start/end time ==
+
+{{{
+    sqlite> select * from accelerometer where time_stamp > (select time_stamp_start '+5 second' from motions where _id = 1) and time_stamp < (select time_stamp_end '-5 second' from motions where _id = 1);
+}}}
+
+note: a bit surprised on this one - shouldn't it be 'seconds' and does it work at all ? - tried the bellow:
+
+{{{
+    sqlite> select time_stamp_end '-5 second' from motions where uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878";
+    2011-11-29 10:56:23
+    sqlite> select time_stamp_end from motions where uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878";
+    2011-11-29 10:56:23
+}}}
+
+
+== from unix time to sqlite time ==
+
+{{{
+    sqlite> select datetime(1092941466, 'unixepoch', 'localtime');
+    
+    // current unix time
+    sqlite>  select strftime('%s','now');
+    
+    // from time stampe stored in db to a unix time stamp
+    sqlite> select strftime('%s',time_stamp_end) from motions where uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878";
+        
+}}}
+
+
+more on sqlite and time (functions) http://www.sqlite.org/cvstrac/wiki?p=DateAndTimeFunctions
+
+
+
+= App engine - ActivityRecorderCloud =
+
+Code: https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/ActivityRecorderCloud/trunk
+
+
+== Main url(s) ==
+
+ * http://spct-e2011-lab-motionrecorder.appspot.com/activitynodes
+
+- lists all activity nodes in ascending order - newest recording first - click on an uuid and view one recording block - either in html or arrf
+
+http://spct-e2011-lab-motionrecorder.appspot.com/activity_arff?activityName=81f686d8-b5fb-45a5-969a-e44bbd671267
+http://spct-e2011-lab-motionrecorder.appspot.com/activityrecording.jsp?activityName=81f686d8-b5fb-45a5-969a-e44bbd671267
+
+- why is there a form at the end of activityrecording.jsp ? its based roughly on the app engine tutorial so its a left over and a simple way to test the app with out the android app. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
