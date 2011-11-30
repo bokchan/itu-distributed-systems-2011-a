@@ -69,23 +69,32 @@ public class ActivityARFFServlet extends HttpServlet {
 		@attribute z numeric
 		@data
 		walking,2011-11-30 10:45:20,4.137180328369141,3.44765043258667,-3.3710360527038574
+
+		
          */
         
-        resp.getWriter().println("@relation <theaction>");
-        resp.getWriter().println("@attribute action {sitting, walking, stairs}");
-        resp.getWriter().println("@time_stamp date");
-        resp.getWriter().println("@attribute x numeric");
-        resp.getWriter().println("@attribute y numeric");
-        resp.getWriter().println("@attribute z numeric");
-        resp.getWriter().println("@data");
+
+        
+        boolean firstrunFlag = true;
         
         // now print eact activity node linie by line    
         QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
         for (Entity entity : results) {
         	
-        	String props = entity.getProperties().toString(); 
-        	
-        	log("entity.getProperties().toString(): " + props);
+        	if (firstrunFlag) {
+
+                resp.getWriter().println("@relation " + entity.getProperty("type").toString().toLowerCase());
+                resp.getWriter().println("@attribute action {sitting, walking, stairs}");
+                resp.getWriter().println("@time_stamp date");
+                resp.getWriter().println("@attribute x numeric");
+                resp.getWriter().println("@attribute y numeric");
+                resp.getWriter().println("@attribute z numeric");
+                resp.getWriter().println("@data");
+        		
+        	}
+
+//        	String props = entity.getProperties().toString(); 
+//        	log("entity.getProperties().toString(): " + props);
  
             resp.getWriter().println(
             		entity.getProperty("type").toString().toLowerCase()
@@ -98,6 +107,9 @@ public class ActivityARFFServlet extends HttpServlet {
             		+ ","
             		+ entity.getProperty("z")
             		);	
+
+        
+            firstrunFlag = false;
         }
 
 
