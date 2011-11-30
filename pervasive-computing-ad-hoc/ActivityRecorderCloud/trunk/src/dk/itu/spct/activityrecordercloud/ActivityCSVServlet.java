@@ -13,6 +13,8 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.QueryResultList;
@@ -23,64 +25,66 @@ import com.google.appengine.api.datastore.QueryResultList;
  * Based upon http://code.google.com/appengine/docs/java/datastore/queries.html
  *
  */
-public class ListActivityNodesServlet extends HttpServlet {
+public class ActivityCSVServlet extends HttpServlet {
 
     private static final Logger log =
-        Logger.getLogger(ListActivityNodesServlet.class.getName());
+        Logger.getLogger(ActivityCSVServlet.class.getName());
 	
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
           throws ServletException, IOException {
 
+    	
+        String activityName = req.getParameter("activityName");
+        if (activityName == null) {
+            activityName = "default";
+        }
+    	
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query("ActivityNode").addSort("time", Query.SortDirection.DESCENDING);
-        PreparedQuery pq = datastore.prepare(q);
-        int pageSize = 20000;
+        Key activityKey = KeyFactory.createKey("Activity", activityName);
         
-        resp.setContentType("text/html");
-        resp.getWriter().println("<ul>");
+        Query q = new Query("ActivityNode", activityKey).addSort("time", Query.SortDirection.ASCENDING);
+//        Query q = new Query("ActivityNode").addSort("time", Query.SortDirection.DESCENDING);
+        PreparedQuery pq = datastore.prepare(q);
 
-        FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+       
+        // resp.setContentType("text/plain")
+        // - didn't work so we set the header 
+        resp.setHeader("Content-Type", "text/plain");
+
+        FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
         String startCursor = req.getParameter("cursor");
         
         // If this servlet is passed a cursor parameter, let's use it
         if (startCursor != null) {
             fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
         }
-              
+
+        /*
+         csv columns: action,time_stamp, x,y,z
+         */
+        
+        // now print eact activity node linie by line    
         QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
         for (Entity entity : results) {
         	
         	String props = entity.getProperties().toString(); 
         	
         	log("entity.getProperties().toString(): " + props);
-
-            resp.getWriter().println("<li>"
-            		+ entity.getProperty("username") 
-            		+ "|"
-            		+ entity.getProperty("uuid")
-            		+ " <a href='/activityrecording.jsp?activityName=" + entity.getProperty("uuid") + "'>HTML</a>"
-            		+ " <a href='/activity_arff?activityName=" + entity.getProperty("uuid") + "'>ARFF</a>"
-            		+ " <a href='/activity_csv?activityName=" + entity.getProperty("uuid") + "'>CSV</a>"
-            		//+ entity.getProperty("uuid") 
-            		+ "|"            		
-            		+ entity.getProperty("type") 
-            		+ "|" 
-            		+ entity.getProperty("time") 
-            		+ "|" 
-            		+ entity.getProperty("x") 
-            		+ "|" 
-            		+ entity.getProperty("y") 
-            		+ "|" 
-            		+ entity.getProperty("z")  
-            		+ "</li>");
+ 
+            resp.getWriter().println(
+            		entity.getProperty("type").toString().toLowerCase()
+            		+ ","
+            		+ entity.getProperty("time")
+            		+ ","
+            		+ entity.getProperty("x")
+            		+ ","
+            		+ entity.getProperty("y")
+            		+ ","
+            		+ entity.getProperty("z")
+            		);	
         }
-        resp.getWriter().println("</ul>");
 
-        String cursor = results.getCursor().toWebSafeString();
 
-        // Assuming this servlet lives at '/people'
-        resp.getWriter().println(
-            "<a href='/activitynodes?cursor=" + cursor + "'>Next page</a>");
     }
 }

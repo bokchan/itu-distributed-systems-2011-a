@@ -1,8 +1,8 @@
-<!-- Indices written at Wed, 30 Nov 2011 09:34:50 UTC -->
+<!-- Indices written at Wed, 30 Nov 2011 13:47:11 UTC -->
 
 <datastore-indexes>
 
-    <!-- Used 2 times in query history -->
+    <!-- Used 1 time in query history -->
     <datastore-index kind="ActivityNode" ancestor="true" source="auto">
         <property name="time" direction="asc"/>
     </datastore-index>

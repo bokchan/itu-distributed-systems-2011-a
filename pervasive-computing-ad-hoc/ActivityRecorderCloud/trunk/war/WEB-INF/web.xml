@@ -60,6 +60,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
 
 
+	<servlet>
+        <servlet-name>activity_csv</servlet-name>
+        <servlet-class>dk.itu.spct.activityrecordercloud.ActivityCSVServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>activity_csv</servlet-name>
+        <url-pattern>/activity_csv</url-pattern>
+    </servlet-mapping>
+
+
+
+
 	
 	
 	

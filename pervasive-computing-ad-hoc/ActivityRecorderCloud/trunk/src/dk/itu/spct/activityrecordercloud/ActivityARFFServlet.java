@@ -61,24 +61,22 @@ public class ActivityARFFServlet extends HttpServlet {
         }
 
         /*
-    @relation activity
-    @attribute type {Walking, Sitting, Chairs, None} 
-    @attribute x float
-    @attribute y float
-    @attribute z float
-
-    @data 
-    Walking,0.9,8.9,7.3
-    Walking,1.9,9.9,0.3
-
+		@relation <theaction>
+		@attribute action {sitting, walking, stairs}
+		@time_stamp date 
+		@attribute x numeric
+		@attribute y numeric
+		@attribute z numeric
+		@data
+		walking,2011-11-30 10:45:20,4.137180328369141,3.44765043258667,-3.3710360527038574
          */
         
-        resp.getWriter().println("@relation activity");
-        resp.getWriter().println("@attribute type {Walking, Sitting, Chairs, None}");
-        resp.getWriter().println("@attribute x float");
-        resp.getWriter().println("@attribute y float");
-        resp.getWriter().println("@attribute z float");
-        resp.getWriter().println("");
+        resp.getWriter().println("@relation <theaction>");
+        resp.getWriter().println("@attribute action {sitting, walking, stairs}");
+        resp.getWriter().println("@time_stamp date");
+        resp.getWriter().println("@attribute x numeric");
+        resp.getWriter().println("@attribute y numeric");
+        resp.getWriter().println("@attribute z numeric");
         resp.getWriter().println("@data");
         
         // now print eact activity node linie by line    
@@ -90,16 +88,17 @@ public class ActivityARFFServlet extends HttpServlet {
         	log("entity.getProperties().toString(): " + props);
  
             resp.getWriter().println(
-            		entity.getProperty("type")
-            		+ " "
+            		entity.getProperty("type").toString().toLowerCase()
+            		+ ","
+            		+ entity.getProperty("time")
+            		+ ","
             		+ entity.getProperty("x")
-            		+ " "
+            		+ ","
             		+ entity.getProperty("y")
-            		+ " "
+            		+ ","
             		+ entity.getProperty("z")
             		);	
         }
-
 
 
     }
