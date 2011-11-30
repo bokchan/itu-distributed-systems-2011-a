@@ -37,6 +37,18 @@ https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionReco
 
 
 
+
+
+== motion recording stops on display sleep ==
+
+on some devices e.g. the huwai ideos (android 2.2)  apparently stop its accelerometer when display is put to sleep - read more:
+
+ * http://stackoverflow.com/questions/2143102/accelerometer-stops-delivering-samples-when-the-screen-is-off-on-droid-nexus-one
+ * http://code.google.com/p/android/issues/detail?id=3708
+
+this behavior doesn't appear on the htc desire (android 2.2)
+
+
 == get database from Android device ==
 
 
@@ -70,24 +82,18 @@ https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/MotionReco
     sqlite3 /tmp/motions.db 
     sqlite> select * from motions;
     # pic an uid (e.g.: a9db7906-c692-4629-8a0e-d9d169f6889f) and lookup recording for one motion sequence
-    sqlite> select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z from accelerometer, motions where motions.uuid="a9db7906-c692-4629-8a0e-d9d169f6889f" and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end);
+    sqlite> select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z, accelerometer.time_stamp from accelerometer, motions where motions.uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878" and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end);
     
 }}}
 
-== add/subtract of 5 seconds from start/end time ==
+== add/subtract of 4/5 seconds from start/end time ==
 
 {{{
-    sqlite> select * from accelerometer where time_stamp > (select time_stamp_start '+5 second' from motions where _id = 1) and time_stamp < (select time_stamp_end '-5 second' from motions where _id = 1);
+
+    sqlite> select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z, accelerometer.time_stamp from accelerometer, motions where motions.uuid="a9db7906-c692-4629-8a0e-d9d169f6889f" and (accelerometer.time_stamp > datetime(motions.time_stamp_start, '+4 seconds') and accelerometer.time_stamp < datetime(motions.time_stamp_end, '-5 seconds'));
+
 }}}
 
-note: a bit surprised on this one - shouldn't it be 'seconds' and does it work at all ? - tried the bellow:
-
-{{{
-    sqlite> select time_stamp_end '-5 second' from motions where uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878";
-    2011-11-29 10:56:23
-    sqlite> select time_stamp_end from motions where uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878";
-    2011-11-29 10:56:23
-}}}
 
 
 == from unix time to sqlite time ==
@@ -105,30 +111,4 @@ note: a bit surprised on this one - shouldn't it be 'seconds' and does it work a
 
 
 more on sqlite and time (functions) http://www.sqlite.org/cvstrac/wiki?p=DateAndTimeFunctions
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
