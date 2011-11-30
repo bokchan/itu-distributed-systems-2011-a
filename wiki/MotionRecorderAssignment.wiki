@@ -95,6 +95,20 @@ this behavior doesn't appear on the htc desire (android 2.2)
 }}}
 
 
+== verify a recording ==
+
+{{{
+
+    // raw
+    sqlite> select count(motions.motion_type) from accelerometer, motions where motions.uuid="69666f1b-2c43-4562-a46e-1bdb498dbd96" and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end);
+    
+    // time adjusted - this number should be equal to the recording on the app engine
+    sqlite> select count(motions.motion_type) from accelerometer, motions where motions.uuid="69666f1b-2c43-4562-a46e-1bdb498dbd96" and (accelerometer.time_stamp > datetime(motions.time_stamp_start, '+4 seconds') and accelerometer.time_stamp < datetime(motions.time_stamp_end, '-5 seconds'));
+
+    
+}}}
+
+
 
 == from unix time to sqlite time ==
 
