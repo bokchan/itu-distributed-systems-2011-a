@@ -260,16 +260,17 @@ public class PostToCloudActivity extends Activity {
             HttpResponse response = httpclient.execute(httppost);
 
             
-            try {
-				// if the response is a html page then print out with the helper
-				// String the_string_response = HttpHelper.request(response);
-            	// we just have a short on - usually: HTTP/1.1 200 OK
-            	StatusLine status = response.getStatusLine();
-            	Log.d(TAG, "status code: " + status.getStatusCode() );
-            } catch(Exception e) {
-            	Log.e(TAG, "problems with posting to the cloud server - the respone failed: " 
-            			+ e.getMessage());
-            }
+            // note: for now we have skipped to get the response
+//            try {
+//				// if the response is a html page then print out with the helper
+//				// String the_string_response = HttpHelper.request(response);
+//            	// we just have a short on - usually: HTTP/1.1 200 OK
+//            	StatusLine status = response.getStatusLine();
+//            	Log.d(TAG, "status code: " + status.getStatusCode() );
+//            } catch(Exception e) {
+//            	Log.e(TAG, "problems with posting to the cloud server - the respone failed: " 
+//            			+ e.getMessage());
+//            }
             
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block

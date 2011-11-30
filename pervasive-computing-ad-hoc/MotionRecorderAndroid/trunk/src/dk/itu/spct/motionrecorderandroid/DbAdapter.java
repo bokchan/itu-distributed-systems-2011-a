@@ -339,6 +339,10 @@ public class DbAdapter {
 	 * 
 	 * select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z, accelerometer.time_stamp from accelerometer, motions where motions.uuid="c7b80dc9-8733-4a7e-81c6-6a0555a82878" and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end);
 	 * 
+	 * time wize adjusted: 
+	 * 
+	 * select motions.motion_type, motions.uuid, accelerometer.x, accelerometer.y, accelerometer.z, accelerometer.time_stamp from accelerometer, motions where motions.uuid="a9db7906-c692-4629-8a0e-d9d169f6889f" and (accelerometer.time_stamp > datetime(motions.time_stamp_start, '+4 seconds') and accelerometer.time_stamp < datetime(motions.time_stamp_end, '-5 seconds'));
+	 * 
 	 * For simplicity we stick to the sqlite time format
 	 * if a unix time format is needed then replace 
 	 * 
@@ -361,7 +365,9 @@ public class DbAdapter {
 				+ DATABASE_TABLE_ACCELEROMETER 
 				+ " where motions.uuid='"
 				+ UUID
-				+ "' and (accelerometer.time_stamp > motions.time_stamp_start and accelerometer.time_stamp < motions.time_stamp_end)";
+				+ "' and (accelerometer.time_stamp > datetime(motions.time_stamp_start, '+4 seconds')"
+				+ " and accelerometer.time_stamp < datetime(motions.time_stamp_end, '-5 seconds'))";
+
 		Cursor mCursor = mDb.rawQuery(sql, null);
 
 		// TODO: not sure what the right approach is here - move to first or not
