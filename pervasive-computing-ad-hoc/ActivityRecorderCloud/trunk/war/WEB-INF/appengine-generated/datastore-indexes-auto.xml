@@ -1,0 +1,10 @@
+<!-- Indices written at Wed, 30 Nov 2011 09:34:50 UTC -->
+
+<datastore-indexes>
+
+    <!-- Used 2 times in query history -->
+    <datastore-index kind="ActivityNode" ancestor="true" source="auto">
+        <property name="time" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
