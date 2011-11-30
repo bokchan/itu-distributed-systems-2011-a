@@ -1,6 +1,23 @@
 #summary 
 
 
+= App engine - ActivityRecorderCloud =
+
+Code: https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/ActivityRecorderCloud/trunk
+
+
+== Main url(s) ==
+
+ * http://spct-e2011-lab-motionrecorder.appspot.com/activitynodes
+
+- lists all activity nodes in ascending order - newest recording first - click on an uuid and view one recording block - either in html or arrf
+
+http://spct-e2011-lab-motionrecorder.appspot.com/activity_arff?activityName=81f686d8-b5fb-45a5-969a-e44bbd671267
+http://spct-e2011-lab-motionrecorder.appspot.com/activityrecording.jsp?activityName=81f686d8-b5fb-45a5-969a-e44bbd671267
+
+- why is there a form at the end of activityrecording.jsp ? its based roughly on the app engine tutorial so its a left over and a simple way to test the app with out the android app. 
+
+
 = Android app code =
 
 
@@ -91,21 +108,7 @@ more on sqlite and time (functions) http://www.sqlite.org/cvstrac/wiki?p=DateAnd
 
 
 
-= App engine - ActivityRecorderCloud =
 
-Code: https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/ActivityRecorderCloud/trunk
-
-
-== Main url(s) ==
-
- * http://spct-e2011-lab-motionrecorder.appspot.com/activitynodes
-
-- lists all activity nodes in ascending order - newest recording first - click on an uuid and view one recording block - either in html or arrf
-
-http://spct-e2011-lab-motionrecorder.appspot.com/activity_arff?activityName=81f686d8-b5fb-45a5-969a-e44bbd671267
-http://spct-e2011-lab-motionrecorder.appspot.com/activityrecording.jsp?activityName=81f686d8-b5fb-45a5-969a-e44bbd671267
-
-- why is there a form at the end of activityrecording.jsp ? its based roughly on the app engine tutorial so its a left over and a simple way to test the app with out the android app. 
 
 
 
