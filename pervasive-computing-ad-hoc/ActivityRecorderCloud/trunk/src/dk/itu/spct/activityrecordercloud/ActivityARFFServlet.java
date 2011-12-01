@@ -47,11 +47,16 @@ public class ActivityARFFServlet extends HttpServlet {
 //        Query q = new Query("ActivityNode").addSort("time", Query.SortDirection.DESCENDING);
         PreparedQuery pq = datastore.prepare(q);
 
-       
+        // note(s):
         // resp.setContentType("text/plain")
         // - didn't work so we set the header 
-        resp.setHeader("Content-Type", "text/plain");
+        // 
+        // and its very important to set utf-8 to get weka to read the file/url
+        // based on this tip http://goo.gl/ajfxt
+        resp.setHeader("Content-Type", "text/plain; charset=utf-8");
 
+
+        
         FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
         String startCursor = req.getParameter("cursor");
         
@@ -62,14 +67,16 @@ public class ActivityARFFServlet extends HttpServlet {
 
         /*
 		@relation <theaction>
+		
 		@attribute action {sitting, walking, stairs}
-		@time_stamp date 
+		@date time_stamp date  // shouldn't it be ? @attribute time_stamp date  
 		@attribute x numeric
 		@attribute y numeric
 		@attribute z numeric
+		
 		@data
-		walking,2011-11-30 10:45:20,4.137180328369141,3.44765043258667,-3.3710360527038574
-
+		walking,'2011-11-30 10:45:20',4.137180328369141,3.44765043258667,-3.3710360527038574
+		NB! date have to be surrounded with signle quotes ''
 		
          */
         
@@ -85,10 +92,13 @@ public class ActivityARFFServlet extends HttpServlet {
 
                 resp.getWriter().println("@relation " + entity.getProperty("type").toString().toLowerCase());
                 resp.getWriter().println("@attribute action {sitting, walking, stairs}");
-                resp.getWriter().println("@time_stamp date");
+                // note: date turned off didn't play well within weka 
+                // resp.getWriter().println("@date time_stamp date");
+                resp.getWriter().println("");
                 resp.getWriter().println("@attribute x numeric");
                 resp.getWriter().println("@attribute y numeric");
                 resp.getWriter().println("@attribute z numeric");
+                resp.getWriter().println("");
                 resp.getWriter().println("@data");
         		
         	}
@@ -98,8 +108,11 @@ public class ActivityARFFServlet extends HttpServlet {
  
             resp.getWriter().println(
             		entity.getProperty("type").toString().toLowerCase()
-            		+ ","
-            		+ entity.getProperty("time")
+// note: date turned off didn't play well within weka
+//            		+ ","
+//            		+ "'"
+//            		+ entity.getProperty("time")
+//            		+ "'"
             		+ ","
             		+ entity.getProperty("x")
             		+ ","
