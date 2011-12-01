@@ -212,20 +212,9 @@ public class MotionRecorderService extends Service {
     
         // Note:
         // first stop the while loop  then stop thread
-        // - stop() is marked deprecated what's the right (TM) way to stop / kill the thread ?
+        // - stop() is marked deprecated what's the right (TM) way to stop / kill the thread ? = interrupt()
         recordMotion = false;
-        motionRecorderThread.stop();
-        
-//        motionRecorderThread.
-     // NB! this one didn't play well
-//      // close motion recorder thread
-//        motionRecorderThread.stop();
-//        try {
-//			motionRecorderThread.wait();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+        motionRecorderThread.interrupt();
     
     }
 
