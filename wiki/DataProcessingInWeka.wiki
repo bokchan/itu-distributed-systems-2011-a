@@ -20,6 +20,6 @@ https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/weka_class
 
 === Using test data === 
 In this phase data should be collected and preprocessed in the same way as the training data. 
-Select the *Supplied test set* radio button and press the button *Set...*. Select the attribute you want to classify by and press *Start*
+Select the *Supplied test set* (1) radio button and press the button *Set...*. Select the attribute you want to classify by (2). Make sure that the same attribute is chosen for the training set (3). Press *Start* (4)
 
 https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/weka_test_data.png
