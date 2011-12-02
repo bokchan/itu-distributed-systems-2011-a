@@ -27,10 +27,14 @@ https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/weka_test_
 === DataFiles ===
 Datafiles can be downloaded here: [https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/files/weka_files.zip weka_files.zip]
 
-When loading csv files into Weka or generating arff files from csv files make sure you have column names defined at the top: 
-{{{action,x,y,z
-sitting,-4.750,-0.34476,8.04451}}}
+When loading csv files into Weka or generating arff files from csv files make sure you have column names defined at the top, eg. 
+
+{{{action,x,y,z}}}
+
+{{{sitting,-4.750,-0.34476,8.04451}}}
 
 From command line arff files can be generated using the Weka jar. 
+
 {{{java weka.core.converters.CSVLoader filename.csv > filename.arff}}}
+
 Make sure to either add Weka.jar to the classpath or copy the jar to the folder of the csv file and use the "-cp wekajarfilename.jar" in the command 
