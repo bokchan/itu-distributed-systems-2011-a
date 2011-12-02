@@ -126,3 +126,82 @@ this behavior doesn't appear on the htc desire (android 2.2)
 
 more on sqlite and time (functions) http://www.sqlite.org/cvstrac/wiki?p=DateAndTimeFunctions
 
+
+
+
+
+
+
+
+
+= Raw project description =
+
+== MotionRecorderAndroid == 
+
+We have a simple model for a motion
+
+{{{
+--------------
+| motion |   |
+--------------
+| id (uuid)  |
+| start time |
+| end time   |
+--------------
+
+---------------------------
+| accelerometer recording |
+---------------------------
+| time stamp              |
+| x                       |
+| y                       |
+| z                       |
+---------------------------
+}}}
+
+When the user starts a recording of a motion it starts an standalone Android service. A service within Android is not bound to the activity (UI) and runs in the background until the user explicitly stops the service through an activity (UI). 
+
+Each motion has an unique id and get a time-stamp on start and stop. All accelerometer movements along the x/y/z axis has as well a time-stamp.
+
+For that reason we can get a sequences of accelerometer recordings for each motion recorded.
+
+In the first place we store all data on the relational database, Sqlite3 which is shipped with Android and famous for handling lots of writes.
+
+In the end of a motion recording the user has the possibility to post the motion recording to the Google App Engine (for now just referenced as App Engine). This is handled by a simple http post request.
+
+
+
+== ActivityRecorderCloud (App Engine) == 
+
+The ActivityRecorderCloud uses an App Engine to store and present a motion. 
+
+We have some servlets to handle that 
+
+- One servlet that handles the date sent from the Android application (AddRecordingServlet)
+- Multiple serlvets that handles the presentation of a single motion recording (ActivityARFFServlet, ActivityCSVServlet)
+
+and we have a simple JSP view that list all recording (activityrecording.jsp)
+
+
+The ActivityRecorderCloud is based on a very simple date model:
+
+{{{
+--------------------------
+| motion recording node |
+---------------------------
+| id (uuid)
+| username
+| time stamp
+| x
+| y
+| z
+| start time
+| end time
+--------------
+}}}
+
+Under the hood we are simply using the low level datastorage of the App Engine which is further more based upon the high replication storage and for that reason are prepared to scale very well.
+
+
+
+
