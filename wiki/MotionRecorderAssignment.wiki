@@ -200,7 +200,7 @@ The ActivityRecorderCloud is based on a very simple date model:
 --------------
 }}}
 
-Under the hood we are simply using the low level datastorage of the App Engine which is further more based upon the high replication storage and for that reason are prepared to scale very well.
+Under the hood we are simply using the low level object oriented datastore of the App Engine which is further more based upon the high replication storage and for that reason are prepared to scale very well.
 
 
 
