@@ -11,7 +11,6 @@ import ioio.lib.api.exception.IncompatibilityException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import android.content.Context;
 import android.util.Log;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.DbAdapter;
@@ -19,7 +18,6 @@ import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
 
 public class NoxDroidIOIOThread extends Thread {
-	private Context context;
 	private String TAG;
 	/** Subclasses should use this field for controlling the IOIO. */
 	protected IOIO ioio_;
@@ -140,7 +138,6 @@ public class NoxDroidIOIOThread extends Thread {
 			ledRed_ = ioio_
 					.openDigitalOutput(pinledRed, Spec.Mode.NORMAL, true);
 
-			
 			/*
 			 * Set up data base
 			 * TODO: Not 100% sure about if service can be used as context ? 
@@ -191,7 +188,7 @@ public class NoxDroidIOIOThread extends Thread {
 			// TODO: add right values
 	    	nox = 10101.0;
 	    	temperature = 38.8;
-			mDbHelper.createNox(nox, temperature);
+			//mDbHelper.createNox(nox, temperature);
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
 			
 
@@ -257,10 +254,6 @@ public class NoxDroidIOIOThread extends Thread {
 			}
 		}
 		return null;
-	}
-
-	private void addToDebug(final String str) {
-		Log.i(TAG, str);
 	}
 
 	private void notifyEventchanged(int msg) {
