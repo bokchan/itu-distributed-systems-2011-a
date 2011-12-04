@@ -1,0 +1,2 @@
+serviceClass: dk.itu.noxdroid.client.GreetingService
+path: CFA73D2CD065D9889D5843F569BFF5F1.gwt.rpc
