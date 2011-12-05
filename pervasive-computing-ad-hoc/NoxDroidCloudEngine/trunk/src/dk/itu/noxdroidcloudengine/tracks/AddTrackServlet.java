@@ -160,6 +160,8 @@ public class AddTrackServlet extends HttpServlet {
 
 	/*
 	 * 
+	 * NB! not used use the JSONObject approach !
+	 * 
 	 * http://jetty.codehaus.org/jetty/jetty-6/apidocs/org/mortbay/util/ajax/JSON
 	 * .html
 	 * 
