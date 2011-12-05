@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+	
+	
+	
+	<!-- 
+		tests related 
+		out   put thing taken from the gwt sample project.
+	-->
+	<classpathentry kind="src" output="test-classes" path="tests"/>	
+	<classpathentry kind="lib" path="lib/junit-4.8.2.jar"/>
+	
+	<!-- probably not the best approach but here we go -->
+	<classpathentry kind="lib" path="lib/appengine-java-sdk-1.5.5-appengine-testing.jar"/>
+	<classpathentry kind="lib" path="lib/sdk-1.5.5-appengine-api-stubs.jar"/>
+	
+	
+</classpath>
