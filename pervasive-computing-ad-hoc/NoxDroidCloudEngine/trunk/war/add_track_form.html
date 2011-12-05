@@ -16,15 +16,15 @@
     <!--                                           -->
     <!-- Any title is fine                         -->
     <!--                                           -->
-    <title>NoxDroidCloudEngine index</title>
+    <title>NoxDroidCloudEngine - add track</title>
     
     <!--                                           -->
     <!-- This script loads your compiled module.   -->
     <!-- If you add any GWT meta tags, they must   -->
     <!-- be added before this line.                -->
     <!--                                           -->
-    <!-- <script type="text/javascript" language="javascript" src="noxdroidcloud/noxdroidcloud.nocache.js"></script>
-  </head> -->
+    <!-- <script type="text/javascript" language="javascript" src="noxdroidcloud/noxdroidcloud.nocache.js"></script> -->
+  </head>
 
   <!--                                           -->
   <!-- The body can have arbitrary html, or      -->
@@ -33,29 +33,35 @@
   <!--                                           -->
   <body>
 
+      <h1>Add track recording</h1>
+      
+      <p>This will happen from a Android phone...</p>
+      
+    <fieldset>
+        <legend>add track</legend>
 
-<!-- 
-./war/add_track_form.html
-./war/index.html
-./war/noxdroidcloud/1A1BF9317CA38709A0103C116D68F263.cache.html
-./war/noxdroidcloud/1AD3D77C1B7A896EF0C48565AE5DBD4C.cache.html
-./war/noxdroidcloud/78B3F6403BADCB580FBD9B8DD524C2FF.cache.html
-./war/noxdroidcloud/9673764BD2112AA1CE57402D3DD32246.cache.html
-./war/noxdroidcloud/BCC879FF05EB5F7B80D524EC3CCF3AF7.cache.html
-./war/noxdroidcloud/E037915EEA08AC796D1659CC604EC1D2.cache.html
-./war/noxdroidcloud/hosted.html
-./war/NoxDroidCloud.html 
--->
+    <form action="/add_track" method="post">
 
+      <div>
+          <label>sensor id/name (e.g. default)</label>
+          <input type="text" name="sensor_id" size="30" />
+      </div>
+      <div><label>sensor user name (e.g. default) - (might be the same as sensor id/name)</label><input type="text" name="sensor_user_name" size="30" /></div>
 
-      <h1>NoxDroid index</h1>
-      <ul>
-          <!-- <li><a href=""></a></li> -->
-          <li><a href="/add_track_form.html">add_track_form.html - add a track recording (TTW test)</a></li>
-          <li><a href="/noxdroidcloudengine">NoxDroidCloudEngineServlet - App Engine default example</a></li>
-          <!-- <li><a href=""></a></li>         -->
-      </ul>
-
-
+      <div><label>track id (UUID e.g. eeb445dc-d2eb-494f-a4af-78c20b5d181c)</label><input type="text" name="track_id" size="30" /></div>
+      <div><label>track start time (e.g. 2011-12-02 09:12:04)</label><input type="text" name="track_start_time" size="30" /></div>
+      <div><label>track end time (e.g. 2011-12-02 10:12:04)</label><input type="text" name="track_end_time" size="30" /></div>
+      
+      
+      
+      
+      
+      
+      <div>
+          <input type="submit" value="Add" />
+      </div>
+      
+    </form>
+</fieldset>
   </body>
 </html>

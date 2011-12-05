@@ -1,4 +1,4 @@
-package dk.itu.noxdroid.tests;
+package dk.itu.noxdroidcloudengine.tests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

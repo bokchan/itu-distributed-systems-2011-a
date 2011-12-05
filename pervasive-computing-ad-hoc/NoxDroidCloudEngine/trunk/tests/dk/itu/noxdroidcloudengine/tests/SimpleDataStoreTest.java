@@ -1,4 +1,4 @@
-package dk.itu.noxdroid.tests;
+package dk.itu.noxdroidcloudengine.tests;
 
 import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
 import static org.junit.Assert.assertEquals;
