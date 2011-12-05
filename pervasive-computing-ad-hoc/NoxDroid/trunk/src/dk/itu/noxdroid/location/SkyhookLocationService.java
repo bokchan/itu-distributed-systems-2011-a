@@ -30,6 +30,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.skyhookwireless.wps.WPSAuthentication;
+import com.skyhookwireless.wps.XPS;
+
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.DbAdapter;
 
@@ -50,11 +54,15 @@ import dk.itu.noxdroid.database.DbAdapter;
  * calling startActivity().
  */
 
-public class LocationService extends Service {
+public class SkyhookLocationService extends Service {
 
-	private static final String TAG = "LocationService";
+	private static final String TAG = "SkyhookLocationService";
+	
+	// final WPSAuthentication auth = new WPSAuthentication(, _realm);
+	final WPSAuthentication auth = new WPSAuthentication("bokchan", "itu.dk");
 
 
+	private XPS _xps;
 	// some debug counters
 	private int countOnProviderEnabled = 0;
 	private int countOnStatusChanged = 0;	
@@ -80,9 +88,9 @@ public class LocationService extends Service {
      */
     public class LocalBinder extends Binder {
     	
-    	public LocationService getService() {
+    	public SkyhookLocationService getService() {
     		Log.d(TAG, "LocalBinder called");
-    		return LocationService.this;
+    		return SkyhookLocationService.this;
         }
     	
     }
@@ -135,7 +143,10 @@ public class LocationService extends Service {
 		Log.d(TAG, "bestProvider - based on criteria given (): " + bestProvider);
 		
 		// try out end
-				
+		
+
+		
+		
 		// Set up data base 
         mDbHelper = new DbAdapter(this);
         mDbHelper.open();
@@ -274,3 +285,4 @@ public class LocationService extends Service {
 	}
     
 }
+

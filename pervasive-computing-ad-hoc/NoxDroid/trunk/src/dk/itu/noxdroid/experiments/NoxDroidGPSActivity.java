@@ -1,4 +1,4 @@
-package dk.itu.noxdroid;
+package dk.itu.noxdroid.experiments;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.R.string;
 import dk.itu.noxdroid.service.NoxDroidService;
 
 public class NoxDroidGPSActivity extends Activity {

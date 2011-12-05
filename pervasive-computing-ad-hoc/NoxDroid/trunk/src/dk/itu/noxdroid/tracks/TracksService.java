@@ -33,15 +33,10 @@ import dk.itu.noxdroid.database.DbAdapter;
  *
  */
 public class TracksService extends Service {
-
 	private static final String TAG = "TracksService";
-
 	private DbAdapter mDbHelper;
-	
 	private String trackUUID;
 			
-	
-	
     /**
      * Class for clients to access.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with
@@ -53,7 +48,6 @@ public class TracksService extends Service {
     		Log.d(TAG, "LocalBinder called");
     		return TracksService.this;
         }
-    	
     }
     
     @Override
@@ -63,7 +57,6 @@ public class TracksService extends Service {
             	
     	Toast.makeText(this, R.string.tracks_service_started, Toast.LENGTH_SHORT).show();
     	
-		
 		// Set up data base 
         mDbHelper = new DbAdapter(this);
         mDbHelper.open();
@@ -116,7 +109,5 @@ public class TracksService extends Service {
     // This is the object that receives interactions from clients.  See
     // RemoteService for a more complete example.
     private final IBinder mBinder = new LocalBinder();
-    
-    
 }
 

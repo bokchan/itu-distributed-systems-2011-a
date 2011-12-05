@@ -19,8 +19,12 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,6 +34,7 @@ import android.widget.Toast;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread.STATUS;
 import dk.itu.noxdroid.service.NoxDroidService;
+import dk.itu.noxdroid.setup.PreferencesActivity;
 import dk.itu.noxdroid.util.Line;
 
 
@@ -71,7 +76,6 @@ public class NoxDroidMainActivity extends Activity {
 			// service = ((NoxDroidService.ServiceBinder) binder).getService();
 			Log.i(TAG, "Connected to NoxDroidService");
 			updateGUI(NoxDroidService.STATUS_SERVICE_STARTED);
-
 			// service.addMessenger(messenger);
 
 			try {
@@ -102,14 +106,16 @@ public class NoxDroidMainActivity extends Activity {
 		imgBtnStop = (ImageButton) findViewById(R.id.imgBtnStop);
 		imgBtnStop.setEnabled(false);
 		imgBtnRecord = (ImageButton) findViewById(R.id.imgBtnStartRecording);
-		imgBtnRecord.setEnabled(false);
-		
+		imgBtnRecord.setEnabled(false);		
 
 		imgBtnGPS = (ImageButton) findViewById(R.id.imgBtnGPS);
+		imgBtnGPS.setEnabled(false);
 		imgGPS = (ImageView) findViewById(R.id.imgGPS);
 		imgBtnIOIO = (ImageButton) findViewById(R.id.imgBtnIOIO);
+		imgBtnIOIO.setEnabled(false);
 		imgIOIO = (ImageView) findViewById(R.id.imgIOIO);
 		imgBtnConn = (ImageButton) findViewById(R.id.imgBtnConn);
+		imgBtnConn.setEnabled(false);
 		imgConn = (ImageView) findViewById(R.id.imgConn);
 		layoutConn = (RelativeLayout) findViewById(R.id.relLayoutConnection);
 		layoutGPS = (RelativeLayout) findViewById(R.id.relLayoutGPS);
@@ -122,6 +128,10 @@ public class NoxDroidMainActivity extends Activity {
 		((ImageView) findViewById(R.id.imgIOIO)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgGPS)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgConn)).setAlpha(80);
+		
+		
+		Log.i(TAG, "Got SharedPreferences " + PreferenceManager.getDefaultSharedPreferences(
+				this).getAll());
 
 		tests = new Hashtable<Class<?>, Boolean>();
 
@@ -159,13 +169,17 @@ public class NoxDroidMainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		testDependencies();
+		if (!isServiceRunning(NoxDroidService.class)) {
+			// Start service
+			doBindService();
+		} else {
+			updateGUI(NoxDroidService.STATUS_SERVICE_STARTED);
+		}
 	}
 
 	void doBindService() {
 		Intent intent = new Intent(this, NoxDroidService.class);
-		intent.putExtra("Main Activity", messenger);
-		
+		intent.putExtra("Main Activity", messenger);		
 		bindService(new Intent(this, NoxDroidService.class), mConnection,
 				Context.BIND_AUTO_CREATE);
 		isBound = true;
@@ -192,23 +206,45 @@ public class NoxDroidMainActivity extends Activity {
 		}
 	}
 
-	private void testDependencies() {
-
-		GPSConnectionTest gpstest = new GPSConnectionTest();
-		gpstest.execute(new Void[] {});
-
-		ConnectivityTest connTest = new ConnectivityTest();
-		connTest.execute(new Void[] {});
-
-		IOIOConnectionTest ioiotest = new IOIOConnectionTest();
-		ioiotest.execute(new Void[] {});
-	}
-
-	public void startNoxDroidService(View view) {
+	public void startTrack(View view) {
 		// startService(new Intent(this, NoxDroidService.class));
-		doBindService();
+//		doBindService();
+//		imgBtnStart.setVisibility(View.GONE);
+//		imgBtnStop.setVisibility(View.VISIBLE);
+		
+		Message msg = Message.obtain(null,
+				NoxDroidService.ACTION_START_TRACK);
+		msg.replyTo = messenger;
+		try {
+			msg_service.send(msg);
+		} catch (RemoteException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		Log.i(TAG, "ACTION_START_TRACK send to NoxDroidService");
+		
 		imgBtnStart.setVisibility(View.GONE);
 		imgBtnStop.setVisibility(View.VISIBLE);
+	}
+	
+	public void endTrack(View view) {
+		
+		imgBtnStop.setVisibility(View.GONE);
+		imgBtnStart.setImageResource(R.drawable.play_disabled);
+		imgBtnStart.setVisibility(View.VISIBLE);
+		imgBtnStart.setEnabled(false);
+		onResume();
+		
+		Toast.makeText(this, "stopping service", Toast.LENGTH_SHORT);
+		Message msg = Message.obtain(null,
+				NoxDroidService.ACTION_STOP_TRACK);
+		msg.replyTo = messenger;
+		try {
+			msg_service.send(msg);
+		} catch (RemoteException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		Log.i(TAG, "ACTION_STOP_TRACK send to NoxDroidService");
+		
 	}
 
 	public void changeGPS(View view) {
@@ -218,7 +254,7 @@ public class NoxDroidMainActivity extends Activity {
 	}
 
 	public void startIOIO(View view) {
-		Toast.makeText(this, "YOu click start IOIO", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "You click start IOIO", Toast.LENGTH_SHORT).show();
 	}
 
 	public void changeConnectivity(View view) {
@@ -262,7 +298,6 @@ public class NoxDroidMainActivity extends Activity {
 			imgConn.setVisibility(View.VISIBLE);
 			pb.setVisibility(View.GONE);
 			update(this.getClass(), result);
-
 		}
 	}
 
@@ -340,6 +375,7 @@ public class NoxDroidMainActivity extends Activity {
 			} else {
 				imgBtnIOIO.setImageResource(R.drawable.circle_red);
 			}
+			Log.i(TAG, "IOIO Status " + result);
 			this.pb.setVisibility(View.GONE);
 			imgIOIO.setVisibility(View.VISIBLE);
 			update(this.getClass(), result);
@@ -351,14 +387,10 @@ public class NoxDroidMainActivity extends Activity {
 		if (tests.size() == 3) {
 			if (passedTests()) {
 				if (!isServiceRunning(NoxDroidService.class)) {
-					imgBtnStart.setImageResource(R.drawable.play);
-					imgBtnStart.setEnabled(true);
-					imgBtnStop.setVisibility(View.GONE);
+					// Start service
+					doBindService();
 				} else {
-					imgBtnStop.setVisibility(View.VISIBLE);
-
-					imgBtnStart.setVisibility(View.GONE);
-
+					updateGUI(NoxDroidService.STATUS_SERVICE_STARTED);
 				}
 			}
 			tests.clear();
@@ -378,7 +410,6 @@ public class NoxDroidMainActivity extends Activity {
 		for (RunningServiceInfo rs : manager
 				.getRunningServices(Integer.MAX_VALUE)) {
 			if (service.getName().equals(rs.service.getClassName())) {
-
 				Log.i(TAG, "Noxdroid Service running");
 				return true;
 			}
@@ -386,19 +417,6 @@ public class NoxDroidMainActivity extends Activity {
 		return false;
 	}
 
-	public void stopNoxDroidService(View view) {
-		stopService(new Intent(this, NoxDroidService.class));
-		Toast.makeText(this, "stopping service", Toast.LENGTH_SHORT);
-		imgBtnStop.setVisibility(View.GONE);
-		imgBtnStart.setImageResource(R.drawable.play_disabled);
-		imgBtnStart.setVisibility(View.VISIBLE);
-		imgBtnStart.setEnabled(false);
-		onResume();
-	}
-
-	private void IOIO_Change_Status(int status) {
-
-	}
 
 	/**
 	 * Section
@@ -410,6 +428,7 @@ public class NoxDroidMainActivity extends Activity {
 			Log.i(TAG, "Handling incoming message");
 			switch (msg.what) {
 			case NoxDroidService.ERROR_IOIO_CONNECTION_LOST:
+			case NoxDroidService.ERROR_IOIO_ABORTED:
 				imgBtnIOIO.setEnabled(false);
 				imgBtnIOIO.setImageResource(R.drawable.circle_red);
 				Toast.makeText(getBaseContext(), "IOIO Lost connection",
@@ -424,18 +443,16 @@ public class NoxDroidMainActivity extends Activity {
 				Log.i(TAG, "IOIO Connected");
 				break;
 			case NoxDroidService.STATUS_IOIO_STATUS_GREEN:
-				
 				break;
 			case NoxDroidService.STATUS_IOIO_YELLOW:
 				break;
 			case NoxDroidService.STATUS_IOIO_RED:
 				break;
-			case NoxDroidService.ERROR_IOIO_ABORTED:
-				imgBtnIOIO.setEnabled(false);
-				imgBtnIOIO.setImageResource(R.drawable.circle_red);
+			case NoxDroidService.STATUS_LOCATION_SERVICE_STARTED :
+				updateGUI(NoxDroidService.STATUS_LOCATION_SERVICE_STARTED);
 				break;
-			case NoxDroidService.STATUS_LOCATION_SERVICE_STARTED : 
-				Toast.makeText(getBaseContext(), "Location Service Started", Toast.LENGTH_LONG);
+			case NoxDroidService.STATUS_SERVICE_READY :
+				Toast.makeText(getApplicationContext(), "Service is ready", Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -448,14 +465,21 @@ public class NoxDroidMainActivity extends Activity {
 
 	private void updateGUI(int status) {
 		switch (status) {
+		
+		case NoxDroidService.STATUS_SERVICE_READY :
+			
+			break;
 		case NoxDroidService.STATUS_SERVICE_STARTED:
+			imgBtnStart.setImageResource(R.drawable.play);
+			imgBtnStart.setVisibility(View.VISIBLE);
 			imgBtnStart.setEnabled(true);
+			imgBtnStop.setVisibility(View.GONE);
 			break;
 		case NoxDroidService.STATUS_CONNECTIVITY_SUCCESS:
 			imgBtnConn.setImageResource(R.drawable.circle_green);
 			imgConn.setVisibility(View.VISIBLE);
 			update(this.getClass(), true);
-		case NoxDroidService.STATUS_CONNECTIVITY_FAILURE:
+		case NoxDroidService.ERROR_NO_CONNECTIVITY:
 			imgBtnConn.setImageResource(R.drawable.circle_red);
 			imgConn.setVisibility(View.VISIBLE);
 			update(this.getClass(), false);
@@ -464,5 +488,31 @@ public class NoxDroidMainActivity extends Activity {
 		default:
 			break;
 		}
+	}
+	
+	/*
+	 * Menu
+	 * 
+	 * 
+	 * */
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.mainmenu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.preferences:
+			
+			startActivity(new Intent(NoxDroidMainActivity.this,
+					PreferencesActivity.class));
+			Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
+			break;
+		}
+		return true;
 	}
 }

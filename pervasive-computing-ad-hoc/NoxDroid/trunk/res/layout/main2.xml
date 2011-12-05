@@ -5,6 +5,7 @@
     android:layout_height="fill_parent"
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true"
+    
     android:padding="0dp"
     android:layout_margin="0dp"
     android:orientation="vertical" >
@@ -50,8 +51,9 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:onClick="startNoxDroidService"
+            android:onClick="startTrack"
             android:scaleType="fitXY"
+            
             android:src="@drawable/play_disabled" />
 
         <ImageButton
@@ -63,7 +65,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:onClick="stopNoxDroidService"
+            android:onClick="endTrack"
             android:scaleType="fitXY"
             android:src="@drawable/stop"
             android:visibility="gone" />
@@ -80,7 +82,9 @@
             android:background="@null"
             android:onClick="startNoxDroidService"
             android:scaleType="fitXY"
-            android:src="@drawable/record" />
+            android:src="@drawable/record"
+            android:visibility="gone"
+             />
 
         <RelativeLayout
             android:id="@+id/relLayoutGPS"

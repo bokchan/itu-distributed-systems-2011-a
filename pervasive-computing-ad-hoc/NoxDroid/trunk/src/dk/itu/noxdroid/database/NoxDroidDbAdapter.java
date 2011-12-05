@@ -23,6 +23,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import dk.itu.noxdroid.R;
 
 /**
  * 
@@ -46,7 +47,7 @@ import android.util.Log;
  * of using a collection of inner classes (which is less scalable and not
  * recommended).
  */
-public class DbAdapter {
+public class NoxDroidDbAdapter {
 
     public static final String KEY_LATITUDE = "latitude"; // previously title KEY__TITLE 
     public static final String KEY_LONGITUDE = "longitude"; // previously title KEY__BODY
@@ -59,7 +60,7 @@ public class DbAdapter {
     public static final String TIME_STAMP_END = "time_stamp_end";
     
     
-    private static final String TAG = "NoxDroidDbAdapter";
+    private static String TAG;
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
     
@@ -103,31 +104,31 @@ public class DbAdapter {
      * 
      */
     private static final String DATABASE_CREATE_TRACKS =
-        "create table tracks (_id integer primary key autoincrement, "
-		+ "track_uuid text not null, time_stamp_start integer not null default current_timestamp,"
+        "create table if not exists tracks (_id integer primary key autoincrement, "
+		+ "track_uuid text not null, time_stamp_start integer not null default (datetime('now','localtime')),"
 		+ "time_stamp_end integer, title text, description text, sync_flag integer, city text, country text)"
 		+ ";";
     
     private static final String DATABASE_CREATE_LOCATIONS =
-    		"create table locations (time_stamp integer not null default current_timestamp,"
+    		"create table if not exists locations (time_stamp integer not null default (datetime('now','localtime')),"
     		+ "latitude double not null, longitude double not null,"
     		+ "location_provider text)"
     		+ ";";
     
     private static final String DATABASE_CREATE_SKYHOOK_LOCATIONS =
-    		"create table skyhooklocations (time_stamp integer not null default current_timestamp,"
+    		"create table if not exists skyhooklocations (time_stamp integer not null default (datetime('now','localtime')),"
     		+ "latitude double not null, longitude double not null,"
     		+ "location_provider text)"
     		+ ";";
 
     private static final String DATABASE_CREATE_NOX =
-    		"create table nox (time_stamp integer not null default current_timestamp,"
+    		"create table if not exists nox (time_stamp integer not null default (datetime('now','localtime')),"
     		+ "nox double not null, temperature double not null)" 
     		+ ";";
     
     //TODO: ensure its real/double(s) which should be used.
     private static final String DATABASE_CREATE_ACCELEROMETER =
-    		"create table accelerometer (time_stamp integer not null default current_timestamp,"
+    		"create table if not exists accelerometer (time_stamp integer not null default (datetime('now','localtime')),"
     		+ "x real not null, y real not null, z real not null)" 
     		+ ";";
 
@@ -135,11 +136,12 @@ public class DbAdapter {
     private static final String DATABASE_TRACKS = "tracks";
     private static final String DATABASE_TABLE_LOCATION = "locations";
     private static final String DATABASE_TABLE_SKYHOOKLOCATION = "skyhooklocations";
+    private static final String DATA_TABLE_NOX = "nox";
     private static final int DATABASE_VERSION = 2;
 
-    private final Context mCtx;
     
-    private static DbAdapter instance; 
+    
+    private static NoxDroidDbAdapter instance = null; 
 
     // TODO: Make this class a singleton which can be shared among all services 
     // using the database 
@@ -152,6 +154,8 @@ public class DbAdapter {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+        	Log.i(TAG, "Running SQL Create scripts");
+        	
             db.execSQL(DATABASE_CREATE_TRACKS);
             db.execSQL(DATABASE_CREATE_LOCATIONS);
             db.execSQL(DATABASE_CREATE_NOX);
@@ -167,7 +171,6 @@ public class DbAdapter {
             onCreate(db);
         }
     }
-    
 
     /**
      * Constructor - takes the context to allow the database to be
@@ -175,25 +178,25 @@ public class DbAdapter {
      * 
      * @param ctx the Context within which to work
      */
-    public DbAdapter(Context ctx) {
-        this.mCtx = ctx;
-    }
-    
+    private NoxDroidDbAdapter() {
+		// TODO Auto-generated constructor stub
+	}
     
     public static void initInstance(Context context) {
-    	//this.mCtx = ctx;
+    	TAG = context.getApplicationContext().getString(R.string.LOGCAT_TAG, context.getApplicationContext().getString(R.string.app_name), 
+    			NoxDroidDbAdapter.class.getSimpleName());
     	if (instance == null) {
-        	instance = new DbAdapter(context);
+        	instance = new NoxDroidDbAdapter();
         	instance.open(context);
         }
     }
     
-    public static DbAdapter getInstance() {
+    public static NoxDroidDbAdapter getInstance() {
     	return instance;
     }
     
     
-    void open(Context context) throws SQLException {
+    public void open(Context context) throws SQLException {
         
         Log.d(TAG, "open called before mDbHelper = new DatabaseHelper(mCtx)");
     	
@@ -206,29 +209,7 @@ public class DbAdapter {
         Log.d(TAG, "before return");
     }
 
-    /**
-     * Open a tracks database. If it cannot be opened, try to create a new
-     * instance of the database. If it cannot be created, throw an exception to
-     * signal the failure
-     * 
-     * @return this (self reference, allowing this to be chained in an
-     *         initialization call)
-     * @throws SQLException if the database could be neither opened or created
-     */
-    public DbAdapter open() throws SQLException {
-        
-        Log.d(TAG, "open called before mDbHelper = new DatabaseHelper(mCtx)");
-    	
-    	mDbHelper = new DatabaseHelper(mCtx);
-    	
-    	Log.d(TAG, "after mDbHelper = new DatabaseHelper(mCtx)");
-    	
-        mDb = mDbHelper.getWritableDatabase();
-        
-        Log.d(TAG, "before return");
-        return this;
-    }
-
+    
     public void close() {
     	
     	Log.d(TAG, "close called");
@@ -263,6 +244,11 @@ public class DbAdapter {
 //    	
 //    	return trackId + 1;
 //    }
+//    
+//    
+//    
+//    
+    
     
     
     /**
@@ -280,7 +266,6 @@ public class DbAdapter {
      */
 //    public long createTrack(String trackUUID, double latitude, double longitude) {
     public void createTrack(String trackUUID) {
-    	
         ContentValues initialValues = new ContentValues();
         
         initialValues.put(KEY_TRACKUUID, trackUUID);
@@ -345,7 +330,7 @@ public class DbAdapter {
         initialValues.put(KEY_NOX, nox);
         initialValues.put(KEY_TEMPERATURE, temperature);
 
-        mDb.insert(DATABASE_CREATE_NOX, null, initialValues);
+        mDb.insert(DATA_TABLE_NOX, null, initialValues);
     	
     }    
     /**

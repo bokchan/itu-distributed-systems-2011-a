@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.util.Log;
+import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.R;
-import dk.itu.noxdroid.database.DbAdapter;
+import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.util.SensorDataUtil;
 
 public class NoxDroidIOIOThread extends Thread {
+	
+	private NoxDroidDbAdapter dbAdapter;
 	private String TAG;
 	/** Subclasses should use this field for controlling the IOIO. */
 	protected IOIO ioio_;
@@ -35,7 +38,6 @@ public class NoxDroidIOIOThread extends Thread {
 	private int pinledRed = 20;
 	private int pinAnalogIn = 40;
 	
-	private DbAdapter mDbHelper;
 	private double nox;
 	private double temperature;
 	
@@ -45,6 +47,7 @@ public class NoxDroidIOIOThread extends Thread {
 	public NoxDroidIOIOThread(NoxDroidService service) {
 		this.service = service;
 		listeners.add(service);
+		dbAdapter = ((NoxDroidApp) service.getApplication()).getDbAdapter();
 		TAG = service.getString(R.string.LOGCAT_TAG, service
 				.getString(R.string.app_name), this.getClass().getSimpleName());
 
@@ -73,6 +76,7 @@ public class NoxDroidIOIOThread extends Thread {
 				ioio_.waitForConnect();
 
 				connected_ = true;
+				notifyEventchanged(NoxDroidService.STATUS_IOIO_CONNECTED);
 				setup();
 				while (!abort_) {
 					loop();
@@ -142,8 +146,6 @@ public class NoxDroidIOIOThread extends Thread {
 			 * Set up data base
 			 * TODO: Not 100% sure about if service can be used as context ? 
 			 */
-	        mDbHelper = new DbAdapter(service);
-	        mDbHelper.open();
 	        
 			
 		} catch (ConnectionLostException e) {
@@ -153,7 +155,6 @@ public class NoxDroidIOIOThread extends Thread {
 			 * Close database - also done in other exceptions
 			 * TODO: verify when it should be closed
 			 */
-			mDbHelper.close();
 
 			Log.e(TAG, e.getMessage());
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
@@ -180,17 +181,11 @@ public class NoxDroidIOIOThread extends Thread {
 			// TODO: probably just disable this part
 			// because we are not going to send data directly back to the UI
 			Object obj = (Object) reading;
-			
+			dbAdapter.createNox(reading, 0.0);
 			service.update(this.getClass(), obj);
+			sleep(10000);
 			
-			sleep(1000);
-			
-			// TODO: add right values
-	    	nox = 10101.0;
-	    	temperature = 38.8;
-			//mDbHelper.createNox(nox, temperature);
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
-			
 
 		} catch (InterruptedException e) {
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
