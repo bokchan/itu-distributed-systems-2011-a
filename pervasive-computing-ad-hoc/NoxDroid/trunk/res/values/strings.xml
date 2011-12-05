@@ -39,5 +39,12 @@
     <string name="tracks_service_started">Tracks service started</string>
     <string name="tracks_service_stopped">Tracks service stopped</string>	
 	
+	
+    <!-- cloud server / app engine -->
+    <!-- <string name="service_default_url_post">http://noxdroidcloudengine.appspot.com/add_track</string> -->	
+	
+	<!-- local testing -->
+	<string name="service_default_url_post">http://10.25.254.241:8888/add_track</string>
+	
 
 </resources>

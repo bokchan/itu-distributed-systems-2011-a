@@ -10,9 +10,16 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CONTROL_LOCATION_UPDATES"/>
+    
+    
+    
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    
+    <!-- try out to be able to add locations through the DDMS - seems not to work for that -->
+	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"></uses-permission>
+    
     
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -77,7 +84,7 @@
             
         </activity>
 
-        <!-- Debug activity for simple try of services only - as stand alone -->
+        <!-- Debug activity for simple try of post to cloud -->
         <activity android:name=".NoxDroidSimpleActivity" >
             
         </activity>

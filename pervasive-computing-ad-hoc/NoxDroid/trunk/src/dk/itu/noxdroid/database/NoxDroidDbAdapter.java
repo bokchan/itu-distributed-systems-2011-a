@@ -102,6 +102,9 @@ public class NoxDroidDbAdapter {
      * if should be get as local time then
      * 
      * 
+     * tips:
+     * - remember to check if it exits "create table if not exists" 
+     * 
      */
     private static final String DATABASE_CREATE_TRACKS =
         "create table if not exists tracks (_id integer primary key autoincrement, "
@@ -191,6 +194,11 @@ public class NoxDroidDbAdapter {
         }
     }
     
+    
+    /*
+     * Singleton approach to get the db adapter 
+     * 
+     */
     public static NoxDroidDbAdapter getInstance() {
     	return instance;
     }
@@ -297,7 +305,8 @@ public class NoxDroidDbAdapter {
         Log.d(TAG, "createLocationPoint called");
 
         
-        // TODO: check that latitude and longitude has value ? - long story short had probelsm when they where not added right from Location service - if they where not initialized yet etc..
+        // TODO: check that latitude and longitude has value ? 
+        // - long story short had probelsm when they where not added right from Location service - if they where not initialized yet etc..
         
         ContentValues initialValues = new ContentValues();
         

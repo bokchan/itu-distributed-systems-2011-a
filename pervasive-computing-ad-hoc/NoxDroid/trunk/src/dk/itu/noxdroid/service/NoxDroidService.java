@@ -133,14 +133,18 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-
+		
+		
+		// start location service 
 		doBindService();
+		
+		// TODO: merge of skyhook and gps
 		// start additional services
 		// startService(new Intent(this, LocationService.class));
 		// startService(new Intent(this, TracksService.class));
 		// startService(new Intent(this, NoxDroidLocationService.class));
-		//
 
+		// Two async tasks / 2 separate threads
 		ConnectivityTest connTest = new ConnectivityTest();
 		connTest.execute(new Void[] {});
 
@@ -417,7 +421,12 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		Log.i(TAG, "Started track: ");
 	}
-
+	
+	/*
+	 * 
+	 * Get message from main ui - and stop
+	 * 
+	 */
 	private void stopTrack() {
 		Log.i(TAG, "stopping track: ");
 		if (isTrackOpen) {
@@ -427,7 +436,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 			dbAdapter.endTrack(((NoxDroidApp) getApplication())
 					.getCurrentTrack().toString());
-
+			
 			Message msg = Message.obtain(null,
 					NoxDroidService.ACTION_START_TRACK);
 			msg.replyTo = messenger;
