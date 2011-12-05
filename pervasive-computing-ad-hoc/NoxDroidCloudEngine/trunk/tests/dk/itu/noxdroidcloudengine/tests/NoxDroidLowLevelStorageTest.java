@@ -254,16 +254,24 @@ public class NoxDroidLowLevelStorageTest {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		
-// Note: another apporahc is to start to create a key
-//
-//        Key sensorKey = KeyFactory.createKey("SensorKey", "sensor1");
-//		
-//		System.out.println("print sensorKey: " + sensorKey);		
-//		
-//		// add a sensor
-//		Entity sensor = new Entity("Sensor", sensorKey);
+		// note: 
+		// add a sensor with specified key
+		//
+		// if no key is specified it will get one automatically 
+		// for that reason its possible to do:
+		// Entity sensor1 = new Entity("Sensor");
+		// Entity sensor2 = new Entity("Sensor");
+		// Entity sensor3 = new Entity("Sensor");
+		//
+		// but we like a way to reference the sensor with a key
+		//
 		
-		Entity sensor = new Entity("Sensor");
+		Key sensorKey = KeyFactory.createKey("SensorKey", "sensor1");
+		
+		System.out.println("print sensorKey: " + sensorKey);		
+		
+		Entity sensor = new Entity("Sensor", sensorKey);
+		
 		sensor.setProperty("id", "sensor1");
 		sensor.setProperty("title", "Sensor 1");
 		datastore.put(sensor);		
