@@ -170,6 +170,11 @@ In the first place we store all data on the relational database, Sqlite3 which i
 In the end of a motion recording the user has the possibility to post the motion recording to the Google App Engine (for now just referenced as App Engine). This is handled by a simple http post request.
 
 
+=== Drawback(s) === 
+Currently each recording is stored in the Sqlite database on the fly. We where curious how many writes the database was able to do so we stock to this solution.
+
+Each motion is posted separately to the App Engine which should of course have been in one request/post e.g. as JSON.
+
 
 == ActivityRecorderCloud (App Engine) == 
 
@@ -186,18 +191,18 @@ and we have a simple JSP view that list all recording (activityrecording.jsp)
 The ActivityRecorderCloud is based on a very simple date model:
 
 {{{
---------------------------
+-------------------------
 | motion recording node |
----------------------------
-| id (uuid)
-| username
-| time stamp
-| x
-| y
-| z
-| start time
-| end time
---------------
+-------------------------
+| id (uuid)             |
+| username              |
+| time stamp            |
+| x                     |
+| y                     |
+| z                     |
+| start time            |
+| end time              |
+-------------------------
 }}}
 
 Under the hood we are simply using the low level object oriented datastore of the App Engine which is further more based upon the high replication storage and for that reason are prepared to scale very well.
