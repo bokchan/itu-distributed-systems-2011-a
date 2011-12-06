@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -15,7 +16,6 @@ import org.mortbay.util.ajax.JSON;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.repackaged.org.json.JSONArray;
@@ -23,13 +23,24 @@ import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
 
 public class AddTrackServlet extends HttpServlet {
+
 	private static final Logger log = Logger.getLogger(AddTrackServlet.class
 			.getName());
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 
-		// setup datastor
+		
+		
+		Map map = req.getParameterMap();		
+		log(map.toString());
+		System.out.println(map);
+		
+		
+		
+		
+		
+		// setup datastore
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 
@@ -43,6 +54,10 @@ public class AddTrackServlet extends HttpServlet {
 		 * 
 		 * locations: as json nox: as json
 		 */
+
+		// do we get it from an Android NoxDroid or form a html form
+
+		String sensorDevice = req.getParameter("sensorDevice");
 
 		// sensor
 		String sensorId = req.getParameter("sensor_id");
@@ -90,92 +105,85 @@ public class AddTrackServlet extends HttpServlet {
 		if (trackLocationsJSON != null) {
 			JSONObject jsonObj;
 			try {
+				
+				// here we have the full / whole json map
+				// {"locations":[{<item>},{<item>}]}
 				jsonObj = new JSONObject(trackLocationsJSON);
 				// human readable json- nice
-				System.out.println("jsonObj: " + jsonObj.toString(4));
+				log("jsonObj: " + jsonObj.toString(4));
 
+				// here we have the json list / array
+				// [{<item>},{<item>}]
 				JSONArray locationJSONArray = jsonObj.optJSONArray("locations");
-
+				log("locationJSONArray: " + locationJSONArray);
+				
+				System.out.println(locationJSONArray.toString(4));
+				
+//				locationJSONArray = jsonObj.toJSONArray(null);
+				
+				
 				// prepare for the datastore
 				List<Entity> locations = new ArrayList<Entity>();
 				Entity locationEntity = null;
 				double longitude = 0.0;
 				double latitude = 0.0;
 				String time_stamp;
+				String provider;
 
-				for (int i = 0; i < locationJSONArray.length(); ++i) {
-					JSONObject rec = locationJSONArray.getJSONObject(i);
-
-					// note: also rec.keys()
-					longitude = rec.getDouble("longitude");
-					latitude = rec.getDouble("latitude");
-					time_stamp = rec.getString("time_stamp");
-
-					
-					// TODO: look up issue on set geopt 
-					// GeoPt geoPoint = new GeoPt(Float.parseFloat("2.0"),Float.parseFloat("1.0"));
-					// read more in NoxDroidLowLevelStorageTest.testNewEntitiesWithAncestorChildren() 
-					locationEntity = new Entity("Location", 2, track.getKey());
-					locationEntity.setProperty("latitude", latitude);
-					locationEntity.setProperty("longitude", longitude);
-					locationEntity.setProperty("longitude", longitude);
-					
-					locations.add(locationEntity);
-					
-
-					System.out.println("longitude: " + longitude
-							+ " latitude: " + latitude + " time_stamp: " + time_stamp);
+				if(locationJSONArray!=null) {
+					for (int i = 0; i < locationJSONArray.length(); ++i) {
+						JSONObject rec = locationJSONArray.getJSONObject(i);
+	
+						// note: also rec.keys()
+						longitude = rec.getDouble("longitude");
+						latitude = rec.getDouble("latitude");
+						time_stamp = rec.getString("time_stamp");
+						provider = rec.getString("provider");
+	
+						// TODO: look up issue on set geopt
+						// GeoPt geoPoint = new
+						// GeoPt(Float.parseFloat("2.0"),Float.parseFloat("1.0"));
+						// read more in
+						// NoxDroidLowLevelStorageTest.testNewEntitiesWithAncestorChildren()
+						
+						// Entity(type/kind, id/key, parent )
+						locationEntity = new Entity("Location", i+1, track.getKey());
+						locationEntity.setProperty("latitude", latitude);
+						locationEntity.setProperty("longitude", longitude);
+						locationEntity.setProperty("time_stamp", time_stamp);
+						locationEntity.setProperty("provider", provider);
+	
+						locations.add(locationEntity);
+	
+						System.out.println("longitude: " + longitude
+								+ " latitude: " + latitude + " time_stamp: "
+								+ time_stamp + " provider: " + provider);
+					}
 				}
-				
 				
 				// batch add locations
 				datastore.put(locations);
-				
+
+				if (sensorDevice != null && sensorDevice.equals("android")) {
+					// OK - we return 201 in a restful like approach
+					// - which is the normal for success on put/post
+					// - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+					resp.setStatus(201);
+				} else {
+					resp.sendRedirect("/add_track_form.html");
+				}
 
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (sensorDevice != null && sensorDevice.equals("android")) {
+					// NOT OK
+					resp.setStatus(409);
+				} else {
+					// TODO: perhaps redirect to an error page but absolutely nicetohave 
+					// the current form is just plain html 
+					resp.sendRedirect("/add_track_form.html");
+				}				
+				log("AddTrackServlet - the json seemed currupted" + e.getMessage());
 			}
-		}
-
-		// add nox (from a json file)
-
-		// } // end of parameter checks
-
-		// if (activityDevice != null && activityDevice.equals("android")) {
-		// // note: for now we have skipped to get the response
-		// // // ok
-		// // resp.setStatus(200);
-		//
-		// } else {
-		//
-		// resp.sendRedirect("/activityrecording.jsp?activityName="
-		// + activityName);
-		//
-		// }
-
-		resp.sendRedirect("/add_track_form.html");
-
-	}
-
-	/*
-	 * 
-	 * NB! not used use the JSONObject approach !
-	 * 
-	 * http://jetty.codehaus.org/jetty/jetty-6/apidocs/org/mortbay/util/ajax/JSON
-	 * .html
-	 * 
-	 * watch out for the static is that needed ? was set when we tried to unit
-	 * test
-	 */
-	public static HashMap<String, String> parseJSONLocation(String json) {
-
-		try {
-			HashMap<String, String> obj = (HashMap<String, String>) JSON
-					.parse(json.toString());
-			return obj;
-		} catch (Exception e) {
-			return new HashMap<String, String>();
 		}
 
 	}
