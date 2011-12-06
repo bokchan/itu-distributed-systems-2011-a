@@ -14,7 +14,7 @@
  * the License.
  */
 
-package dk.itu.noxdroid.database;
+package dk.itu.noxdroid.experiments;
 
 import android.content.ContentValues;
 import android.content.Context;

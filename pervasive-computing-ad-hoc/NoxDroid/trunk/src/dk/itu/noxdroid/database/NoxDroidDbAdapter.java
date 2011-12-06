@@ -109,7 +109,7 @@ public class NoxDroidDbAdapter {
     private static final String DATABASE_CREATE_TRACKS =
         "create table if not exists tracks (_id integer primary key autoincrement, "
 		+ "track_uuid text not null, time_stamp_start integer not null default (datetime('now','localtime')),"
-		+ "time_stamp_end integer, title text, description text, sync_flag integer, city text, country text)"
+		+ "time_stamp_end integer, title text, description text, sync_flag integer default 0, city text, country text)"
 		+ ";";
     
     private static final String DATABASE_CREATE_LOCATIONS =
@@ -126,7 +126,7 @@ public class NoxDroidDbAdapter {
 
     private static final String DATABASE_CREATE_NOX =
     		"create table if not exists nox (time_stamp integer not null default (datetime('now','localtime')),"
-    		+ "nox double not null, temperature double not null)" 
+    		+ "nox double not null, temperature double)" 
     		+ ";";
     
     //TODO: ensure its real/double(s) which should be used.
@@ -136,7 +136,7 @@ public class NoxDroidDbAdapter {
     		+ ";";
 
     private static final String DATABASE_NAME = "noxdroid.db";
-    private static final String DATABASE_TRACKS = "tracks";
+    private static final String DATABASE_TABLE_TRACKS = "tracks";
     private static final String DATABASE_TABLE_LOCATION = "locations";
     private static final String DATABASE_TABLE_SKYHOOKLOCATION = "skyhooklocations";
     private static final String DATA_TABLE_NOX = "nox";
@@ -278,18 +278,23 @@ public class NoxDroidDbAdapter {
         
         initialValues.put(KEY_TRACKUUID, trackUUID);
         
-        mDb.insert(DATABASE_TRACKS, null, initialValues);
+        mDb.insert(DATABASE_TABLE_TRACKS, null, initialValues);
     }
     
-    public boolean endTrack(String trackUUID) {
-        ContentValues args = new ContentValues();
+    public void endTrack(String trackUUID) {
         
-        // or datetime('now')
-        // TODO: fix current_timestamp now it inserts as string ""current_timestamp" :( and not interpretated as the sqlite current_timestamp
-        args.put(TIME_STAMP_END, "current_timestamp");
-
-        // note: trackUUID should be compared as string  and for that reason sorruneded with ''
-        return mDb.update(DATABASE_TRACKS, args, KEY_TRACKUUID + "=" + "'" + trackUUID + "'", null) > 0;
+		// Raw sqlite in use because we like to use the sqlite time stamp mechanism
+    	// the previous approach args.put(TIME_STAMP_END, "current_timestamp") dosen't work
+    	// - remember to surround UUID with ''
+		String sql = "UPDATE "
+				+ DATABASE_TABLE_TRACKS
+				+ " SET "
+				+TIME_STAMP_END
+				+"=(datetime('now','localtime')) WHERE uuid='"
+				+ trackUUID + "'";
+		Log.d(TAG, "sql: " + sql);
+		mDb.execSQL(sql);        
+        
     }
     
     
@@ -301,12 +306,6 @@ public class NoxDroidDbAdapter {
      * @param longitude
      */
     public void createLocationPoint(double latitude, double longitude, String locationProvider ) {
-    	
-        Log.d(TAG, "createLocationPoint called");
-
-        
-        // TODO: check that latitude and longitude has value ? 
-        // - long story short had probelsm when they where not added right from Location service - if they where not initialized yet etc..
         
         ContentValues initialValues = new ContentValues();
         
@@ -341,17 +340,18 @@ public class NoxDroidDbAdapter {
 
         mDb.insert(DATA_TABLE_NOX, null, initialValues);
     	
-    }    
-    /**
-     * Delete an entry with the given rowId
-     * 
-     * @param rowId id of track to delete
-     * @return true if deleted, false otherwise
-     */
-    public boolean deleteRowId(long rowId) {
-
-        return mDb.delete(DATABASE_TRACKS, KEY_ROWID + "=" + rowId, null) > 0;
-    }
+    }  
+    
+//    /**
+//     * Delete an entry with the given rowId
+//     * 
+//     * @param rowId id of track to delete
+//     * @return true if deleted, false otherwise
+//     */
+//    public boolean deleteRowId(long rowId) {
+//
+//        return mDb.delete(DATABASE_TABLE_TRACKS, KEY_ROWID + "=" + rowId, null) > 0;
+//    }
     
 //    TODO: make an deleteTrack
 //    public boolean deleteTack(long trackId) {
@@ -363,7 +363,7 @@ public class NoxDroidDbAdapter {
      */
     public Cursor fetchAllTracks() {
 
-        return mDb.query(DATABASE_TRACKS, new String[] {KEY_ROWID, KEY_LATITUDE,
+        return mDb.query(DATABASE_TABLE_TRACKS, new String[] {KEY_ROWID, KEY_LATITUDE,
                 KEY_LONGITUDE}, null, null, null, null, null);
     }
 
@@ -378,7 +378,7 @@ public class NoxDroidDbAdapter {
 
         Cursor mCursor =
 
-            mDb.query(true, DATABASE_TRACKS, new String[] {KEY_ROWID,
+            mDb.query(true, DATABASE_TABLE_TRACKS, new String[] {KEY_ROWID,
                     KEY_LATITUDE, KEY_LONGITUDE}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
@@ -387,28 +387,56 @@ public class NoxDroidDbAdapter {
         return mCursor;
 
     }
-
     
-//    TODO: probably just delete this one since we might not need to update 
-//    modify existing records..
     
-    /**
-     * Update a track using the details provided. The track to be updated is
-     * specified using the rowId, and it is altered to use the latitude and longitude
-     * values passed in
+    
+    /*
+     * select count(*) from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
      * 
-     * @param rowId id of track to update
-     * @param latitude value to set track latitude to
-     * @param longitude value to set track longitude to
-     * @return true if a track was successfully updated, false otherwise
+     * select locations.latitude, locations.longitude, locations.location_provider from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
+     * 
+     * 
+     * select locations.latitude, locations.longitude, locations.location_provider from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
      */
-    public boolean updateNote(int rowId, long trackId, double latitude, double longitude) {
-        ContentValues args = new ContentValues();
-        
-        args.put(KEY_TRACKUUID, trackId);
-        args.put(KEY_LATITUDE, latitude);
-        args.put(KEY_LONGITUDE, longitude);
+    
+	public Cursor fetchLocations(String UUID) throws SQLException {
 
-        return mDb.update(DATABASE_TRACKS, args, KEY_ROWID + "=" + rowId, null) > 0;
-    }
+		
+		
+		String sql = "select locations.latitude, locations.longitude, locations.location_provider from " 
+				+ DATABASE_TABLE_TRACKS 
+				+ ", " 
+				+ DATABASE_TABLE_LOCATION 
+				+ " where track_uuid='"
+				+ UUID
+				+ "' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);";
+
+		Cursor mCursor = mDb.rawQuery(sql, null);
+
+		// TODO: not sure what the right approach is here - move to first or not
+		// ? or is it one when return a single sql row / result item etc..
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		return mCursor;
+
+	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
 }

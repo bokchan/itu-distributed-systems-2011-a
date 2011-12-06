@@ -205,7 +205,11 @@ public class NoxDroidMainActivity extends Activity {
 			isBound = false;
 		}
 	}
-
+	
+	/*
+	 * Start track
+	 * - send message(s) to the underlying service(s) 
+	 */
 	public void startTrack(View view) {
 		// startService(new Intent(this, NoxDroidService.class));
 //		doBindService();
@@ -225,7 +229,11 @@ public class NoxDroidMainActivity extends Activity {
 		imgBtnStart.setVisibility(View.GONE);
 		imgBtnStop.setVisibility(View.VISIBLE);
 	}
-	
+
+	/*
+	 * Stop track
+	 * - send message(s) to the underlying service(s) 
+	 */
 	public void endTrack(View view) {
 		
 		imgBtnStop.setVisibility(View.GONE);
@@ -514,8 +522,10 @@ public class NoxDroidMainActivity extends Activity {
 			break;
 			
 		case R.id.post_to_cloud:
+
+			
 			startActivity(new Intent(NoxDroidMainActivity.this,
-					NoxDroidSimpleActivity.class));
+					NoxDroidPostActivity.class));
 			break;
 			
 		}

@@ -46,7 +46,7 @@
         -->
         <service android:name=".service.NoxDroidService" >
         </service>
-        <service android:name=".location.LocationService" >
+        <service android:name=".location.GPSLocationService" >
         </service>
         <service android:name=".tracks.TracksService" >
         </service>
@@ -88,7 +88,7 @@
         <activity android:name=".NoxDroidSimpleActivity" >
             
         </activity>
-        <service android:name=".location.NoxDroidLocationService"></service>
+        <service android:name=".location.SkyHookLocationService"></service>
         <activity android:name=".experiments.LogViewerActivity">
              <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

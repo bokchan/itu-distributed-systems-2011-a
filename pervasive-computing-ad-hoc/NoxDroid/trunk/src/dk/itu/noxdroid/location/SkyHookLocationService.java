@@ -26,7 +26,13 @@ import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.service.NoxDroidService;
 
-public class NoxDroidLocationService extends Service {
+
+/*
+ * NoxDroidLocationService
+ * 
+ * 
+ */
+public class SkyHookLocationService extends Service {
 
 	private XPS _xps;
 	private NoxDroidDbAdapter mDbHelper;
@@ -55,8 +61,8 @@ public class NoxDroidLocationService extends Service {
 	}
 
 	public class ServiceBinder extends Binder {
-		public NoxDroidLocationService getService() {
-			return NoxDroidLocationService.this;
+		public SkyHookLocationService getService() {
+			return SkyHookLocationService.this;
 		}
 	}
 

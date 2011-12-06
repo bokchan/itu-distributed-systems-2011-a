@@ -14,25 +14,56 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import dk.itu.noxdroid.database.NoxDroidDbAdapter;
+
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-public class NoxDroidSimpleActivity extends Activity {
+public class NoxDroidPostActivity extends Activity {
 
 	private String TAG = this.getClass().getSimpleName();
-	
-
+	private String webservice_url;
+	private String userName;
+	private String userId;
+	private NoxDroidDbAdapter mDbHelper;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_simple);
+		
+		
+		// note: based upon http://goo.gl/y5m4u - also take a look at the *real* api
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        webservice_url = prefs.getString(getString(dk.itu.noxdroid.R.string.WEBSERVICE_URL), "http://10.0.1.7:8888/add_track");
+        
+        
+        userId = prefs.getString(getString(dk.itu.noxdroid.R.string.USER_ID), "test_user_id");
+        userName = prefs.getString(getString(dk.itu.noxdroid.R.string.USER_NAME), "Test User Name");	
+        
+        
+// note: sometimes a bit confused about the approach to get stuff from <package>.R.string.* 
+//        webservice_url = prefs.getString("WEBSERVICE_URL", "http://10.0.1.7:8888/add_track"); 
+//        String server_url = prefs.getString(dk.itu.noxdroid.R.string.WEBSERVICE_URL, "http://10.0.1.7:8888/add_track");
+        
+        
+        
+        
+		//
+		// Get the global database adapter
+		// - this approach needs no open commands and such its handled with the adapter
+		//        
+		mDbHelper = ((NoxDroidApp) getApplication()).getDbAdapter();
+        
 	}
-
 	
 	/*
 	 * Post Static To Cloud
@@ -43,8 +74,12 @@ public class NoxDroidSimpleActivity extends Activity {
 	public void postStaticToCloud(View view) {
 	
 		// just for test
-        String trackUID = "f3d282f3-6f1b-4a5c-bfa3-a0fc33cfc1a5-test";
+//        String trackUID = "f3d282f3-6f1b-4a5c-bfa3-a0fc33cfc1a5-test";
 		
+		// emulator
+        String trackUID = "8c3adc99-3e51-4922-a3c9-d127117bb764";
+        
+        
 		// post to cloud service
 		postForm(trackUID);
 
@@ -53,9 +88,17 @@ public class NoxDroidSimpleActivity extends Activity {
 	
     public void postForm(String trackUID){
         
-    	String url = getString(R.string.service_default_url_post);
+    	
+    	// TODO: how do we get hand on the service - where the preferences are crated globally
+//    	service.APP_PREFS.get(dk.itu.noxdroid.R.string.server_url);
+    	
+
+    	
+        
+        
+    	
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(url);
+        HttpPost httppost = new HttpPost(webservice_url);
 
         /*
         we are mime'ing this form:
@@ -93,14 +136,26 @@ public class NoxDroidSimpleActivity extends Activity {
         String trackEndTime = "2011-12-02 2011-12-02 10:12:04";
         String trackJSONString = "{ \"locations\" : [{\"latitude\" : \"55.659919\", \"longitude\" : \"12.591190\", \"time_stamp\" : \"2011-12-04 09:12:04\"}, {\"latitude\" : \"55.659919\", \"longitude\" : \"12.691190\", \"time_stamp\" : \"2011-12-04 09:12:05\"}]}";
         
+        // create json from databse query
+        
+        Cursor mCursor = mDbHelper.fetchLocations(trackUID);
+        
+        
+        int size = mCursor.getCount();
+        for (int i = 0; i < size; i++) {
+        	Log.d(TAG, "mCursor: " + mCursor );
+        	mCursor.moveToNext();
+        }
+        	
+        
         try {
             // Add your data to the form
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(8);
             
             // TODO: sensor_id will change to noxdroid_id
-            nameValuePairs.add(new BasicNameValuePair("sensor_id", "noxdroid_test"));
+            nameValuePairs.add(new BasicNameValuePair("sensor_id", userId));
             //sensor_user_name
-            nameValuePairs.add(new BasicNameValuePair("sensor_user_name", "noxdroid_user_name"));
+            nameValuePairs.add(new BasicNameValuePair("sensor_user_name", userName));
 
               
             nameValuePairs.add(new BasicNameValuePair("track_id", trackUID));
@@ -124,7 +179,7 @@ public class NoxDroidSimpleActivity extends Activity {
             	StatusLine status = response.getStatusLine();
             	Log.d(TAG, "status code: " + status.getStatusCode() );
             	            	
-    			Toast.makeText(NoxDroidSimpleActivity.this, "Post to cloud was successful", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(NoxDroidPostActivity.this, "Post to cloud was successful", Toast.LENGTH_SHORT).show();
             	
             	// TODO:
             	// set track flag in database to be sync'ed

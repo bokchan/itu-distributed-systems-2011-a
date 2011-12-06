@@ -24,6 +24,14 @@
     <string name="noxdroid_service_autostart">NoxDroidService automatic startup</string>
     <string name="LOCATIONMANAGER_START">LOCATIONMANAGER_START</string>
     <string name="GPS_SERVICE_ERROR">GPS_SERVICE_ERROR</string>
+
+	<string name="WEBSERVICE_URL">WEBSERVICE_URL</string>
+	<string name="USER_NAME">USER_NAME</string>
+	<string name="USER_ID">USER_ID</string>
+	
+	
+	
+	<string name="IOIO_ENABLED">IOIO_ENABLED</string>
 	<string name="IOIO_NO2_PIN">IOIO_NO2_PIN</string>
 	<string name="IOIO_TEMP_PIN">IOIO_TEMP_PIN</string>
 	<string name="IOIO_LED_GREEN_PIN">IOIO_LED_GREEN_PIN</string>
@@ -38,13 +46,7 @@
     <string name="location_service_stopped">Location service stopped</string>	
     <string name="tracks_service_started">Tracks service started</string>
     <string name="tracks_service_stopped">Tracks service stopped</string>	
-	
-	
-    <!-- cloud server / app engine -->
-    <!-- <string name="service_default_url_post">http://noxdroidcloudengine.appspot.com/add_track</string> -->	
-	
-	<!-- local testing -->
-	<string name="service_default_url_post">http://10.25.254.241:8888/add_track</string>
+
 	
 
 </resources>

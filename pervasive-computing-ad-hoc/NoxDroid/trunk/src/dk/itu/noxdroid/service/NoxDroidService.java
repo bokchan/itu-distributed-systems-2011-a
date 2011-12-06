@@ -14,6 +14,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -34,7 +35,8 @@ import dk.itu.noxdroid.ioio.IOIOConnectedTestThread;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread.STATUS;
 import dk.itu.noxdroid.ioio.IOIOEventListener;
 import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
-import dk.itu.noxdroid.location.NoxDroidLocationService;
+import dk.itu.noxdroid.location.GPSLocationService;
+import dk.itu.noxdroid.location.SkyHookLocationService;
 
 public class NoxDroidService extends Service implements IOIOEventListener {
 
@@ -134,22 +136,41 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			Log.e(TAG, e.getMessage());
 		}
 		
-		
-		// start location service 
+		//
+		// Start skyhook location service 
+		//
 		doBindService();
-		
-		// TODO: merge of skyhook and gps
-		// start additional services
-		// startService(new Intent(this, LocationService.class));
-		// startService(new Intent(this, TracksService.class));
-		// startService(new Intent(this, NoxDroidLocationService.class));
 
-		// Two async tasks / 2 separate threads
+		//
+		// Start gps location service - TODO: change into same approach as doBindService();
+		//  
+		startService(new Intent(this, GPSLocationService.class));
+		
+		//
+		// Check for network connection
+		//  
 		ConnectivityTest connTest = new ConnectivityTest();
 		connTest.execute(new Void[] {});
 
-		IOIOConnectionTest ioiotest = new IOIOConnectionTest();
-		ioiotest.execute(new Void[] {});
+		//
+		// note:
+		// sometimes its usefull to be able to use/test the application with the IOIO board
+		// the connectToIOIO is a quick and dirty one...
+		//
+		// - based upon http://goo.gl/y5m4u - also take a look at the *real* api
+		//
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean connectToIOIO =  prefs.getBoolean(getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), false);
+		
+		if (connectToIOIO) {
+			// Check for IOIO connection
+			IOIOConnectionTest ioiotest = new IOIOConnectionTest();
+			ioiotest.execute(new Void[] {});			
+		} else {
+			updateTest(IOIOConnectionTest.class, true);
+		}
+		
 	}
 
 	public synchronized Map<String, ?> getPrefs() {
@@ -172,7 +193,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// stop additional services
 		// stopService(new Intent(this, LocationService.class));
 		// stopService(new Intent(this, TracksService.class));
-		stopService(new Intent(this, NoxDroidLocationService.class));
+		stopService(new Intent(this, SkyHookLocationService.class));
 
 	}
 
@@ -292,7 +313,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				clients.add(msg.replyTo);
 				break;
 			case STATUS_LOCATION_SERVICE_STARTED:
-				updateTest(NoxDroidLocationService.class, true);
+				// TODO: if SkyHook is not depending on GPS but network
+				// - then it might make sense to be moved to STATUS_CONNECTIVITY_SUCCESS...? 
+				//updateTest(SkyHookLocationService.class, true);
 				break;
 			case ACTION_START_TRACK:
 				startTrack();
@@ -301,6 +324,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				stopTrack();
 				break;
 			case STATUS_CONNECTIVITY_SUCCESS:
+				updateTest(SkyHookLocationService.class, true);
 				Log.i(TAG, "STATUS_CONNECTIVITY_SUCCESS");
 			default:
 				super.handleMessage(msg);
@@ -345,7 +369,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	}
 
 	void doBindService() {
-		bindService(new Intent(this, NoxDroidLocationService.class),
+		bindService(new Intent(this, SkyHookLocationService.class),
 				connLocationService, Context.BIND_AUTO_CREATE);
 		Log.i(TAG, "doBindService");
 		locServiceIsBound = true;
