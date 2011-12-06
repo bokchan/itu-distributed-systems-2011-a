@@ -31,7 +31,7 @@
 	<PreferenceCategory android:key="ioio_prefs"
 		android:title="IOIO Preferences">
 		<CheckBoxPreference android:title="IOIO enabled"
-			android:defaultValue="true"
+			android:defaultValue="false"
 			android:key="IOIO_ENABLED" />		
 		<EditTextPreference android:title="IOIO NO2 pin"
 			android:key="IOIO_NO2_PIN" android:defaultValue="40" />

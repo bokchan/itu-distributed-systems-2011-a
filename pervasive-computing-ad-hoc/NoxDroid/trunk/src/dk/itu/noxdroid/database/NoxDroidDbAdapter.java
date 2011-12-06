@@ -394,19 +394,23 @@ public class NoxDroidDbAdapter {
     
     
     /*
+     * 
+     * Fetch locations for a track
+     * 
+     * Each cursor consist of:
+     * latitude
+     * longitude
+     * time_stamp
+     * location_provider
+     * 
+     * Some raw sqlite queries:
      * select count(*) from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
-     * 
-     * select locations.latitude, locations.longitude, locations.location_provider from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
-     * 
-     * 
-     * select locations.latitude, locations.longitude, locations.location_provider from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
+     * select locations.latitude, locations.longitude, locations.time_stamp, locations.location_provider from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
+     * select locations.latitude, locations.longitude, locations.time_stamp, locations.location_provider from tracks, locations where track_uuid='8c3adc99-3e51-4922-a3c9-d127117bb764' and (locations.time_stamp >= tracks.time_stamp_start and locations.time_stamp <= tracks.time_stamp_end);
      */
-    
 	public Cursor fetchLocations(String UUID) throws SQLException {
-
 		
-		
-		String sql = "select locations.latitude, locations.longitude, locations.location_provider from " 
+		String sql = "select locations.latitude, locations.longitude, locations.time_stamp, locations.location_provider from " 
 				+ DATABASE_TABLE_TRACKS 
 				+ ", " 
 				+ DATABASE_TABLE_LOCATION 
@@ -416,13 +420,11 @@ public class NoxDroidDbAdapter {
 
 		Cursor mCursor = mDb.rawQuery(sql, null);
 
-		// TODO: not sure what the right approach is here - move to first or not
-		// ? or is it one when return a single sql row / result item etc..
 		if (mCursor != null) {
 			mCursor.moveToFirst();
 		}
 		return mCursor;
-
+		
 	}
     
     
