@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,6 @@ public class GPSLocationService extends Service {
 
 	private String TAG;
 
-	private int countOnLocationChanged = 0;
 	private LocationManager lm;
 	private LocationListener locListenD;
 	private Double latitude;
@@ -164,16 +163,8 @@ public class GPSLocationService extends Service {
 		@Override
 		public void onLocationChanged(Location location) {
 
-			countOnLocationChanged++;
-
-			Log.d(TAG, "onLocationChanged called");
-			Log.d(TAG, "countOnLocationChanged: " + countOnLocationChanged);
-
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
-
-			Log.d(TAG, "latitude: " + latitude + "longitude: " + longitude);
-			Log.d(TAG, "locationProvider: " + locationProvider);
 
 			/**
 			 * Add to database

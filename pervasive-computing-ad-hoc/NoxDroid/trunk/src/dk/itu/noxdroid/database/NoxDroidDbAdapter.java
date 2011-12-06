@@ -258,21 +258,13 @@ public class NoxDroidDbAdapter {
 //    
     
     
-    
+
+
     /**
-     * Create a new track using the latitude and longitude provided. If a track is
-     * successfully created return the new rowId for that track, otherwise return
-     * a -1 to indicate failure.
-     * 
-     * Direct update sqlite statements looks like this:
-     * UPDATE tracks SET time_stamp_end=current_timestamp WHERE track_uuid="9aa57056-8d6e-4c9d-9919-79f55cd7e180";
+     * Create / start a track 
      * 
      * @param trackUUID
-     * @param latitude
-     * @param longitude
-     * @return
      */
-//    public long createTrack(String trackUUID, double latitude, double longitude) {
     public void createTrack(String trackUUID) {
         ContentValues initialValues = new ContentValues();
         
@@ -280,7 +272,18 @@ public class NoxDroidDbAdapter {
         
         mDb.insert(DATABASE_TABLE_TRACKS, null, initialValues);
     }
-    
+
+
+    /**
+     * End a track
+     * - basically just a time stampe - end time
+     * 
+     * Direct update sqlite statements looks like this:
+     * UPDATE tracks SET time_stamp_end=current_timestamp 
+     * WHERE track_uuid="9aa57056-8d6e-4c9d-9919-79f55cd7e180";
+     * 
+     * @param trackUUID
+     */
     public void endTrack(String trackUUID) {
         
 		// Raw sqlite in use because we like to use the sqlite time stamp mechanism
