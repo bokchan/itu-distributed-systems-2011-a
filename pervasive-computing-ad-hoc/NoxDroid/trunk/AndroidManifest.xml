@@ -74,7 +74,7 @@
         </activity>
         <activity android:name=".setup.NoxDroidSetup" >
         </activity>
-        <activity android:name=".ioio.IOIOSensorActivity" >
+        <activity android:name=".experiments.IOIOSensorActivity" >
         </activity>
         <activity android:name=".NoxDroidMainActivity" android:screenOrientation="portrait" >
             <intent-filter >
