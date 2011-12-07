@@ -41,59 +41,36 @@ public class AddTrackServlet extends HttpServlet {
 		String trackJSON = req.getParameter("track_json");
 		String isTestForm = req.getParameter("is_test_form");
 
+		
+		// Set up variables
+		//
+		// we are pragmatic here if the basic extract of the json fails
+		// we just return immediately without any writes to the datastore
 		JSONObject jsonObj;
+		String noxDroidId = null;
+		String noxDroidUserName = null;
+		String trackId = null;
+		String trackStartTime = null;
+		String trackEndTime = null;
+		JSONArray locationsJSONArray = null;
+		JSONArray noxJSONArray = null;
 		try {
 
 			// load json string into jsonobject
 			jsonObj = new JSONObject(trackJSON);
 
 			// nox droid sensor
-			String noxDroidId = jsonObj.getString("nox_droid_id");
-			String noxDroidUserName = jsonObj.getString("nox_droid_user_name");
+			noxDroidId = jsonObj.getString("nox_droid_id");
+			noxDroidUserName = jsonObj.getString("nox_droid_user_name");
 
 			// track
-			String trackId = jsonObj.getString("track_id");
-			String trackStartTime = jsonObj.getString("track_start_time");
-			String trackEndTime = jsonObj.getString("track_end_time");
+			trackId = jsonObj.getString("track_id");
+			trackStartTime = jsonObj.getString("track_start_time");
+			trackEndTime = jsonObj.getString("track_end_time");
 
 			// track nox and locations are json array's
-			JSONArray locationsJSONArray = jsonObj.optJSONArray("locations");
-			JSONArray noxJSONArray = jsonObj.optJSONArray("nox");
-
-			//
-			// add nox droid sensor
-			//
-
-			// Entity - type/kind | key/id | optional paraent - this one has no
-			// parent
-			// if an entity with the same id exists - data is stored into that
-			// one or a new is created
-			Entity noxDroid = new Entity("NoxDroid", noxDroidId);
-
-			noxDroid.setProperty("id", noxDroidId);
-			noxDroid.setProperty("username", noxDroidUserName);
-			datastore.put(noxDroid);
-
-			// add track
-			// we assume its a new track so no datastore lookup/query is done
-			Entity track = new Entity("Track", trackId, noxDroid.getKey());
-			track.setProperty("id", trackId);
-			track.setProperty("start_time", trackStartTime);
-			track.setProperty("end_time", trackEndTime);
-			datastore.put(track);
-
-			// add locations and nox
-			addLocationsToDatastore(locationsJSONArray, track, datastore);
-			addNoxToDatastore(noxJSONArray, track, datastore);
-
-			if (isTestForm != null) {
-				resp.sendRedirect("/add_track_form.html");
-			} else {
-				// OK - we return 201 in a restful like approach
-				// - which is the normal for success on put/post
-				// - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-				resp.setStatus(201);
-			}
+			locationsJSONArray = jsonObj.optJSONArray("locations");
+			noxJSONArray = jsonObj.optJSONArray("nox");
 
 		} catch (JSONException e) {
 
@@ -109,6 +86,48 @@ public class AddTrackServlet extends HttpServlet {
 			log("AddTrackServlet - the json seemed currupted" + e.getMessage());
 
 		}
+		
+		
+		
+		//
+		// add nox droid sensor
+		//
+
+		// Entity - type/kind | key/id | optional paraent - this one has no
+		// parent
+		// if an entity with the same id exists - data is stored into that
+		// one or a new is created
+		Entity noxDroid = new Entity("NoxDroid", noxDroidId);
+
+		noxDroid.setProperty("id", noxDroidId);
+		noxDroid.setProperty("username", noxDroidUserName);
+		datastore.put(noxDroid);
+
+		// add track
+		// we assume its a new track so no datastore lookup/query is done
+		Entity track = new Entity("Track", trackId, noxDroid.getKey());
+		track.setProperty("id", trackId);
+		track.setProperty("start_time", trackStartTime);
+		track.setProperty("end_time", trackEndTime);
+		datastore.put(track);
+
+		// add locations and nox
+		addLocationsToDatastore(locationsJSONArray, track, datastore);
+		addNoxToDatastore(noxJSONArray, track, datastore);
+
+		if (isTestForm != null) {
+			resp.sendRedirect("/add_track_form.html");
+		} else {
+			// OK - we return 201 in a restful like approach
+			// - which is the normal for success on put/post
+			// - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+			resp.setStatus(201);
+		}
+
+		
+		
+		
+		
 
 	}
 
