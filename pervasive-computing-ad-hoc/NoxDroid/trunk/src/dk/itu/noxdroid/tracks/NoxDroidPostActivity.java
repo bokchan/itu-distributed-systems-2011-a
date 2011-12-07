@@ -1,4 +1,4 @@
-package dk.itu.noxdroid;
+package dk.itu.noxdroid.tracks;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +28,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import dk.itu.noxdroid.NoxDroidApp;
+import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.R.id;
+import dk.itu.noxdroid.R.layout;
+import dk.itu.noxdroid.R.string;
+import dk.itu.noxdroid.R.xml;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.model.Track;
 

@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.setup.PreferencesActivity;
+import dk.itu.noxdroid.tracks.NoxDroidPostActivity;
 import dk.itu.noxdroid.util.Line;
 
 

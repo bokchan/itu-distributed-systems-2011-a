@@ -85,7 +85,7 @@
         </activity>
 
         <!-- Debug activity for simple try of post to cloud -->
-        <activity android:name=".NoxDroidPostActivity" >
+        <activity android:name=".tracks.NoxDroidPostActivity" >
             
         </activity>
         <service android:name=".location.SkyHookLocationService"></service>
