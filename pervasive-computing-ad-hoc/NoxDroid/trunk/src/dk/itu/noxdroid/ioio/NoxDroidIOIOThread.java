@@ -16,7 +16,6 @@ import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.service.NoxDroidService;
-import dk.itu.noxdroid.util.SensorDataUtil;
 
 public class NoxDroidIOIOThread extends Thread {
 	
@@ -101,7 +100,6 @@ public class NoxDroidIOIOThread extends Thread {
 				try {
 					ioio_.waitForDisconnect();
 				} catch (InterruptedException e1) {
-					
 					Log.e(TAG, e.getMessage());
 					ioio_.disconnect();
 				}
@@ -146,11 +144,7 @@ public class NoxDroidIOIOThread extends Thread {
 			 * Set up data base
 			 * TODO: Not 100% sure about if service can be used as context ? 
 			 */
-	        
-			
-		} catch (ConnectionLostException e) {
-
-			
+		} catch (ConnectionLostException e) {			
 			/* 
 			 * Close database - also done in other exceptions
 			 * TODO: verify when it should be closed
@@ -171,7 +165,8 @@ public class NoxDroidIOIOThread extends Thread {
 	 */
 	protected void loop() throws ConnectionLostException, InterruptedException {
 		try {
-			final float reading = SensorDataUtil.muAtoMuGrames(input_.read());
+			//final float reading = SensorDataUtil.muAtoMuGrames(input_.read());
+			final float reading = input_.read();
 			// addToDebug(Float.toString(reading));
 			ledGreen_.write(!flag);
 			ledYellow_.write(!flag);
@@ -183,7 +178,7 @@ public class NoxDroidIOIOThread extends Thread {
 			Object obj = (Object) reading;
 			dbAdapter.createNox(reading, 0.0);
 			service.update(this.getClass(), obj);
-			sleep(10000);
+			sleep(2000);
 			
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
 
@@ -236,7 +231,17 @@ public class NoxDroidIOIOThread extends Thread {
 		if (connected_) {
 			interrupt();
 		}
-		notifyEventchanged(NoxDroidService.ERROR_IOIO_ABORTED);
+		//notifyEventchanged(NoxDroidService.ERROR_IOIO_ABORTED);
+	}
+	
+	public synchronized void stopRecording() {
+		if (ioio_ != null) {
+			ioio_.disconnect();
+		}
+		if (connected_) {
+			interrupt();
+		}
+		notifyEventchanged(NoxDroidService.STATUS_IOIO_STOPPED_RECORDING);
 	}
 
 	public synchronized Float getReading() throws ConnectionLostException {

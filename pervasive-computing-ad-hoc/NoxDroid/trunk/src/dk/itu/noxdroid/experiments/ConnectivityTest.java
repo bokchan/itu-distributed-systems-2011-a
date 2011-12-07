@@ -1,4 +1,4 @@
-package dk.itu.noxdroid.setup;
+package dk.itu.noxdroid.experiments;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

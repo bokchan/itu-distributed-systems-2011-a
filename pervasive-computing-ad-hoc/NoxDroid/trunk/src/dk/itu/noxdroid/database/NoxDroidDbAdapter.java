@@ -293,7 +293,7 @@ public class NoxDroidDbAdapter {
 				+ DATABASE_TABLE_TRACKS
 				+ " SET "
 				+TIME_STAMP_END
-				+"=(datetime('now','localtime')) WHERE uuid='"
+				+"=(datetime('now','localtime')) WHERE track_uuid='"
 				+ trackUUID + "'";
 		Log.d(TAG, "sql: " + sql);
 		mDb.execSQL(sql);        
@@ -426,22 +426,4 @@ public class NoxDroidDbAdapter {
 		return mCursor;
 		
 	}
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-
 }

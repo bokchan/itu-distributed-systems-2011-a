@@ -42,9 +42,10 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	public final static int ERROR_IOIO_CONNECTION_LOST = 0;
 	public final static int MSG_REGISTER_CLIENT = 1;
-	public final static int STATUS_IOIO_STATUS_GREEN = 3;
+	public final static int STATUS_IOIO_GREEN = 3;
 	public final static int STATUS_IOIO_YELLOW = 4;
 	public final static int STATUS_IOIO_RED = 5;
+	public final static int STATUS_IOIO_STOPPED_RECORDING = 21;
 	public final static int STATUS_IOIO_CONNECTED = 8;
 	public final static int ERROR_IOIO_INTERRUPTED = 9;
 	public final static int ERROR_IOIO_ABORTED = 10;
@@ -54,6 +55,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public final static int STATUS_SERVICE_STARTED = 6;
 	public final static int STATUS_SERVICE_STOPPED = 7;
 	public final static int STATUS_SERVICE_READY = 18;
+	
+	public final static int STATUS_RECORDING = 20; 
 
 	public final static int STATUS_CONNECTIVITY_WAITING = 12;
 	public final static int STATUS_CONNECTIVITY_SUCCESS = 13;
@@ -64,6 +67,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	public final static int ACTION_START_TRACK = 16;
 	public final static int ACTION_STOP_TRACK = 17;
+	
 
 	private boolean isTrackOpen = false;
 
@@ -162,15 +166,15 @@ public class NoxDroidService extends Service implements IOIOEventListener {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean connectToIOIO =  prefs.getBoolean(getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), false);
+        connectToIOIO = true;  
 		
 		if (connectToIOIO) {
 			// Check for IOIO connection
 			IOIOConnectionTest ioiotest = new IOIOConnectionTest();
-			ioiotest.execute(new Void[] {});			
+			ioiotest.execute(new Void[] {});
 		} else {
 			updateTest(IOIOConnectionTest.class, true);
 		}
-		
 	}
 
 	public synchronized Map<String, ?> getPrefs() {
@@ -231,12 +235,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		Notification notification = new Notification(R.drawable.no2_molecule,
 				text, System.currentTimeMillis());
 
-		// The PendingIntent to launch our activity if the user selects this
-		// notification
-		// PendingIntent contentIntent = PendingIntent
-		// .getActivity(this, 0, new Intent(this,
-		// NoxDroidServiceActivities.Controller.class), 0);
-
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				new Intent(this, NoxDroidMainActivity.class), 0);
 
@@ -270,8 +268,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			}
 			if (passed) {
 				notifyClients(STATUS_SERVICE_READY);
+				
 			}
-			tests.clear();
 		}
 	}
 
@@ -315,7 +313,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			case STATUS_LOCATION_SERVICE_STARTED:
 				// TODO: if SkyHook is not depending on GPS but network
 				// - then it might make sense to be moved to STATUS_CONNECTIVITY_SUCCESS...? 
-				//updateTest(SkyHookLocationService.class, true);
+				updateTest(SkyHookLocationService.class, true);
 				break;
 			case ACTION_START_TRACK:
 				startTrack();
@@ -363,6 +361,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			break;
 		case STATUS_IOIO_CONNECTED:
 			break;
+		case STATUS_IOIO_STOPPED_RECORDING : 
+			break;
 		default:
 			break;
 		}
@@ -405,7 +405,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		Log.i(TAG, "Starting track: " + isTrackOpen);
 
-		if (isTrackOpen) {
+		if (((NoxDroidApp)getApplication()).getCurrentTrack()!= null) {
 			Log.i(TAG, "Something is wrong");
 			dbAdapter.endTrack(((NoxDroidApp) getApplication())
 					.getCurrentTrack().toString());
@@ -453,13 +453,11 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	 */
 	private void stopTrack() {
 		Log.i(TAG, "stopping track: ");
-		if (isTrackOpen) {
+		if (((NoxDroidApp)getApplication()).getCurrentTrack() != null) {
 			if (ioio_thread_ != null || ioio_thread_.isAlive()) {
+				//ioio_thread_.stopRecording();
 				ioio_thread_.abort();
 			}
-
-			dbAdapter.endTrack(((NoxDroidApp) getApplication())
-					.getCurrentTrack().toString());
 			
 			Message msg = Message.obtain(null,
 					NoxDroidService.ACTION_START_TRACK);
@@ -470,9 +468,14 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				e1.printStackTrace();
 			}
 
+			dbAdapter.endTrack(((NoxDroidApp) getApplication())
+					.getCurrentTrack().toString());
+			
 		}
 		isTrackOpen = false;
+		((NoxDroidApp)getApplication()).setCurrentTrack(null);
 		Log.i(TAG, "Stopped track: ");
+		updateTest(IOIOConnectionTest.class, true);
 	}
 
 	class ConnectivityTest extends AsyncTask<Void, Void, Boolean> {
