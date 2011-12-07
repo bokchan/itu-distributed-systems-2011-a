@@ -23,6 +23,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import dk.itu.noxdroid.model.Track;
 import dk.itu.noxdroid.R;
 
 /**
@@ -59,7 +60,8 @@ public class NoxDroidDbAdapter {
 	public static final String KEY_DATETIME = "date_time";
 	public static final String KEY_NOX = "nox";
 	public static final String KEY_TEMPERATURE = "temperature";
-	public static final String TIME_STAMP_END = "time_stamp_end";
+	public static final String KEY_TIME_STAMP_END = "time_stamp_end";
+	public static final String KEY_SYNC_FLAG = "sync_flag";
 
 	private static String TAG;
 	private DatabaseHelper mDbHelper;
@@ -268,13 +270,34 @@ public class NoxDroidDbAdapter {
 		// dosen't work
 		// - remember to surround UUID with ''
 		String sql = "UPDATE " + DATABASE_TABLE_TRACKS + " SET "
-				+ TIME_STAMP_END
+				+ KEY_TIME_STAMP_END
 				+ "=(datetime('now','localtime')) WHERE uuid='" + trackUUID
 				+ "'";
 		Log.d(TAG, "sql: " + sql);
 		mDb.execSQL(sql);
 
 	}
+	
+
+	/**
+	 * Set track as synched 
+	 * 
+	 * query example:
+	 * update tracks set sync_flag=1 where track_uuid="8c3adc99-3e51-4922-a3c9-d127117bb764"; 
+	 *  
+	 * @param trackUUID
+	 */
+	public void setTrackSync(String trackUUID) {
+
+		String sql = "UPDATE " + DATABASE_TABLE_TRACKS + " SET "
+				+ KEY_SYNC_FLAG
+				+ "=1 WHERE uuid='" + trackUUID
+				+ "'";
+		Log.d(TAG, "sql: " + sql);
+		mDb.execSQL(sql);
+
+	}
+	
 
 	/**
 	 * 
@@ -438,4 +461,45 @@ public class NoxDroidDbAdapter {
 
 	}
 
+	
+	/**
+	 * 
+	 * Get a track as track object
+	 * 
+	 * @param UUID
+	 * @return
+	 * @throws SQLException
+	 */
+	public Track getTrack(String UUID) throws SQLException {
+		
+		Track track = new Track(UUID);
+		
+		String sql = "select time_stamp_start, time_stamp_end, sync_flag from tracks "
+			+ " where track_uuid='"
+			+ UUID
+			+ "'"
+			+ ";";
+
+		Cursor mCursor = mDb.rawQuery(sql, null);
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+			track.setStartTime(mCursor.getString(0));
+			track.setEndTime(mCursor.getString(1));
+			track.setSyncFlag(mCursor.getInt(2));
+		}		
+		
+		mCursor.close();
+		
+		// String id, String startTime, String endTime, int syncFlag				
+		return track; 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

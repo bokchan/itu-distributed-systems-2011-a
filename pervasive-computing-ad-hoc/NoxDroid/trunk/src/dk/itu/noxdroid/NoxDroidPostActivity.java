@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
+import dk.itu.noxdroid.model.Track;
 
 public class NoxDroidPostActivity extends Activity {
 
@@ -48,8 +49,9 @@ public class NoxDroidPostActivity extends Activity {
 				.getDefaultSharedPreferences(this);
 		webservice_url = prefs.getString(
 				getString(dk.itu.noxdroid.R.string.WEBSERVICE_URL),
-				"http://10.0.1.7:8888/add_track");
+				"http://noxdroidcloudengine.appspot.com/add_track");
 
+		
 		userId = prefs.getString(getString(dk.itu.noxdroid.R.string.USER_ID),
 				"test_user_id");
 		userName = prefs
@@ -91,7 +93,7 @@ public class NoxDroidPostActivity extends Activity {
 
 	}
 
-	public void postForm(String trackUID) {
+	public void postForm(String trackUUID) {
 
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(webservice_url);
@@ -124,22 +126,24 @@ public class NoxDroidPostActivity extends Activity {
 		//
 		// String trackStaticJSONString = "{\"nox_droid_id\" : \"test_user_id\", \"nox_droid_user_name\" : \"Default user name\", \"track_id\" : \"eeb445dc-d2eb-494f-a4af-78c20b5d181c\", \"track_start_time\" : \"2011-12-04 09:10:04\", \"track_end_time\" : \"2011-12-04 09:20:04\", \"locations\" : [ {\"latitude\" : 55.659919, \"longitude\" : 12.591190, \"time_stamp\" : \"2011-12-04 09:12:04\", \"provider\" : \"gps\"},  {\"latitude\" : 55.659919, \"longitude\" : 12.691190, \"time_stamp\" : \"2011-12-04 09:12:05\", \"provider\" : \"skyhook\"} ], \"nox\" : [ {\"nox\" : 55.65, \"temperature\" : 0.0, \"time_stamp\" : \"2011-12-04 09:12:04\"},  {\"nox\" : 65.65, \"temperature\" : 0.0, \"time_stamp\" : \"2011-12-04 09:13:04\"} ]}";
 
+		Track track = mDbHelper.getTrack(trackUUID);
+		
 		JSONObject trackAsJSON = new JSONObject();
 		try {
 			trackAsJSON.put("nox_droid_id", userId);
 			trackAsJSON.put("nox_droid_user_name", userName);
 
 			// TODO: get from database
-			trackAsJSON.put("track_id", trackUID);
-			trackAsJSON.put("track_start_time", "2011-12-04 09:10:04");
-			trackAsJSON.put("track_end_time", "2011-12-04 09:20:04");
+			trackAsJSON.put("track_id", trackUUID);
 
+			trackAsJSON.put("track_start_time", track.getStartTime());
+			trackAsJSON.put("track_end_time", track.getEndTime());
 			
-			JSONArray jsonListLocationsAsJSONArray = getLocations(trackUID);
+			JSONArray jsonListLocationsAsJSONArray = getLocations(trackUUID);
 			trackAsJSON.put("locations", jsonListLocationsAsJSONArray);
 
 //			List<JSONObject> jsonListNox = new ArrayList<JSONObject>();
-			JSONArray jsonListNoxAsJSONArray = getNox(trackUID);
+			JSONArray jsonListNoxAsJSONArray = getNox(trackUUID);
 			trackAsJSON.put("nox", jsonListNoxAsJSONArray);
 
 			Log.d(TAG, "trackAsJSON: " + trackAsJSON.toString(4));
@@ -172,8 +176,11 @@ public class NoxDroidPostActivity extends Activity {
 						"Post to cloud was successful", Toast.LENGTH_SHORT)
 						.show();
 
-				// TODO:
-				// set track flag in database to be sync'ed
+				// TODO: - enabled and check this one
+				// Set track flag in database to be sync'ed
+				// mDbHelper.setTrackSync(trackUUID);
+				
+				
 
 			} catch (Exception e) {
 				Log.e(TAG,
