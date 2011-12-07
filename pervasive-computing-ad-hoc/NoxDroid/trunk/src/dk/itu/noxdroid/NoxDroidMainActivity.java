@@ -27,7 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.setup.PreferencesActivity;
-import dk.itu.noxdroid.tracks.NoxDroidPostActivity;
+import dk.itu.noxdroid.tracks.TracksListActivity;
 import dk.itu.noxdroid.util.Line;
 
 
@@ -413,7 +413,7 @@ public class NoxDroidMainActivity extends Activity {
 			
 		case R.id.post_to_cloud:
 			startActivity(new Intent(NoxDroidMainActivity.this,
-					NoxDroidPostActivity.class));
+					TracksListActivity.class));
 			break;
 			
 		case R.id.exitapp :
