@@ -41,26 +41,31 @@
         <legend>add track</legend>
 
     <form action="/add_track" method="post">
-
+      
       <div>
-          <label>sensor id/name (e.g. default)</label>
-          <input type="text" name="sensor_id" size="30" />
+        <label>json</label>
+        <textarea name="track_json" rows="20" cols="120">
+{ 
+    "nox_droid_id" : "test_user_id",
+    "nox_droid_user_name" : "Default user name",
+    "track_id" : "eeb445dc-d2eb-494f-a4af-78c20b5d181c",
+    "track_start_time" : "2011-12-04 09:10:04",
+    "track_end_time" : "2011-12-04 09:20:04",
+    "locations" : [
+        {"latitude" : 55.659919, "longitude" : 12.591190, "time_stamp" : "2011-12-04 09:12:04", "provider" : "gps"}, 
+        {"latitude" : 55.659919, "longitude" : 12.691190, "time_stamp" : "2011-12-04 09:12:05", "provider" : "skyhook"}
+    ],
+    "nox" : [
+        {"nox" : 55.65, "temperature" : 0.0, "time_stamp" : "2011-12-04 09:12:04"}, 
+        {"nox" : 65.65, "temperature" : 0.0, "time_stamp" : "2011-12-04 09:13:04"}, 
+    ]
+}
+        </textarea>
       </div>
-      <div><label>sensor user name (e.g. default) - (might be the same as sensor id/name)</label><input type="text" name="sensor_user_name" size="30" /></div>
-
-      <div><label>track id (UUID e.g. eeb445dc-d2eb-494f-a4af-78c20b5d181c)</label><input type="text" name="track_id" size="30" /></div>
-      <div><label>track start time (e.g. 2011-12-02 09:12:04)</label><input type="text" name="track_start_time" size="30" /></div>
-      <div><label>track end time (e.g. 2011-12-02 10:12:04)</label><input type="text" name="track_end_time" size="30" /></div>
-      
-      
-      <div><label>location(s) (as json)</label><textarea name="track_locations" rows="3" 
-cols="60">{ "locations" : [{"latitude" : "55.659919", "longitude" : "12.591190", "time_stamp" : "2011-12-04 09:12:04"}, {"latitude" : "55.659919", "longitude" : "12.691190", "time_stamp" : "2011-12-04 09:12:05"}]}
-</textarea></div>
-
-      <div><label>nox(s) (as json)</label><textarea name="track_nox" rows="3" cols="60"></textarea></div>      
       
       <div>
-          <input type="submit" value="Add" />
+          <input type="submit" value="Post" />
+          <input type="hidden" name="is_test_form" value="1" />
       </div>
       
     </form>
