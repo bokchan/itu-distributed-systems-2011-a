@@ -40,7 +40,9 @@ public class NoxDroidIOIOThread extends Thread {
 	private double nox;
 	private double temperature;
 	
-	ArrayList<IOIOEventListener> listeners = new ArrayList<IOIOEventListener>();
+	private int updateinterval = 2000;
+	
+	private ArrayList<IOIOEventListener> listeners = new ArrayList<IOIOEventListener>();
 	private NoxDroidService service;
 
 	public NoxDroidIOIOThread(NoxDroidService service) {
@@ -50,13 +52,15 @@ public class NoxDroidIOIOThread extends Thread {
 		TAG = service.getString(R.string.LOGCAT_TAG, service
 				.getString(R.string.app_name), this.getClass().getSimpleName());
 
+		
+		updateinterval = Integer.valueOf((String)service.getPrefs().get("IOIO_UPDATE_INTERVAL"));
 		// pinGreen = (Integer)
 		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_GREEN_PIN);
 		// pinYellow = (Integer)
 		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_YELLOW_PIN);
 		// pinledRed = (Integer)
 		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_RED_PIN);
-		// pinAnalogIn = (Integer) service.APP_PREFS.get(R.string.IOIO_NO2_PIN);
+		pinAnalogIn = Integer.valueOf((String) service.getPrefs().get("IOIO_NO2_PIN"));
 	}
 
 	/** Not relevant to subclasses. */
@@ -179,7 +183,7 @@ public class NoxDroidIOIOThread extends Thread {
 			Object obj = (Object) reading;
 			dbAdapter.createNox(reading, 0.0);
 			service.update(this.getClass(), obj);
-			sleep(2000);
+			sleep(updateinterval);
 			
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
 

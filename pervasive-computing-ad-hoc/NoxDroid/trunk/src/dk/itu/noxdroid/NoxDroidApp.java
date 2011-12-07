@@ -30,9 +30,11 @@ public class NoxDroidApp extends Application {
 		return dbAdapter;
 	}
 	
+	
 	@Override
 	public void onTerminate() {
 		super.onTerminate();
+		Log.d(TAG, "onTerminate called");
 		if (dbAdapter != null)  {
 			dbAdapter.close();
 		}
@@ -44,4 +46,5 @@ public class NoxDroidApp extends Application {
 	public UUID getCurrentTrack() {
 		return this.currentTrack;
 	}
+	
 }

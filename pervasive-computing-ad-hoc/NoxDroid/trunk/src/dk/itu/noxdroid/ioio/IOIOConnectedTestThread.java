@@ -18,6 +18,8 @@ public class IOIOConnectedTestThread extends Thread {
 
 	private boolean abort_ = false;
 	private boolean connected_ = true;
+	
+	private String TAG = "NoxDroid_IOIOConnectedTestThread";
 
 	/** Not relevant to subclasses. */
 	@Override
@@ -85,6 +87,7 @@ public class IOIOConnectedTestThread extends Thread {
 
 	/** Not relevant to subclasses. */
 	public synchronized final void abort() {
+		Log.d(TAG, "Aborting ");
 		abort_ = true;
 		if (ioio_ != null) {
 			ioio_.disconnect();
@@ -97,5 +100,4 @@ public class IOIOConnectedTestThread extends Thread {
 	public STATUS getStatus() {
 		return this.status;
 	}
-
 }

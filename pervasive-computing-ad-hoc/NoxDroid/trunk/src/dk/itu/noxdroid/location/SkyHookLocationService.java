@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.skyhookwireless.wps.WPSAuthentication;
@@ -54,6 +55,8 @@ public class SkyHookLocationService extends Service {
 	private boolean doCheck = true;
 
 	public final Messenger _handler = new Messenger(new IncomingHandler());
+	
+	
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -78,6 +81,8 @@ public class SkyHookLocationService extends Service {
 		
 		_xps.getLocation(auth,
 				WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP, _callback);
+
+		updateinterval = Integer.valueOf( (String) PreferenceManager.getDefaultSharedPreferences(this).getAll().get("SKYHOOK_UPDATE_INTERVAL"));
 	}
 
 	class IncomingHandler extends Handler {
@@ -106,11 +111,12 @@ public class SkyHookLocationService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "Received start id " + startId + ": " + intent);
 
+		//updateinterval = intent.getIntExtra(getString( R.string.SKYHOOK_UPDATE_INTERVAL), 2000);
+		Log.i(TAG, "Skyhook update interval " + updateinterval);
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
 
 		return START_STICKY;
-
 	}
 
 	private void notifyClients(int msg) {
@@ -203,10 +209,4 @@ public class SkyHookLocationService extends Service {
 		_xps.abort();
 	}
 
-	private void startPeriodicLocation() {
-		Log.i(TAG, "Starting SKYHOOK");
-		_xps.getPeriodicLocation(auth,
-				WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP, 50000, 0,
-				_callback);
-	}
 }

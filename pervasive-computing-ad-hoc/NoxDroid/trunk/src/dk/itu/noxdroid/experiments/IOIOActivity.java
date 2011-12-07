@@ -1,4 +1,4 @@
-package dk.itu.noxdroid.ioio;
+package dk.itu.noxdroid.experiments;
 
 
 import ioio.lib.api.AnalogInput;

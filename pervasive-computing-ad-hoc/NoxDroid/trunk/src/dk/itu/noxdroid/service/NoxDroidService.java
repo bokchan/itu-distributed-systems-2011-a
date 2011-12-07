@@ -71,7 +71,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	private boolean isTrackOpen = false;
 
-	public Map<String, ?> APP_PREFS;
+	public Map<String, ?> APP_PREFS = null;
 	//
 	private NoxDroidIOIOThread ioio_thread_;
 	private NotificationManager nman;
@@ -80,8 +80,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private String TAG;
 	private int NOTIFICATION = R.string.noxdroid_service_started;
 
+	private SharedPreferences prefs;
 	private NoxDroidDbAdapter dbAdapter;
-	Hashtable<Class<?>, Boolean> tests = new Hashtable<Class<?>, Boolean>();
+	private Hashtable<Class<?>, Boolean> tests = new Hashtable<Class<?>, Boolean>();
 
 	public class ServiceBinder extends Binder {
 		public NoxDroidService getService() {
@@ -118,6 +119,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	@Override
 	public void onCreate() {
 
+		// TODO: Start both GPS and skyhook. But check that at least one of them is running
 		super.onCreate();
 
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
@@ -132,7 +134,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
 
 		try {
-			// TODO : Make preferences accessible from Service
 			APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this)
 					.getAll();
 			Log.i(TAG, "Got SharedPreferences " + APP_PREFS);
@@ -164,7 +165,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// - based upon http://goo.gl/y5m4u - also take a look at the *real* api
 		//
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean connectToIOIO =  prefs.getBoolean(getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), false);
         connectToIOIO = true;  
 		
@@ -176,6 +177,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			updateTest(IOIOConnectionTest.class, true);
 		}
 	}
+	
 
 	public synchronized Map<String, ?> getPrefs() {
 		return this.APP_PREFS;
@@ -183,6 +185,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	@Override
 	public void onDestroy() {
+		// Set endtime equal to time of exit 
+		stopTrack();
 		// Cancel the persistent notification.
 		nman.cancel(NOTIFICATION);
 
@@ -197,8 +201,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// stop additional services
 		// stopService(new Intent(this, LocationService.class));
 		// stopService(new Intent(this, TracksService.class));
+		stopService(new Intent(this, GPSLocationService.class));
 		stopService(new Intent(this, SkyHookLocationService.class));
-
 	}
 
 	@Override
@@ -369,8 +373,13 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	}
 
 	void doBindService() {
-		bindService(new Intent(this, SkyHookLocationService.class),
+		Intent intent  = new Intent(this, SkyHookLocationService.class);		
+		//intent.putExtra("SKYHOOK_UPDATE_INTERVAL", prefs.getInt(getString( R.string.SKYHOOK_UPDATE_INTERVAL), 2000));
+		
+		Log.d(TAG, "APP PREFS : " + APP_PREFS);
+		bindService(intent,
 				connLocationService, Context.BIND_AUTO_CREATE);
+		
 		Log.i(TAG, "doBindService");
 		locServiceIsBound = true;
 	}
@@ -460,7 +469,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			}
 			
 			Message msg = Message.obtain(null,
-					NoxDroidService.ACTION_START_TRACK);
+					NoxDroidService.ACTION_STOP_TRACK);
 			msg.replyTo = messenger;
 			try {
 				messengerLocation.send(msg);

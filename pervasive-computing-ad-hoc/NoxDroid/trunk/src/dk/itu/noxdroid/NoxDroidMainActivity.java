@@ -15,7 +15,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -69,8 +68,6 @@ public class NoxDroidMainActivity extends Activity {
 		public void onServiceConnected(ComponentName name, IBinder binder) {
 			// service = ((NoxDroidService.ServiceBinder) binder).getService();
 			Log.i(TAG, "Connected to NoxDroidService");
-			updateGUI(NoxDroidService.STATUS_SERVICE_STARTED);
-			// service.addMessenger(messenger);
 
 			try {
 				msg_service = new Messenger(binder);
@@ -93,7 +90,7 @@ public class NoxDroidMainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main2);
-		
+				
 		app = (NoxDroidApp)getApplication();
 
 		/********** INITIALIZES *************/
@@ -125,10 +122,6 @@ public class NoxDroidMainActivity extends Activity {
 		((ImageView) findViewById(R.id.imgGPS)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgConn)).setAlpha(80);
 		
-		
-		Log.i(TAG, "Got SharedPreferences " + PreferenceManager.getDefaultSharedPreferences(
-				this).getAll());
-
 		tests = new Hashtable<Class<?>, Boolean>();
 
 		lp = new RelativeLayout.LayoutParams(
@@ -138,12 +131,10 @@ public class NoxDroidMainActivity extends Activity {
 
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
+				
 		
 		DisplayMetrics metrics = new DisplayMetrics(); 
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		
-		Log.i(TAG, "METRICS " + metrics.toString());
-		Log.i(TAG, "layoutwrapper " + layoutWrapper.getHeight());
 		
 		// X, y of left is 60, (height - 360) + 180
 		float heightDP = (metrics.heightPixels - (60 * metrics.density)) / metrics.density ;
@@ -158,6 +149,7 @@ public class NoxDroidMainActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		Log.d(TAG, "onDestroy");
 		doUnbindService();
 	}
 
@@ -184,6 +176,7 @@ public class NoxDroidMainActivity extends Activity {
 	}
 
 	void doUnbindService() {
+		Log.d(TAG, "doUnbindService");
 		if (isBound) {
 			if (msg_service != null) {
 				try {
@@ -208,7 +201,7 @@ public class NoxDroidMainActivity extends Activity {
 	 * - send message(s) to the underlying service(s) 
 	 */
 	public void startTrack(View view) {
-
+		updateGUI(NoxDroidService.ACTION_START_TRACK);
 		Message msg = Message.obtain(null,
 				NoxDroidService.ACTION_START_TRACK);
 		msg.replyTo = messenger;
@@ -217,8 +210,8 @@ public class NoxDroidMainActivity extends Activity {
 		} catch (RemoteException e) {
 			Log.e(TAG, e.getMessage());
 		}
-		Log.i(TAG, "ACTION_START_TRACK send to NoxDroidService");
-		updateGUI(NoxDroidService.ACTION_START_TRACK);
+		Log.i(TAG, "ACTION_START_TRACK sent to NoxDroidService");
+		
 	}
 
 	/*
@@ -226,7 +219,7 @@ public class NoxDroidMainActivity extends Activity {
 	 * - send message(s) to the underlying service(s) 
 	 */
 	public void endTrack(View view) {
-		
+		updateGUI(NoxDroidService.ACTION_STOP_TRACK);
 		Toast.makeText(this, "stopping service", Toast.LENGTH_SHORT);
 		Message msg = Message.obtain(null,
 				NoxDroidService.ACTION_STOP_TRACK);
@@ -236,9 +229,8 @@ public class NoxDroidMainActivity extends Activity {
 		} catch (RemoteException e) {
 			Log.e(TAG, e.getMessage());
 		}
-		Log.i(TAG, "ACTION_STOP_TRACK send to NoxDroidService");
+		Log.i(TAG, "ACTION_STOP_TRACK sent to NoxDroidService");
 		
-		updateGUI(NoxDroidService.ACTION_STOP_TRACK);
 	}
 
 	public void changeGPS(View view) {
@@ -360,12 +352,12 @@ public class NoxDroidMainActivity extends Activity {
 			imgBtnStop.setEnabled(true);
 			break;
 		case NoxDroidService.ACTION_STOP_TRACK :
-			Log.e(TAG, "Stop track");
-			imgBtnStop.setVisibility(View.GONE);
-			//imgBtnStart.setImageResource(R.drawable.play_disabled);
-			// Button should be disabled and a connections should be tested
+			imgBtnStop.setEnabled(false);
 			imgBtnStart.setVisibility(View.VISIBLE);
+			imgBtnStop.setVisibility(View.GONE);
 			imgBtnStart.setEnabled(true);
+			Log.e(TAG, "Stop track");
+			
 			break;
 		case NoxDroidService.STATUS_SERVICE_READY :
 			imgBtnConn.setImageResource(R.drawable.circle_green);
@@ -377,12 +369,6 @@ public class NoxDroidMainActivity extends Activity {
 		case NoxDroidService.STATUS_RECORDING :
 			imgBtnStart.setVisibility(View.GONE);
 			imgBtnStop.setVisibility(View.VISIBLE);
-			break;
-		case NoxDroidService.STATUS_SERVICE_STARTED:
-			imgBtnStart.setImageResource(R.drawable.play);
-			imgBtnStart.setVisibility(View.VISIBLE);
-			imgBtnStart.setEnabled(true);
-			imgBtnStop.setVisibility(View.GONE);
 			break;
 		case NoxDroidService.STATUS_CONNECTIVITY_SUCCESS:
 			imgBtnConn.setImageResource(R.drawable.circle_green);
@@ -425,14 +411,17 @@ public class NoxDroidMainActivity extends Activity {
 			break;
 			
 		case R.id.post_to_cloud:
-
-			
 			startActivity(new Intent(NoxDroidMainActivity.this,
 					NoxDroidPostActivity.class));
 			break;
 			
-		}
-		
+		case R.id.exitapp :
+			stopService(new Intent(this,NoxDroidService.class));
+			finish();
+			break;
+		}		
 		return true;
 	}
+	
+	
 }
