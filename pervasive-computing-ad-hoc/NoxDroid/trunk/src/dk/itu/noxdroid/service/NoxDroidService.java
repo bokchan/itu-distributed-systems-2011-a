@@ -264,11 +264,10 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				if (!e.getValue() && true) {
 					passed = false;
 				}
-				notifyClients(getTestStatus(e.getKey(), e.getValue()));
+				notifyClients(getTestStatus(e.getKey(), e.getValue()));	
 			}
 			if (passed) {
 				notifyClients(STATUS_SERVICE_READY);
-				
 			}
 		}
 	}
@@ -360,6 +359,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			notifyClients(msg);
 			break;
 		case STATUS_IOIO_CONNECTED:
+			notifyClients(msg);
 			break;
 		case STATUS_IOIO_STOPPED_RECORDING : 
 			break;

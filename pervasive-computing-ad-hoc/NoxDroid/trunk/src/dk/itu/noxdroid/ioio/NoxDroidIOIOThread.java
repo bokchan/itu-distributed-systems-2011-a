@@ -35,7 +35,7 @@ public class NoxDroidIOIOThread extends Thread {
 	private int pinGreen = 16;
 	private int pinYellow = 18;
 	private int pinledRed = 20;
-	private int pinAnalogIn = 40;
+	private int pinAnalogIn = 41;
 	
 	private double nox;
 	private double temperature;
@@ -82,14 +82,15 @@ public class NoxDroidIOIOThread extends Thread {
 				}
 				ioio_.disconnect();
 			} catch (ConnectionLostException e) {
-				Log.e(TAG, e.getMessage());
+				
+				Log.e(TAG, "RUN" + e.getMessage());
 				if (abort_) {
 					notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 					break;
 				}
 			} catch (InterruptedException e) {
 				notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
-				Log.e(TAG, e.getMessage());
+				Log.e(TAG, "RUN" + e.getMessage());
 				ioio_.disconnect();
 				break;
 			} catch (IncompatibilityException e) {
@@ -100,11 +101,11 @@ public class NoxDroidIOIOThread extends Thread {
 				try {
 					ioio_.waitForDisconnect();
 				} catch (InterruptedException e1) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "RUN: " +  e.getMessage());
 					ioio_.disconnect();
 				}
 			} catch (Exception e) {
-				Log.e("AbstractIOIOActivity", "Unexpected exception caught", e);
+				Log.e("AbstractIOIOActivity", "RUN: Unexpected exception caught", e);
 				notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 				ioio_.disconnect();
 				break;
@@ -117,7 +118,7 @@ public class NoxDroidIOIOThread extends Thread {
 						}
 					}
 				} catch (InterruptedException e) {
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "RUN" +  e.getMessage());
 					notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
 				}
 			}
@@ -183,13 +184,14 @@ public class NoxDroidIOIOThread extends Thread {
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
 
 		} catch (InterruptedException e) {
+			
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
-			Log.i(TAG, e.getMessage());
+			Log.i(TAG, "LOOP: " + e.getMessage());
 			ioio_.disconnect();
 		} catch (ConnectionLostException e) {
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_CONNECTION_LOST);
 			// Notify service;
-			Log.e(TAG, e.getMessage());
+			Log.e(TAG, "LOOP:" +  e.getMessage());
 			throw e;
 		}
 	}

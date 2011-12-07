@@ -353,17 +353,18 @@ public class NoxDroidMainActivity extends Activity {
 			Toast.makeText(getBaseContext(), "IOIO Lost connection",
 					Toast.LENGTH_LONG);
 			Log.e(TAG, "IOIO Not Connected");
+			break;
 		case NoxDroidService.ACTION_START_TRACK :
 			imgBtnStart.setVisibility(View.GONE);
 			imgBtnStop.setVisibility(View.VISIBLE);
 			imgBtnStop.setEnabled(true);
 			break;
 		case NoxDroidService.ACTION_STOP_TRACK :
+			Log.e(TAG, "Stop track");
 			imgBtnStop.setVisibility(View.GONE);
 			//imgBtnStart.setImageResource(R.drawable.play_disabled);
 			// Button should be disabled and a connections should be tested
 			imgBtnStart.setVisibility(View.VISIBLE);
-			
 			imgBtnStart.setEnabled(true);
 			break;
 		case NoxDroidService.STATUS_SERVICE_READY :
@@ -387,12 +388,15 @@ public class NoxDroidMainActivity extends Activity {
 			imgBtnConn.setImageResource(R.drawable.circle_green);
 			imgConn.setVisibility(View.VISIBLE);
 			update(this.getClass(), true);
+			break;
 		case NoxDroidService.ERROR_NO_CONNECTIVITY:
 			imgBtnConn.setImageResource(R.drawable.circle_red);
 			imgConn.setVisibility(View.VISIBLE);
 			update(this.getClass(), false);
+			break;
 		case NoxDroidService.STATUS_LOCATION_SERVICE_STARTED:
 			Toast.makeText(this, "Location service started", Toast.LENGTH_LONG);
+			break;
 		default:
 			break;
 		}
