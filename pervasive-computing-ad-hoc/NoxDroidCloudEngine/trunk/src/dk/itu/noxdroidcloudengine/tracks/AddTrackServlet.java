@@ -98,15 +98,16 @@ public class AddTrackServlet extends HttpServlet {
 		// if an entity with the same id exists - data is stored into that
 		// one or a new is created
 		Entity noxDroid = new Entity("NoxDroid", noxDroidId);
-
-		noxDroid.setProperty("id", noxDroidId);
+		// not needed use the key name/id
+		// noxDroid.setProperty("id", noxDroidId);
 		noxDroid.setProperty("username", noxDroidUserName);
 		datastore.put(noxDroid);
 
 		// add track
 		// we assume its a new track so no datastore lookup/query is done
 		Entity track = new Entity("Track", trackId, noxDroid.getKey());
-		track.setProperty("id", trackId);
+		// not needed use the key name/id
+		//track.setProperty("id", trackId);
 		track.setProperty("start_time", trackStartTime);
 		track.setProperty("end_time", trackEndTime);
 		datastore.put(track);
