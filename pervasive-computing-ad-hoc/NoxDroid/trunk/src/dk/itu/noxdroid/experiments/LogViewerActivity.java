@@ -6,10 +6,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.itu.noxdroid.R;
-import dk.itu.noxdroid.R.id;
-import dk.itu.noxdroid.R.layout;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -22,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import dk.itu.noxdroid.R;
 
 public class LogViewerActivity extends ListActivity {
 	private LogStringAdaptor adaptor = null;

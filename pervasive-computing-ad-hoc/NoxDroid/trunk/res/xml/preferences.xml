@@ -20,9 +20,10 @@
 		android:title="Webservice Preferences">
 		<EditTextPreference android:summary="Url to data webservice"
 			android:key="SERVER_URL" android:title="Server Url"
-			android:defaultValue="http://10.0.1.7:8888/add_track" />
-			
+			android:defaultValue="http://noxdroidcloudengine.appspot.com/add_track" />			
 		<!-- TODO: change android:defaultValue to http://noxdroidcloudengine.appspot.com/add_track -->
+		<!-- p-test-value http://10.0.1.7:8888/add_track -->
+
 		<EditTextPreference android:summary="Api Key for data webservice"
 			android:key="api_key" android:title="ApiKey" />
 		<CheckBoxPreference android:title="@string/noxdroid_service_autostart"

@@ -23,8 +23,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import dk.itu.noxdroid.model.Track;
 import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.model.Track;
 
 /**
  * 
@@ -60,6 +60,7 @@ public class NoxDroidDbAdapter {
 	public static final String KEY_DATETIME = "date_time";
 	public static final String KEY_NOX = "nox";
 	public static final String KEY_TEMPERATURE = "temperature";
+	public static final String KEY_TIME_STAMP_START = "time_stamp_start";
 	public static final String KEY_TIME_STAMP_END = "time_stamp_end";
 	public static final String KEY_SYNC_FLAG = "sync_flag";
 
@@ -271,7 +272,7 @@ public class NoxDroidDbAdapter {
 		// - remember to surround UUID with ''
 		String sql = "UPDATE " + DATABASE_TABLE_TRACKS + " SET "
 				+ KEY_TIME_STAMP_END
-				+ "=(datetime('now','localtime')) WHERE uuid='" + trackUUID
+				+ "=(datetime('now','localtime')) WHERE " + KEY_TRACKUUID + "='" + trackUUID
 				+ "'";
 		Log.d(TAG, "sql: " + sql);
 		mDb.execSQL(sql);
@@ -367,8 +368,11 @@ public class NoxDroidDbAdapter {
 	public Cursor fetchAllTracks() {
 
 		return mDb.query(DATABASE_TABLE_TRACKS, new String[] { KEY_ROWID,
-				KEY_LATITUDE, KEY_LONGITUDE }, null, null, null, null, null);
+				KEY_TRACKUUID, KEY_TIME_STAMP_START, KEY_TIME_STAMP_END }, null, null, null, null, null);
 	}
+	
+	
+	
 
 	/**
 	 * Return a Cursor positioned at a track that matches the given rowId

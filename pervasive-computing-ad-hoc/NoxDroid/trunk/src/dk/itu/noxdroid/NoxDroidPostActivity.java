@@ -17,18 +17,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import android.app.ListActivity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.model.Track;
 
-public class NoxDroidPostActivity extends Activity {
+//public class NoxDroidPostActivity extends Activity {
+public class NoxDroidPostActivity extends ListActivity {
+	
 
 	private String TAG = this.getClass().getSimpleName();
 	private String webservice_url;
@@ -36,12 +41,18 @@ public class NoxDroidPostActivity extends Activity {
 	private String userId;
 	private NoxDroidDbAdapter mDbHelper;
 
+
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+	
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_simple);
-
+//		setContentView(R.layout.main_simple);
+		
+		setContentView(R.layout.tracks_list);
+		
+		
 		// note: based upon http://goo.gl/y5m4u - also take a look at the *real*
 		// api
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -73,8 +84,79 @@ public class NoxDroidPostActivity extends Activity {
 		//
 		mDbHelper = ((NoxDroidApp) getApplication()).getDbAdapter();
 
+		
+		
+		// list view specific
+        fillData();
+//        registerForContextMenu(getListView());
+		
+		
+		
 	}
+	
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        
+        
+        // do something post to service
+
+        Log.d(TAG, "onListItemClick: " + position + " " + id);
+
+        // hook post in here // 
+        
+//        Intent i = new Intent(this, NoteEdit.class);
+//        i.putExtra(NotesDbAdapter.KEY_ROWID, id);
+//        startActivityForResult(i, ACTIVITY_EDIT);
+
+    }
+
+// not sure about this one   
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+//        super.onActivityResult(requestCode, resultCode, intent);
+//        fillData();
+// 
+//    }
+	
+	
+    private void fillData() {
+        // Get all of the rows from the database and create the item list
+    	Cursor mNotesCursor = mDbHelper.fetchAllTracks();
+        startManagingCursor(mNotesCursor);
+
+        // Create an array to specify the fields we want to display in the list (only TITLE)
+        String[] from = new String[]{mDbHelper.KEY_TRACKUUID};
+
+        // and an array of the fields we want to bind those fields to (in this case just trackItemText)
+        int[] to = new int[]{R.id.trackItemText};
+
+        // Now create a simple cursor adapter and set it to display
+        SimpleCursorAdapter tracksAdapter = 
+            new SimpleCursorAdapter(this, R.layout.tracks_row, mNotesCursor, from, to);
+        setListAdapter(tracksAdapter);
+        
+        
+        // try out bsed upon:
+        //http://stackoverflow.com/questions/1254074/how-to-call-the-setlistadapter-in-android 
+//        myList.setAdapter(tracksAdapter);
+        // but that crashed app
+        // this one points out the problem
+        // http://stackoverflow.com/questions/3033791/the-method-setlistadapterarrayadapter-is-undefined-for-the-type-create
+       // "When you call this.setListAdapter this must extend ListActivity probably you class just extends Activity."
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	/* moce all post to an utility package etc...*/
+	
+	
 	/*
 	 * Post Static To Cloud
 	 * 

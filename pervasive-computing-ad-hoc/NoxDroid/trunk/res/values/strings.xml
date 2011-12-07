@@ -48,5 +48,7 @@
     <string name="tracks_service_stopped">Tracks service stopped</string>	
 
 	
+	<string name="no_tracks">No tracks recorded yet</string>
+	
 
 </resources>
