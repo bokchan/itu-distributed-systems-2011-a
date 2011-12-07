@@ -31,7 +31,7 @@
 	
 	
 	
-	<string name="IOIO_ENABLED">IOIO_ENABLED</string>
+	<string name="IOIO_ENABLED">0</string>
 	<string name="IOIO_NO2_PIN">IOIO_NO2_PIN</string>
 	<string name="IOIO_TEMP_PIN">IOIO_TEMP_PIN</string>
 	<string name="IOIO_LED_GREEN_PIN">IOIO_LED_GREEN_PIN</string>
@@ -45,7 +45,8 @@
     <string name="location_service_started">Location service started</string>
     <string name="location_service_stopped">Location service stopped</string>	
     <string name="tracks_service_started">Tracks service started</string>
-    <string name="tracks_service_stopped">Tracks service stopped</string>	
+    <string name="tracks_service_stopped">Tracks service stopped</string>
+    <string name="SKYHOOK_UPDATE_INTERVAL">SKYHOOK_UPDATE_INTERVAL</string>	
 
 	
 	<string name="no_tracks">No tracks recorded yet</string>
