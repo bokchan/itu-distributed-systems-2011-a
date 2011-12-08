@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.repackaged.org.json.JSONArray;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
@@ -93,21 +95,24 @@ public class AddTrackServlet extends HttpServlet {
 		// add nox droid sensor
 		//
 
-		// Entity - type/kind | key/id | optional paraent - this one has no
+		
+		// Entity - type/kind | key/id | optional parent - this one has no
 		// parent
 		// if an entity with the same id exists - data is stored into that
 		// one or a new is created
 		Entity noxDroid = new Entity("NoxDroid", noxDroidId);
-		// not needed use the key name/id
+		// not strictly needed use the key name/id - entity.getKey().getName()
 		// noxDroid.setProperty("id", noxDroidId);
 		noxDroid.setProperty("username", noxDroidUserName);
 		datastore.put(noxDroid);
 
+		//
 		// add track
-		// we assume its a new track so no datastore lookup/query is done
+		//
 		Entity track = new Entity("Track", trackId, noxDroid.getKey());
-		// not needed use the key name/id
-		//track.setProperty("id", trackId);
+		
+		// not strictly needed use the key name/id - entity.getKey().getName()
+		// track.setProperty("id", trackId);
 		track.setProperty("start_time", trackStartTime);
 		track.setProperty("end_time", trackEndTime);
 		datastore.put(track);
@@ -146,7 +151,7 @@ public class AddTrackServlet extends HttpServlet {
 
 		// prepare for the datastore
 		List<Entity> locations = new ArrayList<Entity>();
-		Entity locationEntity = null;
+		Entity entity = null;
 		double longitude = 0.0;
 		double latitude = 0.0;
 		String time_stamp;
@@ -175,14 +180,17 @@ public class AddTrackServlet extends HttpServlet {
 					// NoxDroidLowLevelStorageTest.testNewEntitiesWithAncestorChildren()
 
 					// Entity(type/kind, id/key, parent )
-					locationEntity = new Entity("Location", i + 1,
+					entity = new Entity("Location", i + 1,
 							track.getKey());
-					locationEntity.setProperty("latitude", latitude);
-					locationEntity.setProperty("longitude", longitude);
-					locationEntity.setProperty("time_stamp", time_stamp);
-					locationEntity.setProperty("provider", provider);
+					
+					// not strictly needed use the key name/id - entity.getKey().getName()
+					// entity.setProperty("id", i + 1);
+					entity.setProperty("latitude", latitude);
+					entity.setProperty("longitude", longitude);
+					entity.setProperty("time_stamp", time_stamp);
+					entity.setProperty("provider", provider);
 
-					locations.add(locationEntity);
+					locations.add(entity);
 
 					System.out.println("longitude: " + longitude
 							+ " latitude: " + latitude + " time_stamp: "
@@ -234,6 +242,8 @@ public class AddTrackServlet extends HttpServlet {
 
 					// Entity(type/kind, id/key, parent )
 					entity = new Entity("Nox", i + 1, track.getKey());
+					// not strictly needed use the key name/id - entity.getKey().getName()
+					// entity.setProperty("id", i + 1);
 					entity.setProperty("temperature", temperature);
 					entity.setProperty("nox", nox);
 					entity.setProperty("time_stamp", time_stamp);

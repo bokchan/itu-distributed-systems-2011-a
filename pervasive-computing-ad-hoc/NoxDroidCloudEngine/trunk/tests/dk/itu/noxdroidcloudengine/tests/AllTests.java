@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 	SimpleTest.class,
 	NoxDroidLowLevelStorageTest.class,
 	SimpleDataStoreTest.class,	
+	NoxDroidLowLevelStorageKeysAncestorTest.class
 	}
 )
 public class AllTests {
