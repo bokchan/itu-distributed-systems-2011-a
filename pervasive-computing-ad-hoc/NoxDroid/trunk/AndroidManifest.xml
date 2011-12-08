@@ -47,13 +47,6 @@
         </service>
         <service android:name=".location.GPSLocationService" >
         </service>
-        <service android:name=".tracks.TracksService" >
-        </service>
-
-        <!--
-              .service.NoxDroidServiceActivities$Controller / .service.NoxDroidServiceActivities$Binding are left overs right from the api demo example
-         TODO: remove
-        -->
         <activity
             android:label="@string/activity_local_service_controller"
             android:name=".service.NoxDroidServiceActivities$Controller" >

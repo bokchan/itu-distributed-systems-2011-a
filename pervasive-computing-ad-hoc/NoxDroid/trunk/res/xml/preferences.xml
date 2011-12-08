@@ -79,9 +79,15 @@
             android:key="IOIO_UPDATE_INTERVAL"
             android:title="IOIO Update Interval (ms)" />
     </PreferenceCategory>
-    <PreferenceCategory android:key="skyhook_prefs" android:title="Skyhook">
-        <EditTextPreference android:title="Update interval" android:key="SKYHOOK_UPDATE_INTERVAL" android:defaultValue="2000"/>
+
+    <PreferenceCategory
+        android:key="skyhook_prefs"
+        android:title="Skyhook" >
+
+        <EditTextPreference
+            android:defaultValue="2000"
+            android:key="SKYHOOK_UPDATE_INTERVAL"
+            android:title="Update interval" />
     </PreferenceCategory>
-    
 
 </PreferenceScreen>

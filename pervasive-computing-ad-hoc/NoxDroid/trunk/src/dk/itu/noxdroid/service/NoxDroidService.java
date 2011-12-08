@@ -145,7 +145,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Start skyhook location service 
 		//
 		doBindService();
-
+		
 		//
 		// Start gps location service - TODO: change into same approach as doBindService();
 		//  
