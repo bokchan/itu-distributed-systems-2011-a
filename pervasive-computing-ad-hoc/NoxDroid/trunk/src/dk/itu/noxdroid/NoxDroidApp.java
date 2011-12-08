@@ -3,6 +3,7 @@ package dk.itu.noxdroid;
 import java.util.UUID;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 
@@ -18,6 +19,8 @@ public class NoxDroidApp extends Application {
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
 		Log.i(TAG, "Created NoxdroidApp");
+		
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 	}
 	
 	public NoxDroidDbAdapter getDbAdapter() {

@@ -132,7 +132,6 @@ public class NoxDroidMainActivity extends Activity {
 
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
-				
 		
 		DisplayMetrics metrics = new DisplayMetrics(); 
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -291,40 +290,8 @@ public class NoxDroidMainActivity extends Activity {
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			
+			Log.d(TAG, "Handling incoming message from " + msg.describeContents()) ;
 			updateGUI(msg.what);
-//			Log.i(TAG, "Handling incoming message");
-//			switch (msg.what) {
-//			case NoxDroidService.ERROR_IOIO_CONNECTION_LOST:
-//			case NoxDroidService.ERROR_IOIO_ABORTED:
-//				updateGUI(msg.what);
-//				break;
-//			case NoxDroidService.STATUS_IOIO_CONNECTED:
-//				imgBtnIOIO.setEnabled(true);
-//				imgBtnIOIO.setImageResource(R.drawable.circle_green);
-//				Toast.makeText(getBaseContext(), "IOIO Connected",
-//						Toast.LENGTH_LONG);
-//				Log.i(TAG, "IOIO Connected");
-//				break;
-//			case NoxDroidService.STATUS_IOIO_GREEN:
-//				break;
-//			case NoxDroidService.STATUS_IOIO_YELLOW:
-//				break;
-//			case NoxDroidService.STATUS_IOIO_RED:
-//				break;
-//			case NoxDroidService.STATUS_LOCATION_SERVICE_STARTED :
-//				updateGUI(NoxDroidService.STATUS_LOCATION_SERVICE_STARTED);
-//				break;
-//			case NoxDroidService.STATUS_SERVICE_READY :
-//				Toast.makeText(getApplicationContext(), "Service is ready", Toast.LENGTH_SHORT).show();
-//				updateGUI(msg.what);
-//			case NoxDroidService.STATUS_CONNECTIVITY_SUCCESS: 
-//				updateGUI(msg.what);
-//				break;
-//			default:
-//				super.handleMessage(msg);
-//				break;
-//			}
 		}
 	}
 
@@ -371,19 +338,21 @@ public class NoxDroidMainActivity extends Activity {
 			imgBtnStart.setVisibility(View.GONE);
 			imgBtnStop.setVisibility(View.VISIBLE);
 			break;
-		case NoxDroidService.STATUS_CONNECTIVITY_SUCCESS:
+		case NoxDroidService.STATUS_CONNECTIVITY_OK:
 			imgBtnConn.setImageResource(R.drawable.circle_green);
 			imgConn.setVisibility(View.VISIBLE);
-			update(this.getClass(), true);
 			break;
 		case NoxDroidService.ERROR_NO_CONNECTIVITY:
 			imgBtnConn.setImageResource(R.drawable.circle_red);
 			imgConn.setVisibility(View.VISIBLE);
-			update(this.getClass(), false);
 			break;
-		case NoxDroidService.STATUS_LOCATION_SERVICE_STARTED:
-			Toast.makeText(this, "Location service started", Toast.LENGTH_LONG);
+		case NoxDroidService.STATUS_LOCATION_OK:
+			imgBtnGPS.setImageResource(R.drawable.circle_green);
+			imgGPS.setVisibility(View.VISIBLE);
 			break;
+		case NoxDroidService.ERROR_NO_LOCATION : 
+			imgBtnGPS.setImageResource(R.drawable.circle_red);
+			imgGPS.setVisibility(View.VISIBLE);
 		default:
 			break;
 		}
@@ -422,7 +391,5 @@ public class NoxDroidMainActivity extends Activity {
 			break;
 		}		
 		return true;
-	}
-	
-	
+	}	
 }
