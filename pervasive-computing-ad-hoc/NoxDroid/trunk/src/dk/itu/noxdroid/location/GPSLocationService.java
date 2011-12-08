@@ -15,6 +15,8 @@
  */
 package dk.itu.noxdroid.location;
 
+import java.util.ArrayList;
+
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -24,11 +26,17 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
+import dk.itu.noxdroid.service.NoxDroidService;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
@@ -57,6 +65,10 @@ public class GPSLocationService extends Service {
 	private Double longitude;
 	private NoxDroidDbAdapter mDbHelper;
 	private String locationProvider;
+	private int updateinterval;
+
+	private ArrayList<Messenger> clients = new ArrayList<Messenger>();
+	public final Messenger _handler = new Messenger(new IncomingHandler());
 
 	/**
 	 * Class for clients to access. Because we know this service always runs in
@@ -68,7 +80,6 @@ public class GPSLocationService extends Service {
 			Log.d(TAG, "LocalBinder called");
 			return GPSLocationService.this;
 		}
-
 	}
 
 	@Override
@@ -76,7 +87,7 @@ public class GPSLocationService extends Service {
 
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
-		
+
 		//
 		// Get handle for LocationManager
 		//
@@ -88,38 +99,20 @@ public class GPSLocationService extends Service {
 		// adapter
 		//
 		mDbHelper = ((NoxDroidApp) getApplication()).getDbAdapter();
+		updateinterval = Integer.valueOf((String) PreferenceManager
+				.getDefaultSharedPreferences(this).getAll()
+				.get("GPS_UPDATE_INTERVAL"));
 
-		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (loc != null) {
-			//
-			// connect to the GPS location service - get and print
-			//
-			locationProvider = loc.getProvider();
-
-			latitude = loc.getLatitude();
-			longitude = loc.getLongitude();
-
-			/*
-			 * Add to database
-			 */
-			mDbHelper
-					.createLocationPoint(latitude, longitude, locationProvider);
-
-		} else {
-			Log.d(TAG,
-					"lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) is "
-							+ loc);
-		}
-
+		Log.d(TAG, "GPS updateinterval: " +  updateinterval);
+		
 		// ask the Location Manager to send us location updates
-		locListenD = new DispLocListener();
+		// locListenD = new DispLocListener();
 		// bind to location manager - TODO: fine tune the variables
 		// 30000L / minTime = the minimum time interval for notifications, in
 		// milliseconds.
 		// 10.0f / minDistance - the minimum distance interval for notifications
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
-				locListenD);
-
+		// lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+		// locListenD);
 	}
 
 	@Override
@@ -146,7 +139,7 @@ public class GPSLocationService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return mBinder;
+		return _handler.getBinder();
 	}
 
 	// This is the object that receives interactions from clients. See
@@ -166,34 +159,96 @@ public class GPSLocationService extends Service {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
 
+			Log.i(TAG, "GPS LOC. lat: " + latitude + " lon: " + longitude);
+
 			/**
 			 * Add to database
 			 */
 			mDbHelper
-					.createLocationPoint(latitude, longitude, locationProvider);
-
+					.createLocationPoint(latitude, longitude, location.getProvider());
 		}
 
 		@Override
 		public void onProviderDisabled(String arg0) {
-			// TODO Auto-generated method stub
-
+			notifyClients(NoxDroidService.ERROR_NO_GPS);
 		}
 
 		@Override
 		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
-
+			notifyClients(NoxDroidService.STATUS_GPS_OK);
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
-
+			
 		}
 
 	}
-	
-	
 
+	private void startRecording() {
+		Log.i(TAG, "Start rec");
+
+		// ask the Location Manager to send us location updates
+		locListenD = new DispLocListener();
+		// bind to location manager - TODO: fine tune the variables
+		// 30000L / minTime = the minimum time interval for notifications, in
+		// milliseconds.
+		// 10.0f / minDistance - the minimum distance interval for notifications
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+				locListenD);
+
+	}
+
+	private void stopRecording() {
+		Log.i(TAG, "Stop rec");
+		lm.removeUpdates(locListenD);
+	}
+
+	class IncomingHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			Log.i(TAG, "Handling incoming message");
+			switch (msg.what) {
+			case NoxDroidService.MSG_REGISTER_CLIENT:
+				Log.i(TAG, "Added client: " + msg.replyTo
+						+ this.getClass().getSimpleName());
+				clients.add(msg.replyTo);
+				Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				if (loc != null) {
+					notifyClients(NoxDroidService.STATUS_GPS_OK);
+				} else {
+					notifyClients(NoxDroidService.ERROR_NO_GPS);
+				}
+				
+				Log.d(TAG,
+						"lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) is "
+								+ loc);
+				
+				break;
+			case NoxDroidService.ACTION_START_TRACK:
+				startRecording();
+				break;
+			case NoxDroidService.ACTION_STOP_TRACK:
+				stopRecording();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	private void notifyClients(int msg) {
+		Log.i(TAG, "Notifying clients # " + clients.size());
+		for (int i = 0; i < clients.size(); i++) {
+			try {
+				Log.i(TAG, "Sent message to : " + clients.get(i));
+				clients.get(i).send(Message.obtain(null, msg));
+			} catch (RemoteException e) {
+				// If we get here, the client is dead, and we should remove it
+				// from the list
+				Log.e(TAG, "Removing client: " + clients.get(i));
+				clients.remove(i);
+			}
+		}
+	}
 }
