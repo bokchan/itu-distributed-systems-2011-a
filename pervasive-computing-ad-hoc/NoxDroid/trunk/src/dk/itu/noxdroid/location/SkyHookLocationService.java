@@ -82,7 +82,11 @@ public class SkyHookLocationService extends Service {
 		_xps.getLocation(auth,
 				WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP, _callback);
 
-		updateinterval = Integer.valueOf( (String) PreferenceManager.getDefaultSharedPreferences(this).getAll().get("SKYHOOK_UPDATE_INTERVAL"));
+		//
+		// before this is set it has a value of: 10000 view http://screencast.com/t/nSXoYDm54aw4 
+		// updateinterval = Integer.valueOf( (String) PreferenceManager.getDefaultSharedPreferences(this).getAll().get("SKYHOOK_UPDATE_INTERVAL"));
+		updateinterval = 10000;
+		
 	}
 
 	class IncomingHandler extends Handler {
