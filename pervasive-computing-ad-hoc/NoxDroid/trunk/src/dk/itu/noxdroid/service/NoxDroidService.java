@@ -3,7 +3,6 @@ package dk.itu.noxdroid.service;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import android.app.Notification;
@@ -40,34 +39,41 @@ import dk.itu.noxdroid.location.SkyHookLocationService;
 
 public class NoxDroidService extends Service implements IOIOEventListener {
 
-	public final static int ERROR_IOIO_CONNECTION_LOST = 0;
+	
 	public final static int MSG_REGISTER_CLIENT = 1;
+	public final static int MSG_UNREGISTER_CLIENT = 2;
+	
 	public final static int STATUS_IOIO_GREEN = 3;
 	public final static int STATUS_IOIO_YELLOW = 4;
 	public final static int STATUS_IOIO_RED = 5;
 	public final static int STATUS_IOIO_STOPPED_RECORDING = 21;
 	public final static int STATUS_IOIO_CONNECTED = 8;
+	public final static int ERROR_IOIO_CONNECTION_LOST = 0;
 	public final static int ERROR_IOIO_INTERRUPTED = 9;
 	public final static int ERROR_IOIO_ABORTED = 10;
 	public final static int ERROR_IOIO_INCOMPATIBLE = 11;
 
-	public final static int MSG_UNREGISTER_CLIENT = 2;
 	public final static int STATUS_SERVICE_STARTED = 6;
 	public final static int STATUS_SERVICE_STOPPED = 7;
 	public final static int STATUS_SERVICE_READY = 18;
-	
-	public final static int STATUS_RECORDING = 20; 
+
+	public final static int STATUS_RECORDING = 20;
 
 	public final static int STATUS_CONNECTIVITY_WAITING = 12;
-	public final static int STATUS_CONNECTIVITY_SUCCESS = 13;
+	public final static int STATUS_CONNECTIVITY_OK = 13;
 	public final static int ERROR_NO_CONNECTIVITY = 14;
 
-	public final static int STATUS_LOCATION_SERVICE_STARTED = 15;
-	public final static int ERROR_LOCATION_SERVICE_UNAVAILABLE = 19;
+	public final static int STATUS_SKYHOOK_OK = 15;
+	public final static int ERROR_NO_SKYHOOK = 19;
 
 	public final static int ACTION_START_TRACK = 16;
 	public final static int ACTION_STOP_TRACK = 17;
-	
+
+	public static final int ERROR_NO_GPS = 22;
+	public static final int STATUS_GPS_OK = 23;
+
+	public static final int ERROR_NO_LOCATION = 24;
+	public static final int STATUS_LOCATION_OK = 25;
 
 	private boolean isTrackOpen = false;
 
@@ -75,7 +81,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	//
 	private NoxDroidIOIOThread ioio_thread_;
 	private NotificationManager nman;
-	private Messenger messengerLocation;
+	private Messenger messengerSkyhook;
+	private Messenger messengerGPS;
 	private boolean locServiceIsBound = false;
 	private String TAG;
 	private int NOTIFICATION = R.string.noxdroid_service_started;
@@ -90,25 +97,50 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		}
 	}
 
+	private ArrayList<Integer> msgQueue;
+
 	private ArrayList<Messenger> clients = new ArrayList<Messenger>();
 
-	private ServiceConnection connLocationService = new ServiceConnection() {
+	private ServiceConnection connSkyhookService = new ServiceConnection() {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			messengerLocation = null;
+			messengerSkyhook = null;
 		}
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.i(TAG, "Connected to NoxDroidLocationService");
+			Log.i(TAG, "Connected to SkyhookLocationService");
 
 			try {
-				messengerLocation = new Messenger(service);
+				messengerSkyhook = new Messenger(service);
 				Message msg = Message.obtain(null,
 						NoxDroidService.MSG_REGISTER_CLIENT);
 				msg.replyTo = messenger;
-				messengerLocation.send(msg);
+				messengerSkyhook.send(msg);
+
+			} catch (RemoteException e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+	};
+
+	private ServiceConnection connGPSService = new ServiceConnection() {
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			messengerGPS = null;
+		}
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.i(TAG, "Connected to GPSLocationService");
+			try {
+				messengerGPS = new Messenger(service);
+				Message msg = Message.obtain(null,
+						NoxDroidService.MSG_REGISTER_CLIENT);
+				msg.replyTo = messenger;
+				messengerGPS.send(msg);
 
 			} catch (RemoteException e) {
 				Log.e(TAG, e.getMessage());
@@ -118,8 +150,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	@Override
 	public void onCreate() {
-
-		// TODO: Start both GPS and skyhook. But check that at least one of them is running
+		// TODO: Start both GPS and skyhook. But check that at least one of them
+		// is running
 		super.onCreate();
 
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
@@ -129,6 +161,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Display a notification about us starting. We put an icon in the
 		// status bar.
 		showNotification();
+
+		msgQueue = new ArrayList<Integer>();
 
 		// Get dbAdapter;
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
@@ -140,35 +174,27 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-		
+
 		//
-		// Start skyhook location service 
-		//
+		// Start skyhook & GPS services
 		doBindService();
-		
-		//
-		// Start gps location service - TODO: change into same approach as doBindService();
-		//  
-		startService(new Intent(this, GPSLocationService.class));
-		
+
 		//
 		// Check for network connection
-		//  
-		ConnectivityTest connTest = new ConnectivityTest();
-		connTest.execute(new Void[] {});
+		//
 
 		//
 		// note:
-		// sometimes its usefull to be able to use/test the application with the IOIO board
+		// sometimes its usefull to be able to use/test the application with the
+		// IOIO board
 		// the connectToIOIO is a quick and dirty one...
 		//
 		// - based upon http://goo.gl/y5m4u - also take a look at the *real* api
 		//
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean connectToIOIO =  prefs.getBoolean(getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), false);
-        connectToIOIO = true;  
-		
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean connectToIOIO = prefs.getBoolean(
+				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), true);
+
 		if (connectToIOIO) {
 			// Check for IOIO connection
 			IOIOConnectionTest ioiotest = new IOIOConnectionTest();
@@ -176,8 +202,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		} else {
 			updateTest(IOIOConnectionTest.class, true);
 		}
+		ConnectivityTest connTest = new ConnectivityTest();
+		connTest.execute(new Void[] {});
 	}
-	
 
 	public synchronized Map<String, ?> getPrefs() {
 		return this.APP_PREFS;
@@ -185,7 +212,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	@Override
 	public void onDestroy() {
-		// Set endtime equal to time of exit 
+		// Set endtime equal to time of exit
 		stopTrack();
 		// Cancel the persistent notification.
 		nman.cancel(NOTIFICATION);
@@ -199,8 +226,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				Toast.LENGTH_SHORT).show();
 
 		// stop additional services
-		// stopService(new Intent(this, LocationService.class));
-		// stopService(new Intent(this, TracksService.class));
 		stopService(new Intent(this, GPSLocationService.class));
 		stopService(new Intent(this, SkyHookLocationService.class));
 	}
@@ -261,19 +286,35 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private void updateTest(Class<?> c, boolean flag) {
 		Log.d(TAG, "updating test for: " + c.getSimpleName() + " " + flag);
 		tests.put(c, flag);
-		boolean passed = true;
-		if (tests.size() == 3) {
-
-			for (Entry<Class<?>, Boolean> e : tests.entrySet()) {
-				if (!e.getValue() && true) {
-					passed = false;
-				}
-				notifyClients(getTestStatus(e.getKey(), e.getValue()));	
+		if (c.equals(GPSLocationService.class)
+				|| c.equals(SkyHookLocationService.class)) {
+			if ((tests.containsKey(GPSLocationService.class) && tests
+					.get(GPSLocationService.class))
+					|| (tests.containsKey(SkyHookLocationService.class) && tests
+							.get(SkyHookLocationService.class))) {
+				notifyClients(STATUS_LOCATION_OK);
+			} else {
+				notifyClients(ERROR_NO_LOCATION);
 			}
-			if (passed) {
-				notifyClients(STATUS_SERVICE_READY);
-			}
+		} else {
+			notifyClients(getTestStatus(c, flag));
 		}
+		if (isReady()) {
+			notifyClients(STATUS_SERVICE_READY);
+		}
+
+	}
+
+	private boolean isReady() {
+		return ((tests.containsKey(GPSLocationService.class) && tests
+				.get(GPSLocationService.class)) || (tests
+				.containsKey(SkyHookLocationService.class) && tests
+				.get(SkyHookLocationService.class)))
+				&& (tests.containsKey(IOIOConnectionTest.class) && tests
+						.get(IOIOConnectionTest.class))
+				&& (tests.containsKey(ConnectivityTest.class) && tests
+						.get(ConnectivityTest.class));
+
 	}
 
 	private int getTestStatus(Class<?> c, boolean flag) {
@@ -285,13 +326,18 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		} else if (c.equals(ConnectivityTest.class)) {
 			if (flag)
-				return STATUS_CONNECTIVITY_SUCCESS;
+				return STATUS_CONNECTIVITY_OK;
 			else
 				return ERROR_NO_CONNECTIVITY;
+		} else if (c.equals(GPSLocationService.class)) {
+			if (flag)
+				return STATUS_GPS_OK;
+			else
+				return ERROR_NO_GPS;
 		} else if (flag) {
-			return STATUS_LOCATION_SERVICE_STARTED;
+			return STATUS_SKYHOOK_OK;
 		} else
-			return ERROR_LOCATION_SERVICE_UNAVAILABLE;
+			return ERROR_NO_SKYHOOK;
 	}
 
 	public void removeMessenger(Messenger m) {
@@ -313,9 +359,10 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				Log.i(TAG, "Added client: " + msg.replyTo);
 				clients.add(msg.replyTo);
 				break;
-			case STATUS_LOCATION_SERVICE_STARTED:
+			case STATUS_SKYHOOK_OK:
 				// TODO: if SkyHook is not depending on GPS but network
-				// - then it might make sense to be moved to STATUS_CONNECTIVITY_SUCCESS...? 
+				// - then it might make sense to be moved to
+				// STATUS_CONNECTIVITY_SUCCESS...?
 				updateTest(SkyHookLocationService.class, true);
 				break;
 			case ACTION_START_TRACK:
@@ -324,9 +371,14 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			case ACTION_STOP_TRACK:
 				stopTrack();
 				break;
-			case STATUS_CONNECTIVITY_SUCCESS:
-				updateTest(SkyHookLocationService.class, true);
-				Log.i(TAG, "STATUS_CONNECTIVITY_SUCCESS");
+			case ERROR_NO_GPS:
+				Log.i(TAG, "STATUS_GPS_DISABLED");
+				updateTest(GPSLocationService.class, false);
+				break;
+			case STATUS_GPS_OK:
+				Log.i(TAG, "STATUS_GPS_ENABLED");
+				updateTest(GPSLocationService.class, true);
+				break;
 			default:
 				super.handleMessage(msg);
 				break;
@@ -337,18 +389,28 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public final Messenger messenger = new Messenger(new IncomingHandler());
 
 	private void notifyClients(int msg) {
-		Log.i(TAG, "Notifying clients # " + clients.size());
-		for (int i = 0; i < clients.size(); i++) {
-			try {
-				Log.i(TAG, "Sent message to : " + clients.get(i));
-				showNotification();
-				clients.get(i).send(Message.obtain(null, msg));
-			} catch (RemoteException e) {
-				// If we get here, the client is dead, and we should remove it
-				// from the list
-				Log.e(TAG, "Removing client: " + clients.get(i));
-				clients.remove(i);
+		Log.i(TAG, "Notifying clients # " + clients.size() + " msg " + msg);
+		if (clients.size() > 0) {
+			for (int i = 0; i < clients.size(); i++) {
+				try {
+					Log.i(TAG, "Sent message to : " + clients.get(i));
+					showNotification();
+
+					clients.get(i).send(Message.obtain(null, msg));
+					for (Integer m : msgQueue) {
+						clients.get(i).send(Message.obtain(null, m));
+					}
+					msgQueue.clear();
+				} catch (RemoteException e) {
+					// If we get here, the client is dead, and we should remove
+					// it
+					// from the list
+					Log.e(TAG, "Removing client: " + clients.get(i));
+					clients.remove(i);
+				}
 			}
+		} else {
+			msgQueue.add(msg);
 		}
 	}
 
@@ -365,7 +427,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		case STATUS_IOIO_CONNECTED:
 			notifyClients(msg);
 			break;
-		case STATUS_IOIO_STOPPED_RECORDING : 
+		case STATUS_IOIO_STOPPED_RECORDING:
 			break;
 		default:
 			break;
@@ -373,25 +435,24 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	}
 
 	void doBindService() {
-		Intent intent  = new Intent(this, SkyHookLocationService.class);		
-		//intent.putExtra("SKYHOOK_UPDATE_INTERVAL", prefs.getInt(getString( R.string.SKYHOOK_UPDATE_INTERVAL), 2000));
-		
-		Log.d(TAG, "APP PREFS : " + APP_PREFS);
-		bindService(intent,
-				connLocationService, Context.BIND_AUTO_CREATE);
-		
+		Intent intent = new Intent(this, SkyHookLocationService.class);
+		bindService(intent, connSkyhookService, Context.BIND_AUTO_CREATE);
+
+		bindService(new Intent(this, GPSLocationService.class), connGPSService,
+				Context.BIND_AUTO_CREATE);
+
 		Log.i(TAG, "doBindService");
 		locServiceIsBound = true;
 	}
 
 	void doUnbindService() {
 		if (locServiceIsBound) {
-			if (connLocationService != null) {
+			if (connSkyhookService != null) {
 				try {
 					Message msg = Message.obtain(null,
 							NoxDroidService.MSG_UNREGISTER_CLIENT);
 					msg.replyTo = messenger;
-					messengerLocation.send(msg);
+					messengerSkyhook.send(msg);
 				} catch (RemoteException e) {
 					// There is nothing special we need to do if the service
 					// has crashed.
@@ -399,7 +460,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			}
 
 			// Detach our existing connection.
-			unbindService(connLocationService);
+			unbindService(connSkyhookService);
 			locServiceIsBound = false;
 		}
 	}
@@ -414,7 +475,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		Log.i(TAG, "Starting track: " + isTrackOpen);
 
-		if (((NoxDroidApp)getApplication()).getCurrentTrack()!= null) {
+		if (((NoxDroidApp) getApplication()).getCurrentTrack() != null) {
 			Log.i(TAG, "Something is wrong");
 			dbAdapter.endTrack(((NoxDroidApp) getApplication())
 					.getCurrentTrack().toString());
@@ -431,15 +492,36 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		((NoxDroidApp) getApplication()).setCurrentTrack(uuid);
 		Log.d(TAG, "Set new track uuid in app context");
 
-		Message msg = Message.obtain(null, NoxDroidService.ACTION_START_TRACK);
-		msg.replyTo = messenger;
-		try {
-			messengerLocation.send(msg);
-		} catch (RemoteException e1) {
-			Log.e(TAG, e1.getMessage());
+		if (tests.containsKey(SkyHookLocationService.class)
+				&& tests.get(SkyHookLocationService.class)) {
+
+			Message msg = Message.obtain(null,
+					NoxDroidService.ACTION_START_TRACK);
+			msg.replyTo = messenger;
+			try {
+				messengerSkyhook.send(msg);
+			} catch (RemoteException e1) {
+				Log.e(TAG, e1.getMessage());
+			}
+
+			Log.d(TAG, "Sent msg to SkyhookService");
 		}
 
-		Log.d(TAG, "Sent msg to LocationService");
+		if (tests.containsKey(GPSLocationService.class)
+				&& tests.get(GPSLocationService.class)) {
+			Message msg2 = Message.obtain(null,
+					NoxDroidService.ACTION_START_TRACK);
+			msg2.replyTo = messenger;
+
+			try {
+				Log.i(TAG, messengerGPS.toString());
+				messengerGPS.send(msg2);
+			} catch (RemoteException e1) {
+				Log.e(TAG, e1.getMessage());
+			}
+
+			Log.d(TAG, "Sent msg to GPSService");
+		}
 
 		// IOIO
 		ioio_thread_ = new NoxDroidIOIOThread(this);
@@ -454,35 +536,34 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		Log.i(TAG, "Started track: ");
 	}
-	
+
 	/*
 	 * 
 	 * Get message from main ui - and stop
-	 * 
 	 */
 	private void stopTrack() {
 		Log.i(TAG, "stopping track: ");
-		if (((NoxDroidApp)getApplication()).getCurrentTrack() != null) {
+		if (((NoxDroidApp) getApplication()).getCurrentTrack() != null) {
 			if (ioio_thread_ != null || ioio_thread_.isAlive()) {
-				//ioio_thread_.stopRecording();
+				// ioio_thread_.stopRecording();
 				ioio_thread_.abort();
 			}
-			
+
 			Message msg = Message.obtain(null,
 					NoxDroidService.ACTION_STOP_TRACK);
 			msg.replyTo = messenger;
 			try {
-				messengerLocation.send(msg);
+				messengerSkyhook.send(msg);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
 
 			dbAdapter.endTrack(((NoxDroidApp) getApplication())
 					.getCurrentTrack().toString());
-			
+
 		}
 		isTrackOpen = false;
-		((NoxDroidApp)getApplication()).setCurrentTrack(null);
+		((NoxDroidApp) getApplication()).setCurrentTrack(null);
 		Log.i(TAG, "Stopped track: ");
 		updateTest(IOIOConnectionTest.class, true);
 	}
@@ -506,7 +587,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	}
 
 	class IOIOConnectionTest extends AsyncTask<Void, Void, Boolean> {
-
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			Log.i("NoxDroid_IOIOTest", "Testing");
@@ -521,7 +601,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			if (t.isAlive()) {
 				t.abort();
 			}
-			Log.i("NoxDroid_IOIOTest", "tested");
+			Log.i("NoxDroid_IOIOTest", "tested: " + t.getStatus());
 			return (t.getStatus() == STATUS.CONNECTED);
 		}
 
