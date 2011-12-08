@@ -19,7 +19,6 @@ public class PreferencesActivity extends PreferenceActivity {
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		
 		Log.d(TAG, "Called Preferences Activity");
-		 
 	}
 	
 	
