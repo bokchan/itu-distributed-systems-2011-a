@@ -112,10 +112,6 @@ public class NoxDroidDbAdapter {
 			+ "latitude double not null, longitude double not null,"
 			+ "location_provider text)" + ";";
 
-	private static final String DATABASE_CREATE_SKYHOOK_LOCATIONS = "create table if not exists skyhooklocations (time_stamp integer not null default (datetime('now','localtime')),"
-			+ "latitude double not null, longitude double not null,"
-			+ "location_provider text)" + ";";
-
 	private static final String DATABASE_CREATE_NOX = "create table if not exists nox (time_stamp integer not null default (datetime('now','localtime')),"
 			+ "nox double not null, temperature double)" + ";";
 
@@ -126,7 +122,6 @@ public class NoxDroidDbAdapter {
 	private static final String DATABASE_NAME = "noxdroid.db";
 	private static final String DATABASE_TABLE_TRACKS = "tracks";
 	private static final String DATABASE_TABLE_LOCATION = "locations";
-	private static final String DATABASE_TABLE_SKYHOOKLOCATION = "skyhooklocations";
 	private static final String DATABASE_TABLE_NOX = "nox";
 	private static final int DATABASE_VERSION = 2;
 
@@ -149,7 +144,7 @@ public class NoxDroidDbAdapter {
 			db.execSQL(DATABASE_CREATE_LOCATIONS);
 			db.execSQL(DATABASE_CREATE_NOX);
 			db.execSQL(DATABASE_CREATE_ACCELEROMETER);
-			db.execSQL(DATABASE_CREATE_SKYHOOK_LOCATIONS);
+			//db.execSQL(DATABASE_CREATE_SKYHOOK_LOCATIONS);
 		}
 
 		@Override
@@ -317,12 +312,7 @@ public class NoxDroidDbAdapter {
 		initialValues.put(KEY_LONGITUDE, longitude);
 		initialValues.put(KEY_LOCATION_PROVIDER, locationProvider);
 
-		if (locationProvider.endsWith("skyhook")) {
-			mDb.insert(DATABASE_TABLE_SKYHOOKLOCATION, null, initialValues);
-		} else {
-
-			mDb.insert(DATABASE_TABLE_LOCATION, null, initialValues);
-		}
+		mDb.insert(DATABASE_TABLE_LOCATION, null, initialValues);
 	}
 
 	/**
@@ -370,9 +360,6 @@ public class NoxDroidDbAdapter {
 		return mDb.query(DATABASE_TABLE_TRACKS, new String[] { KEY_ROWID,
 				KEY_TRACKUUID, KEY_TIME_STAMP_START, KEY_TIME_STAMP_END }, null, null, null, null, null);
 	}
-	
-	
-	
 
 	/**
 	 * Return a Cursor positioned at a track that matches the given rowId
