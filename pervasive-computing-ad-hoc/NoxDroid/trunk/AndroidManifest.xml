@@ -75,7 +75,6 @@
             </intent-filter>
             
         </activity>
-
         
         <activity android:name=".tracks.TracksListActivity" android:screenOrientation="portrait">
         </activity>
