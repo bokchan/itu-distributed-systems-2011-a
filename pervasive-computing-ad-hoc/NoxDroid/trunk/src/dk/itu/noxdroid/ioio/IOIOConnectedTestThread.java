@@ -81,7 +81,7 @@ public class IOIOConnectedTestThread extends Thread {
 			ioio_.openAnalogInput(pinIn);
 			ioio_.openDigitalOutput(pinLed, Spec.Mode.NORMAL, true);
 		} catch (ConnectionLostException e) {
-			
+			connected_ = false;
 		}
 	}
 

@@ -54,12 +54,6 @@ public class NoxDroidIOIOThread extends Thread {
 
 		
 		updateinterval = Integer.valueOf((String)service.getPrefs().get("IOIO_UPDATE_INTERVAL"));
-		// pinGreen = (Integer)
-		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_GREEN_PIN);
-		// pinYellow = (Integer)
-		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_YELLOW_PIN);
-		// pinledRed = (Integer)
-		// service.APP_PREFS.get(dk.itu.noxdroid.R.string.IOIO_LED_RED_PIN);
 		pinAnalogIn = Integer.valueOf((String) service.getPrefs().get("IOIO_NO2_PIN"));
 	}
 
