@@ -63,8 +63,7 @@ public class GPSLocationService extends Service {
 	private LocationListener locListenD;
 	private Double latitude;
 	private Double longitude;
-	private NoxDroidDbAdapter mDbHelper;
-	private String locationProvider;
+	private NoxDroidDbAdapter mDbHelper;	
 	private int updateinterval;
 
 	private ArrayList<Messenger> clients = new ArrayList<Messenger>();
@@ -126,10 +125,15 @@ public class GPSLocationService extends Service {
 	@Override
 	public void onDestroy() {
 
+		try {
 		Log.d(TAG, "onDestroy called");
 
 		// Location: close down / unsubscribe the location updates
 		lm.removeUpdates(locListenD);
+		} catch (Exception e){
+			Log.e(TAG, e.getMessage());
+		}
+		
 
 		// the NoxDroid database don't need to be closed - are handled globally
 		// // close database
@@ -223,7 +227,6 @@ public class GPSLocationService extends Service {
 				Log.d(TAG,
 						"lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) is "
 								+ loc);
-				
 				break;
 			case NoxDroidService.ACTION_START_TRACK:
 				startRecording();

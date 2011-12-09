@@ -91,6 +91,12 @@ public class SkyHookLocationService extends Service {
 		Log.d(TAG, "Skyhook updateinterval: " + updateinterval);
 
 	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		_xps.abort();
+	}
 
 	class IncomingHandler extends Handler {
 		@Override

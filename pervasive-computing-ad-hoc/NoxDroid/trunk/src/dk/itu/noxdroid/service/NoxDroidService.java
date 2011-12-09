@@ -93,8 +93,10 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private SharedPreferences prefs;
 	private NoxDroidDbAdapter dbAdapter;
 	private Hashtable<Class<?>, Boolean> tests = new Hashtable<Class<?>, Boolean>();
-	private NoxDroidApp app;
 	boolean connectToIOIO;
+	
+	private ConnectivityTest connTest;
+	private IOIOConnectionTest ioiotest;
 
 	public class ServiceBinder extends Binder {
 		public NoxDroidService getService() {
@@ -169,7 +171,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		msgQueue = new ArrayList<Integer>();
 		
-		app = ((NoxDroidApp) getApplication());
+		
 
 		// Get dbAdapter;
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
@@ -186,31 +188,21 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Start skyhook & GPS services
 		doBindService();
 
-		//
-		// Check for network connection
-		//
-
-		//
-		// note:
-		// sometimes its usefull to be able to use/test the application with the
-		// IOIO board
-		// the connectToIOIO is a quick and dirty one...
-		//
 		// - based upon http://goo.gl/y5m4u - also take a look at the *real* api
-		//
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		connectToIOIO = prefs.getBoolean(
 				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), true);
 
 		if (connectToIOIO) {
 			// Check for IOIO connection
-			IOIOConnectionTest ioiotest = new IOIOConnectionTest();
+			ioiotest = new IOIOConnectionTest();
 			ioiotest.execute(new Void[] {});
 		} else {
 			updateTest(IOIOConnectionTest.class, true);
 		}
-		ConnectivityTest connTest = new ConnectivityTest();
+		connTest = new ConnectivityTest();
 		connTest.execute(new Void[] {});
+		
 	}
 
 	public synchronized Map<String, ?> getPrefs() {
@@ -231,10 +223,16 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Tell the user we stopped.
 		Toast.makeText(this, R.string.noxdroid_service_stopped,
 				Toast.LENGTH_SHORT).show();
+		
+		if (ioiotest != null) ioiotest.cancel(true);
+		if (connTest != null) connTest.cancel(true);
+		
+		unbindService(connSkyhookService);
+		unbindService(connGPSService);
 
 		// stop additional services
 		stopService(new Intent(this, GPSLocationService.class));
-		stopService(new Intent(this, SkyHookLocationService.class));
+		stopService(new Intent(this, SkyHookLocationService.class));		
 	}
 
 	@Override

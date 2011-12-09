@@ -191,8 +191,6 @@ public class NoxDroidMainActivity extends Activity {
 					msg.replyTo = messenger;
 					msg_service.send(msg);
 				} catch (RemoteException e) {
-					// There is nothing special we need to do if the service
-					// has crashed.
 				}
 			}
 
