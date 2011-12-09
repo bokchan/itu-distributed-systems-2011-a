@@ -62,10 +62,11 @@ public class NoxDroidMainActivity extends Activity {
 	private Vibrator vibrator;
 
 	private static final int SHOW_EXIT_DIALOG = 1;
-	private static final int SHOW_LOCATION_UNAVAILABLE = 2;
+	private static final int SHOW_LOCATION = 2;
 	private static final int SHOW_ABOUT = 3;
-	private static final int SHOW_IOIO_HELP = 4;
+	private static final int SHOW_IOIO = 4;
 	private static final int SHOW_HELP = 5;
+	private static final int SHOW_CONNECTIVITY = 6;
 	private Builder builder;
 	private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -115,7 +116,6 @@ public class NoxDroidMainActivity extends Activity {
 		imgBtnIOIO.setEnabled(true);
 		imgIOIO = (ImageView) findViewById(R.id.imgIOIO);
 		imgBtnConn = (ImageButton) findViewById(R.id.imgBtnConn);
-		imgBtnConn.setEnabled(false);
 		imgConn = (ImageView) findViewById(R.id.imgConn);
 		layoutConn = (RelativeLayout) findViewById(R.id.relLayoutConnection);
 		layoutGPS = (RelativeLayout) findViewById(R.id.relLayoutGPS);
@@ -244,11 +244,11 @@ public class NoxDroidMainActivity extends Activity {
 	}
 
 	public void imgBtnGPS_onClick(View view) {
-		showDialog(SHOW_LOCATION_UNAVAILABLE);
+		showDialog(SHOW_LOCATION);
 	}
 	
 	public void imgBtnIOIO_onClick(View view) {
-		showDialog(SHOW_IOIO_HELP);
+		showDialog(SHOW_IOIO);
 	}
 
 	public void changeConnectivity(View view) {
@@ -260,6 +260,10 @@ public class NoxDroidMainActivity extends Activity {
 		vibrator.vibrate(30);
 		Log.d(TAG, "Help clicked");
 		showDialog(SHOW_HELP);
+	}
+	
+	public void imgBtnConn_onClick(View view) {
+		showDialog(SHOW_CONNECTIVITY);
 	}
 
 	private boolean isServiceRunning(Class<?> service) {
@@ -347,7 +351,7 @@ public class NoxDroidMainActivity extends Activity {
 		
 		case NoxDroidService.ERROR_NO_LOCATION:
 			if (!imgBtnGPS.getTag().equals(NoxDroidService.STATUS_LOCATION_OK)) {
-				showDialog(SHOW_LOCATION_UNAVAILABLE);
+				showDialog(SHOW_LOCATION);
 			}
 			imgBtnGPS.setImageResource(R.drawable.circle_red);
 			imgGPS.setVisibility(View.VISIBLE);
@@ -423,10 +427,10 @@ public class NoxDroidMainActivity extends Activity {
 									.show();
 						}
 					});
-			AlertDialog dialogExit = builder.create();
-			dialogExit.show();
+			builder.create().show();
+			
 			break;
-		case SHOW_LOCATION_UNAVAILABLE:
+		case SHOW_LOCATION:
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(dk.itu.noxdroid.R.string.DIALOG_MSG_LOCATION));
 			builder.setTitle("Location service");
@@ -439,7 +443,7 @@ public class NoxDroidMainActivity extends Activity {
 					startActivity(gpsOptionsIntent);
 				}
 			});
-			builder.setNeutralButton("Data", new DialogInterface.OnClickListener(){
+			builder.setNeutralButton("Mobile Data", new DialogInterface.OnClickListener(){
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					final  Intent intent=new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
@@ -457,8 +461,7 @@ public class NoxDroidMainActivity extends Activity {
 					dialog.dismiss();
 				}
 			});
-			AlertDialog dialogLocation = builder.create();
-			dialogLocation.show();
+			builder.create().show();
 			break;
 			
 		case SHOW_ABOUT : 
@@ -474,7 +477,7 @@ public class NoxDroidMainActivity extends Activity {
 			});
 			builder.create().show();
 			break;
-		case SHOW_IOIO_HELP : 
+		case SHOW_IOIO : 
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(R.string.DIALOG_MSG_IOIO_HELP));
 			builder.setTitle("IOIO");
@@ -496,6 +499,31 @@ public class NoxDroidMainActivity extends Activity {
 					dialog.dismiss();
 				}
 			});
+			builder.create().show();
+			break;
+		case SHOW_CONNECTIVITY :
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(R.string.DIALOG_MSG_HELP));
+			builder.setTitle("Connectivity");
+			builder.setPositiveButton("Mobile Data", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					final  Intent intent=new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
+					intent.addCategory(Intent.CATEGORY_LAUNCHER);
+					final ComponentName cn = new ComponentName("com.android.phone","com.android.phone.Settings");
+					intent.setComponent(cn);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(intent);
+				}
+			});
+			
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			
 			builder.create().show();
 			break;
 		}
