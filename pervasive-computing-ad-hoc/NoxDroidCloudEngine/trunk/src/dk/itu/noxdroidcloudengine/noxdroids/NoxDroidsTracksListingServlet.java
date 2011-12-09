@@ -84,6 +84,9 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
             		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>View locations</a>"
             		+ "</li>");
         }
+        
+        if(results.size() < 1)
+        	resp.getWriter().println("<li>no results</li>");
         resp.getWriter().println("</ul>");
 
         String cursor = results.getCursor().toWebSafeString();
@@ -94,6 +97,9 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
 	            "<a href='/noxdroids_tracks_listing?ancestor_key_name=" 
 	        		+ ancestorKeyName
 	        		+ "&cursor=" + cursor + "'>Next page</a>");
+        
+        
+        	
         
     }
 }
