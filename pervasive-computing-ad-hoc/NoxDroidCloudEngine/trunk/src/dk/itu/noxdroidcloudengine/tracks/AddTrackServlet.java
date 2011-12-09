@@ -253,9 +253,7 @@ public class AddTrackServlet extends HttpServlet {
 					// entity.setProperty("id", i + 1);
 					entity.setProperty("temperature", temperature);
 					entity.setProperty("nox", nox);
-//					entity.setProperty("time_stamp", time_stamp);
-					// date tray out 
-					entity.setProperty("time_stamp", new Date());
+					entity.setProperty("time_stamp", time_stamp);
 
 					noxList.add(entity);
 
