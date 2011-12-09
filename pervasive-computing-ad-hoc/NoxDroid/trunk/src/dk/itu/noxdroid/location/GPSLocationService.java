@@ -122,18 +122,20 @@ public class GPSLocationService extends Service {
 		// 30000L / minTime = the minimum time interval for notifications, in
 		// milliseconds.
 		// 10.0f / minDistance - the minimum distance interval for notifications
-		//lm.addGpsStatusListener(gpsStatusListener);
+		// lm.addGpsStatusListener(gpsStatusListener);
 
 		// ask the Location Manager to send us location updates
-		 locListenD = new DispLocListener();
+		locListenD = new DispLocListener();
 		// bind to location manager - TODO: fine tune the variables
 		// 30000L / minTime = the minimum time interval for notifications, in
 		// milliseconds.
 		// 10.0f / minDistance - the minimum distance interval for notifications
-		 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
-		 locListenD);
-		 lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListenD);
-		 lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, locListenD);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+				locListenD);
+		lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
+				locListenD);
+		lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0,
+				locListenD);
 	}
 
 	@Override
@@ -183,14 +185,15 @@ public class GPSLocationService extends Service {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
 
-			Log.i(TAG, "GPS LOC. lat: " + latitude + " lon: " + longitude + " provider: " + location.getProvider());
+			Log.i(TAG, "GPS LOC. lat: " + latitude + " lon: " + longitude
+					+ " provider: " + location.getProvider());
 
 			/**
 			 * Add to database
 			 */
 			if (record)
-			mDbHelper.createLocationPoint(latitude, longitude,
-					location.getProvider());
+				mDbHelper.createLocationPoint(latitude, longitude,
+						location.getProvider());
 		}
 
 		@Override
@@ -215,7 +218,7 @@ public class GPSLocationService extends Service {
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			
+
 		}
 	}
 
@@ -223,7 +226,7 @@ public class GPSLocationService extends Service {
 		Log.i(TAG, "Start rec");
 		record = true;
 		// ask the Location Manager to send us location updates
-//		locListenD = new DispLocListener();
+		// locListenD = new DispLocListener();
 		// bind to location manager - TODO: fine tune the variables
 		// 30000L / minTime = the minimum time interval for notifications, in
 		// milliseconds.
