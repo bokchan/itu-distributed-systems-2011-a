@@ -1,12 +1,14 @@
 package dk.itu.noxdroid;
 
-import java.util.Hashtable;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -29,7 +33,6 @@ import dk.itu.noxdroid.service.NoxDroidService;
 import dk.itu.noxdroid.setup.PreferencesActivity;
 import dk.itu.noxdroid.tracks.TracksListActivity;
 import dk.itu.noxdroid.util.Line;
-
 
 public class NoxDroidMainActivity extends Activity {
 
@@ -51,13 +54,19 @@ public class NoxDroidMainActivity extends Activity {
 	private ImageButton imgBtnConn;
 	private ImageView imgConn;
 	private ImageButton imgBtnStop;
-	private ImageButton imgBtnRecord;
-	
+
 	private RelativeLayout.LayoutParams lp;
-	private Hashtable<Class<?>, Boolean> tests;
 	private boolean isBound;
 	private Messenger msg_service;
 	private NoxDroidApp app;
+	private Vibrator vibrator;
+
+	private static final int SHOW_EXIT_DIALOG = 1;
+	private static final int SHOW_LOCATION_UNAVAILABLE = 2;
+	private static final int SHOW_ABOUT = 3;
+	private static final int SHOW_IOIO_HELP = 4;
+	private static final int SHOW_HELP = 5;
+	private Builder builder;
 	private ServiceConnection mConnection = new ServiceConnection() {
 
 		@Override
@@ -78,7 +87,7 @@ public class NoxDroidMainActivity extends Activity {
 				msg_service.send(msg);
 				Log.i(TAG, "Registered messenger to NoxDroidService");
 			} catch (RemoteException e) {
-				
+
 			}
 		}
 	};
@@ -91,22 +100,19 @@ public class NoxDroidMainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main2);
-				
-		app = (NoxDroidApp)getApplication();
+
+		app = (NoxDroidApp) getApplication();
 
 		/********** INITIALIZES *************/
 		imgBtnStart = (ImageButton) findViewById(R.id.imgBtnStart);
 		imgBtnStart.setEnabled(false);
 		imgBtnStop = (ImageButton) findViewById(R.id.imgBtnStop);
 		imgBtnStop.setEnabled(false);
-		imgBtnRecord = (ImageButton) findViewById(R.id.imgBtnStartRecording);
-		imgBtnRecord.setEnabled(false);		
-
 		imgBtnGPS = (ImageButton) findViewById(R.id.imgBtnGPS);
-		imgBtnGPS.setEnabled(false);
+		imgBtnGPS.setTag(NoxDroidService.ERROR_NO_LOCATION);
 		imgGPS = (ImageView) findViewById(R.id.imgGPS);
 		imgBtnIOIO = (ImageButton) findViewById(R.id.imgBtnIOIO);
-		imgBtnIOIO.setEnabled(false);
+		imgBtnIOIO.setEnabled(true);
 		imgIOIO = (ImageView) findViewById(R.id.imgIOIO);
 		imgBtnConn = (ImageButton) findViewById(R.id.imgBtnConn);
 		imgBtnConn.setEnabled(false);
@@ -117,13 +123,13 @@ public class NoxDroidMainActivity extends Activity {
 		layoutWrapper = (RelativeLayout) findViewById(R.id.relLayoutWrapper);
 		wrapper = (RelativeLayout) findViewById(R.id.wrapper);
 		parentWrapper = (RelativeLayout) findViewById(R.id.parentWrapper);
-		
+
 		/* Please visit http://www.ryangmattison.com for updates */
 		((ImageView) findViewById(R.id.imgIOIO)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgGPS)).setAlpha(80);
 		((ImageView) findViewById(R.id.imgConn)).setAlpha(80);
-		
-		tests = new Hashtable<Class<?>, Boolean>();
+
+		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		lp = new RelativeLayout.LayoutParams(
 				RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -132,18 +138,22 @@ public class NoxDroidMainActivity extends Activity {
 
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
-		
-		DisplayMetrics metrics = new DisplayMetrics(); 
+
+		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		
+
 		// X, y of left is 60, (height - 360) + 180
-		float heightDP = (metrics.heightPixels - (60 * metrics.density)) / metrics.density ;
-		float[] points = {metrics.widthPixels / 2, heightDP, 60 * metrics.density, 360 * metrics.density / 2};
-		float[] points2 = {metrics.widthPixels / 2, heightDP, metrics.widthPixels - ( 60 * metrics.density), 360 * metrics.density / 2};
+		float heightDP = (metrics.heightPixels - (60 * metrics.density))
+				/ metrics.density;
+		float[] points = { metrics.widthPixels / 2, heightDP,
+				60 * metrics.density, 360 * metrics.density / 2 };
+		float[] points2 = { metrics.widthPixels / 2, heightDP,
+				metrics.widthPixels - (60 * metrics.density),
+				360 * metrics.density / 2 };
 		Line l = new Line(this, points);
 		Line l2 = new Line(this, points2);
-		layoutWrapper.addView(l,0);
-		layoutWrapper.addView(l2,0);
+		layoutWrapper.addView(l, 0);
+		layoutWrapper.addView(l2, 0);
 	}
 
 	@Override
@@ -159,10 +169,11 @@ public class NoxDroidMainActivity extends Activity {
 		if (!isServiceRunning(NoxDroidService.class)) {
 			// Start service
 			doBindService();
-		} else if (app.getCurrentTrack() != null){
+		} else if (app.getCurrentTrack() != null) {
 			updateGUI(NoxDroidService.STATUS_RECORDING);
 		} else {
-			Message msg = Message.obtain(null, NoxDroidService.GET_SENSOR_STATES);
+			Message msg = Message.obtain(null,
+					NoxDroidService.GET_SENSOR_STATES);
 			msg.replyTo = messenger;
 			try {
 				msg_service.send(msg);
@@ -174,7 +185,7 @@ public class NoxDroidMainActivity extends Activity {
 
 	void doBindService() {
 		Intent intent = new Intent(this, NoxDroidService.class);
-		intent.putExtra("Main Activity", messenger);		
+		intent.putExtra("Main Activity", messenger);
 		bindService(new Intent(this, NoxDroidService.class), mConnection,
 				Context.BIND_AUTO_CREATE);
 		isBound = true;
@@ -199,15 +210,13 @@ public class NoxDroidMainActivity extends Activity {
 			isBound = false;
 		}
 	}
-	
+
 	/*
-	 * Start track
-	 * - send message(s) to the underlying service(s) 
+	 * Start track - send message(s) to the underlying service(s)
 	 */
 	public void startTrack(View view) {
 		updateGUI(NoxDroidService.ACTION_START_TRACK);
-		Message msg = Message.obtain(null,
-				NoxDroidService.ACTION_START_TRACK);
+		Message msg = Message.obtain(null, NoxDroidService.ACTION_START_TRACK);
 		msg.replyTo = messenger;
 		try {
 			msg_service.send(msg);
@@ -215,18 +224,16 @@ public class NoxDroidMainActivity extends Activity {
 			Log.e(TAG, e.getMessage());
 		}
 		Log.i(TAG, "ACTION_START_TRACK sent to NoxDroidService");
-		
+
 	}
 
 	/*
-	 * Stop track
-	 * - send message(s) to the underlying service(s) 
+	 * Stop track - send message(s) to the underlying service(s)
 	 */
 	public void endTrack(View view) {
 		updateGUI(NoxDroidService.ACTION_STOP_TRACK);
 		Toast.makeText(this, "stopping service", Toast.LENGTH_SHORT);
-		Message msg = Message.obtain(null,
-				NoxDroidService.ACTION_STOP_TRACK);
+		Message msg = Message.obtain(null, NoxDroidService.ACTION_STOP_TRACK);
 		msg.replyTo = messenger;
 		try {
 			msg_service.send(msg);
@@ -234,45 +241,25 @@ public class NoxDroidMainActivity extends Activity {
 			Log.e(TAG, e.getMessage());
 		}
 		Log.i(TAG, "ACTION_STOP_TRACK sent to NoxDroidService");
-		
 	}
 
-	public void changeGPS(View view) {
-		Intent gpsOptionsIntent = new Intent(
-				android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		startActivity(gpsOptionsIntent);
+	public void imgBtnGPS_onClick(View view) {
+		showDialog(SHOW_LOCATION_UNAVAILABLE);
 	}
-
-	public void startIOIO(View view) {
-		Toast.makeText(this, "You click start IOIO", Toast.LENGTH_SHORT).show();
+	
+	public void imgBtnIOIO_onClick(View view) {
+		showDialog(SHOW_IOIO_HELP);
 	}
 
 	public void changeConnectivity(View view) {
 		Toast.makeText(this, "You clicked change connectivity",
 				Toast.LENGTH_SHORT).show();
 	}
-
-	private synchronized void update(Class<?> c, boolean flag) {
-		tests.put(c, flag);
-		if (tests.size() == 3) {
-			if (passedTests()) {
-				if (!isServiceRunning(NoxDroidService.class)) {
-					// Start service
-					doBindService();
-				} else {
-					updateGUI(NoxDroidService.STATUS_SERVICE_STARTED);
-				}
-			}
-			tests.clear();
-		}
-	}
-
-	private synchronized boolean passedTests() {
-		for (Boolean val : tests.values()) {
-			if (!val && true)
-				return false;
-		}
-		return true;
+	
+	public void btnHelp_onClick(View view) {
+		vibrator.vibrate(30);
+		Log.d(TAG, "Help clicked");
+		showDialog(SHOW_HELP);
 	}
 
 	private boolean isServiceRunning(Class<?> service) {
@@ -294,7 +281,8 @@ public class NoxDroidMainActivity extends Activity {
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			Log.d(TAG, "Handling incoming message from " + msg.describeContents()) ;
+			Log.d(TAG,
+					"Handling incoming message from " + msg.describeContents());
 			updateGUI(msg.what);
 		}
 	}
@@ -304,41 +292,42 @@ public class NoxDroidMainActivity extends Activity {
 	private void updateGUI(int status) {
 		switch (status) {
 		case NoxDroidService.STATUS_IOIO_CONNECTED:
-			imgBtnIOIO.setEnabled(true);
 			imgBtnIOIO.setImageResource(R.drawable.circle_green);
 			Toast.makeText(getBaseContext(), "IOIO Connected",
 					Toast.LENGTH_LONG);
 			Log.i(TAG, "IOIO Connected");
 			break;
-		case NoxDroidService.ERROR_IOIO_ABORTED : 
+		case NoxDroidService.ERROR_IOIO_ABORTED:
 		case NoxDroidService.ERROR_IOIO_CONNECTION_LOST:
-			imgBtnIOIO.setEnabled(false);
 			imgBtnIOIO.setImageResource(R.drawable.circle_red);
 			Toast.makeText(getBaseContext(), "IOIO Lost connection",
 					Toast.LENGTH_LONG);
 			Log.e(TAG, "IOIO Not Connected");
 			break;
-		case NoxDroidService.ACTION_START_TRACK :
+		case NoxDroidService.ACTION_START_TRACK:
+			vibrator.vibrate(30);
 			imgBtnStart.setVisibility(View.GONE);
 			imgBtnStop.setVisibility(View.VISIBLE);
 			imgBtnStop.setEnabled(true);
 			break;
-		case NoxDroidService.ACTION_STOP_TRACK :
+		case NoxDroidService.ACTION_STOP_TRACK:
+			vibrator.vibrate(30);
 			imgBtnStop.setEnabled(false);
 			imgBtnStart.setVisibility(View.VISIBLE);
 			imgBtnStop.setVisibility(View.GONE);
 			imgBtnStart.setEnabled(true);
 			Log.e(TAG, "Stop track");
-			
+
 			break;
-		case NoxDroidService.STATUS_SERVICE_READY :
+		case NoxDroidService.STATUS_SERVICE_READY:
 			imgBtnConn.setImageResource(R.drawable.circle_green);
 			imgBtnIOIO.setImageResource(R.drawable.circle_green);
 			imgBtnGPS.setImageResource(R.drawable.circle_green);
+			imgBtnGPS.setTag(NoxDroidService.STATUS_LOCATION_OK);
 			imgBtnStart.setImageResource(R.drawable.play);
 			imgBtnStart.setEnabled(true);
 			break;
-		case NoxDroidService.STATUS_RECORDING :
+		case NoxDroidService.STATUS_RECORDING:
 			imgBtnStart.setVisibility(View.GONE);
 			imgBtnStop.setVisibility(View.VISIBLE);
 			break;
@@ -353,28 +342,32 @@ public class NoxDroidMainActivity extends Activity {
 		case NoxDroidService.STATUS_LOCATION_OK:
 			imgBtnGPS.setImageResource(R.drawable.circle_green);
 			imgGPS.setVisibility(View.VISIBLE);
+			imgBtnGPS.setTag(NoxDroidService.STATUS_LOCATION_OK);
 			break;
-		case NoxDroidService.ERROR_NO_LOCATION : 
+		
+		case NoxDroidService.ERROR_NO_LOCATION:
+			if (!imgBtnGPS.getTag().equals(NoxDroidService.STATUS_LOCATION_OK)) {
+				showDialog(SHOW_LOCATION_UNAVAILABLE);
+			}
 			imgBtnGPS.setImageResource(R.drawable.circle_red);
 			imgGPS.setVisibility(View.VISIBLE);
+			imgBtnGPS.setTag(NoxDroidService.ERROR_NO_LOCATION);
 		default:
 			break;
 		}
 	}
-	
+
 	/*
 	 * Menu
-	 * 
-	 * 
-	 * */
-	
+	 */
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.mainmenu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -383,17 +376,129 @@ public class NoxDroidMainActivity extends Activity {
 					PreferencesActivity.class));
 			Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
 			break;
-			
 		case R.id.post_to_cloud:
 			startActivity(new Intent(NoxDroidMainActivity.this,
 					TracksListActivity.class));
 			break;
-			
-		case R.id.exitapp :
-			stopService(new Intent(this,NoxDroidService.class));
-			finish();
+		case R.id.exitapp:
+			openDialog(SHOW_EXIT_DIALOG);
 			break;
-		}		
+		case R.id.about : 
+			openDialog(SHOW_ABOUT);
+			break;
+		}
+		
 		return true;
-	}	
+	}
+
+	/***
+	 * 
+	 */
+
+	public void openDialog(int id) {
+		showDialog(id);
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case SHOW_EXIT_DIALOG:
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(R.string.DIALOG_MSG_EXIT));
+			builder.setCancelable(true);
+			builder.setTitle("NOxDroid");
+			builder.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							stopService(new Intent(NoxDroidMainActivity.this,
+									NoxDroidService.class));
+							NoxDroidMainActivity.this.finish();
+						}
+					});
+			builder.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							Toast.makeText(getApplicationContext(),
+									"NOxDroid will continue", Toast.LENGTH_LONG)
+									.show();
+						}
+					});
+			AlertDialog dialogExit = builder.create();
+			dialogExit.show();
+			break;
+		case SHOW_LOCATION_UNAVAILABLE:
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(dk.itu.noxdroid.R.string.DIALOG_MSG_LOCATION));
+			builder.setTitle("Location service unavailable");
+			builder.setCancelable(true);
+			builder.setPositiveButton("GPS", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent gpsOptionsIntent = new Intent(
+							android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivity(gpsOptionsIntent);
+				}
+			});
+			builder.setNeutralButton("Data", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					final  Intent intent=new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
+					intent.addCategory(Intent.CATEGORY_LAUNCHER);
+					final ComponentName cn = new ComponentName("com.android.phone","com.android.phone.Settings");
+					intent.setComponent(cn);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(intent);
+				}
+			});
+			
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			AlertDialog dialogLocation = builder.create();
+			dialogLocation.show();
+			break;
+			
+		case SHOW_ABOUT : 
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(R.string.DIALOG_MSG_NOXDROID_ABOUT));
+			builder.setTitle("About NOxDroid");
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+				
+			});
+			builder.create().show();
+			break;
+		case SHOW_IOIO_HELP : 
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(R.string.DIALOG_MSG_IOIO_HELP));
+			builder.setTitle("IOIO Help");
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			builder.create().show();
+			break;
+		case SHOW_HELP : 
+			builder = new AlertDialog.Builder(this);
+			builder.setMessage(getString(R.string.DIALOG_MSG_HELP));
+			builder.setTitle("Help");
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			builder.create().show();
+			break;
+		}
+		return super.onCreateDialog(id);
+	}
 }

@@ -10,9 +10,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -40,10 +42,9 @@ import dk.itu.noxdroid.location.SkyHookLocationService;
 
 public class NoxDroidService extends Service implements IOIOEventListener {
 
-	
 	public final static int MSG_REGISTER_CLIENT = 1;
 	public final static int MSG_UNREGISTER_CLIENT = 2;
-	
+
 	public final static int STATUS_IOIO_GREEN = 3;
 	public final static int STATUS_IOIO_YELLOW = 4;
 	public final static int STATUS_IOIO_RED = 5;
@@ -75,8 +76,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	public static final int ERROR_NO_LOCATION = 24;
 	public static final int STATUS_LOCATION_OK = 25;
-	
+
 	public static final int GET_SENSOR_STATES = 26;
+	public static final int ACTION_SKYHOOK_DOTEST = 27;
 
 	private boolean isTrackOpen = false;
 
@@ -94,7 +96,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private NoxDroidDbAdapter dbAdapter;
 	private Hashtable<Class<?>, Boolean> tests = new Hashtable<Class<?>, Boolean>();
 	boolean connectToIOIO;
-	
+
 	private ConnectivityTest connTest;
 	private IOIOConnectionTest ioiotest;
 
@@ -170,11 +172,11 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		showNotification();
 
 		msgQueue = new ArrayList<Integer>();
-		
-		
 
 		// Get dbAdapter;
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
+		
+		registerReceiver(networkStateReceiver, filter);
 
 		try {
 			APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this)
@@ -202,7 +204,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		}
 		connTest = new ConnectivityTest();
 		connTest.execute(new Void[] {});
-		
+
 	}
 
 	public synchronized Map<String, ?> getPrefs() {
@@ -223,16 +225,18 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Tell the user we stopped.
 		Toast.makeText(this, R.string.noxdroid_service_stopped,
 				Toast.LENGTH_SHORT).show();
-		
-		if (ioiotest != null) ioiotest.cancel(true);
-		if (connTest != null) connTest.cancel(true);
-		
+
+		if (ioiotest != null)
+			ioiotest.cancel(true);
+		if (connTest != null)
+			connTest.cancel(true);
+
 		unbindService(connSkyhookService);
 		unbindService(connGPSService);
 
 		// stop additional services
 		stopService(new Intent(this, GPSLocationService.class));
-		stopService(new Intent(this, SkyHookLocationService.class));		
+		stopService(new Intent(this, SkyHookLocationService.class));
 	}
 
 	@Override
@@ -294,12 +298,13 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		if (c.equals(GPSLocationService.class)
 				|| c.equals(SkyHookLocationService.class)) {
 			if ((tests.containsKey(GPSLocationService.class) && tests
-					.get(GPSLocationService.class))
-					|| (tests.containsKey(SkyHookLocationService.class) && tests
-							.get(SkyHookLocationService.class))) {
-				notifyClients(STATUS_LOCATION_OK);
-			} else {
-				notifyClients(ERROR_NO_LOCATION);
+					.containsKey(SkyHookLocationService.class))) {
+				if ((tests.get(GPSLocationService.class) || tests
+						.get(SkyHookLocationService.class))) {
+					notifyClients(STATUS_LOCATION_OK);
+				} else {
+					notifyClients(ERROR_NO_LOCATION);
+				}
 			}
 		} else {
 			notifyClients(getTestStatus(c, status));
@@ -370,6 +375,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				// STATUS_CONNECTIVITY_SUCCESS...?
 				updateTest(SkyHookLocationService.class, true);
 				break;
+			case ERROR_NO_SKYHOOK:
+				updateTest(SkyHookLocationService.class, false);
+				break;
 			case ACTION_START_TRACK:
 				startTrack();
 				break;
@@ -384,8 +392,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				Log.i(TAG, "STATUS_GPS_ENABLED");
 				updateTest(GPSLocationService.class, true);
 				break;
-			case GET_SENSOR_STATES : 
-				for (Entry<Class<?>, Boolean> e: tests.entrySet()) {
+			case GET_SENSOR_STATES:
+				for (Entry<Class<?>, Boolean> e : tests.entrySet()) {
 					updateTest(e.getKey(), e.getValue());
 				}
 			default:
@@ -428,7 +436,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		switch (msg) {
 		case (ERROR_IOIO_CONNECTION_LOST):
 		case ERROR_IOIO_ABORTED:
-		case ERROR_IOIO_INTERRUPTED : 
+		case ERROR_IOIO_INTERRUPTED:
 			updateTest(IOIOConnectionTest.class, false);
 		case STATUS_IOIO_CONNECTED:
 			updateTest(IOIOConnectionTest.class, true);
@@ -469,6 +477,52 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 			locServiceIsBound = false;
 		}
 	}
+
+	BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+				boolean isDisConnected = intent.getBooleanExtra(
+						android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY,
+						false);
+				if (isDisConnected) {
+					updateTest(ConnectivityTest.class, false);
+					Message msg = Message.obtain(null, ACTION_SKYHOOK_DOTEST);
+					msg.replyTo = messenger;
+					try {
+						messengerSkyhook.send(msg);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				} 
+				updateTest(ConnectivityTest.class, true);
+
+				NetworkInfo mNetworkInfo = (NetworkInfo) intent
+						.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+				NetworkInfo mOtherNetworkInfo = (NetworkInfo) intent
+						.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+
+				String mReason = intent
+						.getStringExtra(ConnectivityManager.EXTRA_REASON);
+				boolean mIsFailover = intent.getBooleanExtra(
+						ConnectivityManager.EXTRA_IS_FAILOVER, false);
+
+				Log.d(TAG, "onReceive(): mNetworkInfo="
+						+ mNetworkInfo
+						+ " mOtherNetworkInfo = "
+						+ (mOtherNetworkInfo == null ? "[none]"
+								: mOtherNetworkInfo + " noConn="
+										+ isDisConnected) + " reason=" + mReason + " isFailOver=" + mIsFailover);
+			}
+
+			Log.w("Network Listener", "Network Type Changed");
+		}
+	};
+
+	IntentFilter filter = new IntentFilter(
+			ConnectivityManager.CONNECTIVITY_ACTION);
 
 	/**
 	 * Tracks
@@ -569,7 +623,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		isTrackOpen = false;
 		((NoxDroidApp) getApplication()).setCurrentTrack(null);
 		Log.i(TAG, "Stopped track: ");
-		
+
 		if (connectToIOIO) {
 			// Check for IOIO connection
 			IOIOConnectionTest ioiotest = new IOIOConnectionTest();

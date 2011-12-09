@@ -63,11 +63,14 @@ public class GPSLocationService extends Service {
 	private LocationListener locListenD;
 	private Double latitude;
 	private Double longitude;
-	private NoxDroidDbAdapter mDbHelper;	
+	private NoxDroidDbAdapter mDbHelper;
 	private int updateinterval;
 
 	private ArrayList<Messenger> clients = new ArrayList<Messenger>();
+	private ArrayList<Integer> msgQueue;
 	public final Messenger _handler = new Messenger(new IncomingHandler());
+
+	private boolean record = false;
 
 	/**
 	 * Class for clients to access. Because we know this service always runs in
@@ -83,10 +86,10 @@ public class GPSLocationService extends Service {
 
 	@Override
 	public void onCreate() {
-
+		super.onCreate();
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
-
+		msgQueue = new ArrayList<Integer>();
 		//
 		// Get handle for LocationManager
 		//
@@ -102,16 +105,35 @@ public class GPSLocationService extends Service {
 				.getDefaultSharedPreferences(this).getAll()
 				.get("GPS_UPDATE_INTERVAL"));
 
-		Log.d(TAG, "GPS updateinterval: " +  updateinterval);
-		
+		Log.d(TAG, "GPS updateinterval: " + updateinterval);
+
+		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if (loc != null) {
+			notifyClients(NoxDroidService.STATUS_GPS_OK);
+
+		} else {
+			notifyClients(NoxDroidService.ERROR_NO_GPS);
+
+		}
+
 		// ask the Location Manager to send us location updates
-		// locListenD = new DispLocListener();
+
 		// bind to location manager - TODO: fine tune the variables
 		// 30000L / minTime = the minimum time interval for notifications, in
 		// milliseconds.
 		// 10.0f / minDistance - the minimum distance interval for notifications
-		// lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
-		// locListenD);
+		//lm.addGpsStatusListener(gpsStatusListener);
+
+		// ask the Location Manager to send us location updates
+		 locListenD = new DispLocListener();
+		// bind to location manager - TODO: fine tune the variables
+		// 30000L / minTime = the minimum time interval for notifications, in
+		// milliseconds.
+		// 10.0f / minDistance - the minimum distance interval for notifications
+		 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+		 locListenD);
+		 lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListenD);
+		 lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, locListenD);
 	}
 
 	@Override
@@ -124,16 +146,14 @@ public class GPSLocationService extends Service {
 
 	@Override
 	public void onDestroy() {
-
 		try {
-		Log.d(TAG, "onDestroy called");
+			Log.d(TAG, "onDestroy called");
 
-		// Location: close down / unsubscribe the location updates
-		lm.removeUpdates(locListenD);
-		} catch (Exception e){
+			// Location: close down / unsubscribe the location updates
+			lm.removeUpdates(locListenD);
+		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-		
 
 		// the NoxDroid database don't need to be closed - are handled globally
 		// // close database
@@ -163,44 +183,53 @@ public class GPSLocationService extends Service {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
 
-			Log.i(TAG, "GPS LOC. lat: " + latitude + " lon: " + longitude);
+			Log.i(TAG, "GPS LOC. lat: " + latitude + " lon: " + longitude + " provider: " + location.getProvider());
 
 			/**
 			 * Add to database
 			 */
-			mDbHelper
-					.createLocationPoint(latitude, longitude, location.getProvider());
+			if (record)
+			mDbHelper.createLocationPoint(latitude, longitude,
+					location.getProvider());
 		}
 
 		@Override
 		public void onProviderDisabled(String arg0) {
+			Log.d(TAG, "GPS_EVENT_STOPPED");
 			notifyClients(NoxDroidService.ERROR_NO_GPS);
 		}
 
 		@Override
 		public void onProviderEnabled(String provider) {
-			notifyClients(NoxDroidService.STATUS_GPS_OK);
+			Log.d(TAG, "GPS_EVENT_STARTED");
+			Location loc = lm
+					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			if (loc != null) {
+				notifyClients(NoxDroidService.STATUS_GPS_OK);
+
+			} else {
+				notifyClients(NoxDroidService.ERROR_NO_GPS);
+
+			}
 		}
 
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			
 		}
-
 	}
 
 	private void startRecording() {
 		Log.i(TAG, "Start rec");
-
+		record = true;
 		// ask the Location Manager to send us location updates
-		locListenD = new DispLocListener();
+//		locListenD = new DispLocListener();
 		// bind to location manager - TODO: fine tune the variables
 		// 30000L / minTime = the minimum time interval for notifications, in
 		// milliseconds.
 		// 10.0f / minDistance - the minimum distance interval for notifications
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
 				locListenD);
-
 	}
 
 	private void stopRecording() {
@@ -217,16 +246,18 @@ public class GPSLocationService extends Service {
 				Log.i(TAG, "Added client: " + msg.replyTo
 						+ this.getClass().getSimpleName());
 				clients.add(msg.replyTo);
-				Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				Location loc = lm
+						.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 				if (loc != null) {
 					notifyClients(NoxDroidService.STATUS_GPS_OK);
 				} else {
 					notifyClients(NoxDroidService.ERROR_NO_GPS);
 				}
-				
+
 				Log.d(TAG,
 						"lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) is "
 								+ loc);
+
 				break;
 			case NoxDroidService.ACTION_START_TRACK:
 				startRecording();
@@ -241,17 +272,28 @@ public class GPSLocationService extends Service {
 	}
 
 	private void notifyClients(int msg) {
-		Log.i(TAG, "Notifying clients # " + clients.size());
-		for (int i = 0; i < clients.size(); i++) {
-			try {
-				Log.i(TAG, "Sent message to : " + clients.get(i));
-				clients.get(i).send(Message.obtain(null, msg));
-			} catch (RemoteException e) {
-				// If we get here, the client is dead, and we should remove it
-				// from the list
-				Log.e(TAG, "Removing client: " + clients.get(i));
-				clients.remove(i);
+		if (clients.size() > 0) {
+			Log.i(TAG, "Notifying clients # " + clients.size());
+			for (int i = 0; i < clients.size(); i++) {
+				try {
+					Log.i(TAG, "Sent message to : " + clients.get(i));
+					clients.get(i).send(Message.obtain(null, msg));
+
+					for (Integer m : msgQueue) {
+						clients.get(i).send(Message.obtain(null, m));
+					}
+
+					msgQueue.clear();
+				} catch (RemoteException e) {
+					// If we get here, the client is dead, and we should remove
+					// it
+					// from the list
+					Log.e(TAG, "Removing client: " + clients.get(i));
+					clients.remove(i);
+				}
 			}
+		} else {
+			msgQueue.add(msg);
 		}
 	}
 }

@@ -48,14 +48,13 @@ public class SkyHookLocationService extends Service {
 
 	// our Handler understands three messages:
 	// a location, an error, or a finished request
-	private static final int ERROR_MESSAGE = 2;
-	private static final int DONE_MESSAGE = 3;
 	private boolean doCheck = true;
-	private boolean record = false;
 
 	public final Messenger _handler = new Messenger(new IncomingHandler());
 
 	private int retries = 0;
+	private ArrayList<Integer> msgQueue;
+	
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -71,20 +70,24 @@ public class SkyHookLocationService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
 		_xps = new XPS(this);
+		
+		msgQueue = new ArrayList<Integer>();
 
 		mDbHelper = ((NoxDroidApp) getApplication()).getDbAdapter();
 		doCheck = true;
 
-		_xps.getLocation(auth,
-				WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP, _callback);
+//		_xps.getLocation(auth,
+//				WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP, _callback);
+		
+		_xps.getPeriodicLocation(auth,
+				WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP,updateinterval, 0, _callback);
 
 		// before this is set it has a value of: 10000 view
 		// http://screencast.com/t/nSXoYDm54aw4
-		Log.d(TAG, PreferenceManager
-				.getDefaultSharedPreferences(this).getAll().toString());
 		updateinterval = Integer.valueOf((String) PreferenceManager
 				.getDefaultSharedPreferences(this).getAll()
 				.get("SKYHOOK_UPDATE_INTERVAL"));
@@ -114,6 +117,11 @@ public class SkyHookLocationService extends Service {
 			case NoxDroidService.ACTION_STOP_TRACK:
 				stopRecording();
 				break;
+			case NoxDroidService.ACTION_SKYHOOK_DOTEST :
+				retries = 0;
+				doCheck = true;
+				_xps.getPeriodicLocation(auth,
+						WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP,updateinterval, 0, _callback);
 			default:
 				break;
 			}
@@ -128,10 +136,15 @@ public class SkyHookLocationService extends Service {
 
 	private void notifyClients(int msg) {
 		Log.i(TAG, "Notifying clients # " + clients.size());
+		if (clients.size()>0) {
 		for (int i = 0; i < clients.size(); i++) {
 			try {
 				Log.i(TAG, "Sent message to : " + clients.get(i));
 				clients.get(i).send(Message.obtain(null, msg));
+				for (Integer m : msgQueue) {
+					clients.get(i).send(Message.obtain(null, m));
+				}
+				msgQueue.clear();
 			} catch (RemoteException e) {
 				// If we get here, the client is dead, and we should remove it
 				// from the list
@@ -139,31 +152,32 @@ public class SkyHookLocationService extends Service {
 				clients.remove(i);
 			}
 		}
+		} else {
+			msgQueue.add(msg);
+		}
 	}
 
 	private class SkyhookLocationCallBack implements
 			WPSPeriodicLocationCallback, WPSLocationCallback  {
 		@Override
 		public WPSContinuation handleError(WPSReturnCode error) {
-			Message m = Message.obtain(null, ERROR_MESSAGE);
 			Log.e(TAG, error.toString());
-
-			
 			if (doCheck) {
-				Log.d(TAG, "Skyhook handleError");
-				// Allow 3 retries
-				if (retries > 2) {
+				// Allow 1 retry
+				if (retries >=1 ) {
 					notifyClients(NoxDroidService.ERROR_NO_SKYHOOK);
 					retries = 0;
 					doCheck = false;
-				} else {
+					_xps.abort();
+					return WPSContinuation.WPS_STOP;
+				} 
+				else {
 					Log.d(TAG, "Skyhook retry");
-					_xps.getLocation(auth,
-							WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP, _callback);
 					retries++;
 				}
-			}
+			} 
 			return WPSContinuation.WPS_CONTINUE;
+			
 		}
 
 		@Override
@@ -186,7 +200,6 @@ public class SkyHookLocationService extends Service {
 				retries = 0;
 				return WPSContinuation.WPS_STOP;
 			} else {
-
 				mDbHelper.createLocationPoint(location.getLatitude(),
 					location.getLongitude(), "skyhook");
 				Log.i(TAG, "Saved Location to database");
@@ -225,7 +238,7 @@ public class SkyHookLocationService extends Service {
 	}
 
 	public void stopRecording() {
-		record = false;
 		_xps.abort();
 	}
+	
 }
