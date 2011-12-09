@@ -429,7 +429,7 @@ public class NoxDroidMainActivity extends Activity {
 		case SHOW_LOCATION_UNAVAILABLE:
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(dk.itu.noxdroid.R.string.DIALOG_MSG_LOCATION));
-			builder.setTitle("Location service unavailable");
+			builder.setTitle("Location service");
 			builder.setCancelable(true);
 			builder.setPositiveButton("GPS", new DialogInterface.OnClickListener() {
 				@Override
@@ -477,7 +477,7 @@ public class NoxDroidMainActivity extends Activity {
 		case SHOW_IOIO_HELP : 
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(R.string.DIALOG_MSG_IOIO_HELP));
-			builder.setTitle("IOIO Help");
+			builder.setTitle("IOIO");
 			builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -486,7 +486,7 @@ public class NoxDroidMainActivity extends Activity {
 			});
 			builder.create().show();
 			break;
-		case SHOW_HELP : 
+		case SHOW_HELP :
 			builder = new AlertDialog.Builder(this);
 			builder.setMessage(getString(R.string.DIALOG_MSG_HELP));
 			builder.setTitle("Help");
