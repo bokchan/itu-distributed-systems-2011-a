@@ -1,6 +1,5 @@
 <!-- Indices written at Fri, 9 Dec 2011 11:41:16 UTC -->
-
-<datastore-indexes>
+<datastore-indexes autoGenerate="true"> 
 
     <!-- Used 5 times in query history -->
     <datastore-index kind="Track" ancestor="true" source="auto">
