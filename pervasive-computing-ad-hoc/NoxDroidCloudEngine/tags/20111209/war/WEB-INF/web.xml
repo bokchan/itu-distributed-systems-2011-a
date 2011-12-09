@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	<servlet>
+		<servlet-name>NoxDroidCloudEngine</servlet-name>
+		<servlet-class>dk.itu.noxdroidcloudengine.NoxDroidCloudEngineServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>NoxDroidCloudEngine</servlet-name>
+		<url-pattern>/noxdroidcloudengine</url-pattern>
+	</servlet-mapping>
+	
+	
+	
+	<!-- add track recording -->  
+	<servlet>
+        <servlet-name>add_track</servlet-name>
+        <servlet-class>dk.itu.noxdroidcloudengine.tracks.AddTrackServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>add_track</servlet-name>
+        <url-pattern>/add_track</url-pattern>
+    </servlet-mapping>
+
+	<!-- 
+	** nox droid listings **
+	 -->
+	
+	<!-- noxdroids -->
+	<servlet>
+        <servlet-name>noxdroids_listing</servlet-name>
+        <servlet-class>dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsListingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>noxdroids_listing</servlet-name>
+        <url-pattern>/noxdroids_listing</url-pattern>
+    </servlet-mapping>
+
+	<!-- tracks -->
+	<servlet>
+        <servlet-name>noxdroids_tracks_listing</servlet-name>
+        <servlet-class>dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsTracksListingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>noxdroids_tracks_listing</servlet-name>
+        <url-pattern>/noxdroids_tracks_listing</url-pattern>
+    </servlet-mapping>
+
+	<!-- nox -->
+	<servlet>
+        <servlet-name>noxdroids_tracks_nox_listing</servlet-name>
+        <servlet-class>dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsTracksNoxListingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>noxdroids_tracks_nox_listing</servlet-name>
+        <url-pattern>/noxdroids_tracks_nox_listing</url-pattern>
+    </servlet-mapping>
+
+	<!-- nox -->
+	<servlet>
+        <servlet-name>noxdroids_tracks_location_listing</servlet-name>
+        <servlet-class>dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsTracksLocationsListingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>noxdroids_tracks_location_listing</servlet-name>
+        <url-pattern>/noxdroids_tracks_location_listing</url-pattern>
+    </servlet-mapping>
+
+
+
+
+
+
+
+
+
+
+
+  
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
