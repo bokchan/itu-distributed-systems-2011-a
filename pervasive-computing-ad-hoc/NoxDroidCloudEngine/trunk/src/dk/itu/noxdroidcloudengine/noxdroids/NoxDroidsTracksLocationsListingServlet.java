@@ -78,7 +78,9 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
             		+ " | "            		
             		+ entity.getProperty("latitude") 
             		+ " | "
-            		+ entity.getProperty("longitude") 
+            		+ entity.getProperty("longitude")
+            		+ " | "
+            		+ entity.getProperty("geo_point")            		            		
             		+ " | "
             		+ entity.getProperty("provider") 
             		+ " | "

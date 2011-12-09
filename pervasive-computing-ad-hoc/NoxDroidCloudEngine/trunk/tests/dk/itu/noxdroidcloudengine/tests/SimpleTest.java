@@ -1,8 +1,12 @@
 package dk.itu.noxdroidcloudengine.tests;
 
+import static org.junit.Assert.assertEquals;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.SimpleTimeZone;
+
 import org.junit.Test;
-// note: import static - currious about that one - 
-import static org.junit.Assert.*;
 
 /*
  * Based upon
@@ -15,7 +19,49 @@ public class SimpleTest {
     public void testAddition() {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void testDateTime() {
+
+    	// from book Developing the Application | 43
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSSSS"); 
+        fmt.setTimeZone(new SimpleTimeZone(0, "")); 
+        
+        
+        System.out.println(fmt.format(new Date()));
+        
+    	
+    	//        
+    	String timeStamp = "2011-12-04 09:12:04";
+    	
+//    	Date date = new Date(timeStamp);
+    	
+    	
+		// create cet time
+		Date time = new Date();
+		System.out.println(time);
+		
+		//create unix time
+		long unixTime = System.currentTimeMillis() / 1000L;
+		System.out.println(unixTime);
+		
+		
+		
+		
+
+    	
+//    	
+//    	assertEquals(4, 2 + 2);
+    }
+
 }
+
+
+
+
+
+
+
 
 
 //

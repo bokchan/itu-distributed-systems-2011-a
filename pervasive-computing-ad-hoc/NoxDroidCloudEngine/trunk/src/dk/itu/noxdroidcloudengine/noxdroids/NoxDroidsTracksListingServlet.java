@@ -73,9 +73,9 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
         	
         	
             resp.getWriter().println("<li>"
-            		+ entity.getProperty("time_start") 
+            		+ entity.getProperty("start_time") 
             		+ " | "
-            		+ entity.getProperty("time_end") 
+            		+ entity.getProperty("end_time") 
             		+ " | "
             		+ entity.getKey() 
             		+ "|"

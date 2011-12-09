@@ -2,6 +2,7 @@ package dk.itu.noxdroidcloudengine.tracks;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -13,8 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.repackaged.org.json.JSONArray;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
@@ -122,7 +122,10 @@ public class AddTrackServlet extends HttpServlet {
 		addNoxToDatastore(noxJSONArray, track, datastore);
 
 		if (isTestForm != null) {
-			resp.sendRedirect("/add_track_form.html");
+			resp.sendRedirect("/noxdroids_tracks_listing?ancestor_key_name=" + noxDroidId);
+			
+			
+			
 		} else {
 			// OK - we return 201 in a restful like approach
 			// - which is the normal for success on put/post
@@ -154,6 +157,7 @@ public class AddTrackServlet extends HttpServlet {
 		Entity entity = null;
 		double longitude = 0.0;
 		double latitude = 0.0;
+		GeoPt geoPoint;
 		String time_stamp;
 		String provider;
 
@@ -168,17 +172,19 @@ public class AddTrackServlet extends HttpServlet {
 					// note: also rec.keys()
 					longitude = location.getDouble("longitude");
 					latitude = location.getDouble("latitude");
+					
 					time_stamp = location.getString("time_stamp");
 					provider = location.getString("provider");
 
+					// 
+					// Prepare geo point
+					// - but also store  latitude / longitude
+					// - we play safe but might overblow datastore a bit
 					//
-					// TODO: look up issue on set geopt
-					//
-					// GeoPt geoPoint = new
-					// GeoPt(Float.parseFloat("2.0"),Float.parseFloat("1.0"));
-					// read more in
-					// NoxDroidLowLevelStorageTest.testNewEntitiesWithAncestorChildren()
-
+					// GEOPT(lat, long) GEOPT(37.4219, -122.0846)
+					// - takes only floats not double
+					geoPoint = new GeoPt((float) latitude, (float) longitude);
+					
 					// Entity(type/kind, id/key, parent )
 					entity = new Entity("Location", i + 1,
 							track.getKey());
@@ -189,7 +195,8 @@ public class AddTrackServlet extends HttpServlet {
 					entity.setProperty("longitude", longitude);
 					entity.setProperty("time_stamp", time_stamp);
 					entity.setProperty("provider", provider);
-
+					entity.setProperty("geo_point", geoPoint);
+					
 					locations.add(entity);
 
 					System.out.println("longitude: " + longitude
@@ -246,7 +253,10 @@ public class AddTrackServlet extends HttpServlet {
 					// entity.setProperty("id", i + 1);
 					entity.setProperty("temperature", temperature);
 					entity.setProperty("nox", nox);
-					entity.setProperty("time_stamp", time_stamp);
+//					entity.setProperty("time_stamp", time_stamp);
+					// date tray out 
+					entity.setProperty("time_stamp", new Date());
+
 					noxList.add(entity);
 
 					System.out.println("nox: " + nox + " temperature: "

@@ -144,11 +144,18 @@ public class NoxDroidLowLevelStorageTest {
 		location.setProperty("latitude", 60.99999);
 		datastore.put(location);
 		
+//		double latitude = -122.084075;
+//		double longitude = 37.4220033612141;
+
 		Entity location2 = new Entity("Location", track.getKey());
-		location2.setProperty("latitude", -122.084075);
-		location2.setProperty("longitude", 37.4220033612141);
+
 		
-		// TODO:
+		double latitude = -55.659919;
+		double longitude = 12.59119;
+		
+		location2.setProperty("latitude", latitude);
+		location2.setProperty("longitude", longitude);
+		
 		// note: 
 		// additional try out to set the location using the GeoPt type 
 		// http://code.google.com/appengine/docs/java/javadoc/com/google/appengine/api/datastore/GeoPt.html
@@ -158,33 +165,17 @@ public class NoxDroidLowLevelStorageTest {
 		// we tried:
 		// GeoPt geoPoint = new GeoPt(Float.parseFloat("-122.0822035425683"),Float.parseFloat("37.42228990140251"));
 		// but didn't play well so for now we simply do
-		GeoPt geoPoint = new GeoPt(Float.parseFloat("2.0"),Float.parseFloat("1.0"));
+		// GeoPt geoPoint = new GeoPt(Float.parseFloat("2.0"),Float.parseFloat("1.0"));
+		//
+		// solution
+		// 
+		// simply cast double to float - geo point only takes floats (less precise than double's)
+
+		GeoPt geoPoint = new GeoPt((float) latitude, (float) longitude);
+		
 		
 		location2.setProperty("geo", geoPoint);
-		datastore.put(location);		
-		
-		// there are other types of interest:
-//        Entity entity = new Entity("test");
-//        entity.setProperty("String", "AAA");
-//        entity.setProperty("Integer", 1);
-//        entity.setProperty("Short", Short.valueOf("1"));
-//        entity.setProperty("Long", Long.valueOf("1"));
-//        entity.setProperty("Boolean", Boolean.valueOf("true"));
-//        entity.setProperty("Float", Float.valueOf("1"));
-//        entity.setProperty("Double", Double.valueOf("1"));
-//        entity.setProperty("Date", new Date());
-//        entity.setProperty("User", new User("test@example", "google.com"));
-//        entity.setProperty("Key", Datastore.createKey("test", 1));
-//        entity.setProperty("Category", new Category("test"));
-//        entity.setProperty("Email", new Email("test@example"));
-//        entity.setProperty("GeoPt", new GeoPt(Float.parseFloat("1.0"), Float.parseFloat("1.0")));
-//        entity.setProperty("IMHandle", new IMHandle(Scheme.valueOf("sip"), "test"));
-//        entity.setProperty("Link", new Link("test"));
-//        entity.setProperty("PhoneNumber", new PhoneNumber("000"));
-//        entity.setProperty("PostalAddress", new PostalAddress("123"));
-//        entity.setProperty("Rating", new Rating(0));
-		
-		
+		datastore.put(location2);		
 
 		// add a nox(s)
 		Entity nox = new Entity("Nox", track.getKey());
@@ -197,6 +188,7 @@ public class NoxDroidLowLevelStorageTest {
 		
 
 		Query q = new Query("Sensor"); // SELECT * FROM sensor
+		
 		PreparedQuery pQuery = datastore.prepare(q);
 				
 		int pQueryCount = pQuery.countEntities(withLimit(10));
