@@ -24,13 +24,9 @@
     <string name="noxdroid_service_autostart">NoxDroidService automatic startup</string>
     <string name="LOCATIONMANAGER_START">LOCATIONMANAGER_START</string>
     <string name="GPS_SERVICE_ERROR">GPS_SERVICE_ERROR</string>
-
 	<string name="WEBSERVICE_URL">WEBSERVICE_URL</string>
 	<string name="USER_NAME">USER_NAME</string>
 	<string name="USER_ID">USER_ID</string>
-	
-	
-	
 	<string name="IOIO_ENABLED">0</string>
 	<string name="IOIO_NO2_PIN">IOIO_NO2_PIN</string>
 	<string name="IOIO_TEMP_PIN">IOIO_TEMP_PIN</string>
@@ -38,18 +34,18 @@
 	<string name="IOIO_LED_RED_PIN">IOIO_LED_RED_PIN</string>
 	<string name="IOIO_LED_YELLOW_PIN">IOIO_LED_YELLOW_PIN</string>
 	<string name="IOIO_UPDATE_INTERVAL">IOIO_UPDATE_INTERVAL</string>
-
 	<string name="LOGCAT_TAG">%1$s_%2$s</string>
 	<string name="MSG_REGISTER_CLIENT">MSG_REGISTER_CLIENT</string>
-
     <string name="location_service_started">Location service started</string>
     <string name="location_service_stopped">Location service stopped</string>	
     <string name="tracks_service_started">Tracks service started</string>
     <string name="tracks_service_stopped">Tracks service stopped</string>
     <string name="SKYHOOK_UPDATE_INTERVAL">SKYHOOK_UPDATE_INTERVAL</string>	
-
-	
 	<string name="no_tracks">No tracks recorded yet</string>
-	
-
+	<string name="DIALOG_MSG_NOXDROID_ABOUT">NOxDroid is a device and application for showing air pollution in Copenhagen. \n\nIt works by connecting your phone and a gas sensor attached to a IOIO board.\nThe collected sensor data is used to show a map of pollution levels. \n\nThe project has been made by Pelle Krøgholt, Stine Hartmann Bierre and Andreas Bok Andersen (2011)\n\nMore information available on\nwww.noxdroid.org </string>
+	<string name="DIALOG_MSG_IOIO_HELP">Please check that the IOIO turned on and is connected with the phone.\n\nIf the IOIO is turned on the battery level  might be too low and you should change the battery on the IOIO board.</string>
+	<string name="DIALOG_MSG_EXIT">This will end NOxDroid and stop any ongoing recordings</string>
+	<string name="DIALOG_MSG_LOCATION">Please turn on either GPS or mobile data.</string>
+	<string name="DIALOG_MSG_HELP">All three buttons must be green to be able to start the recording.\n\nPlease check the IOIO connection and make sure you have either GPS turned on or have activated mobile data</string>
+	<string name="DIALOG_MSG_CONNECTIVITY">Click the button to change status of your mobile data connection</string>
 </resources>
