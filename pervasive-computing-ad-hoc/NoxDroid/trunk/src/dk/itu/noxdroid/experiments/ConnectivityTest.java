@@ -44,7 +44,7 @@ public class ConnectivityTest extends AsyncTask<Object, Void, Boolean> {
 			
 //			Message.obtain(messenger,
 //					NoxDroidService.STATUS_CONNECTIVITY_SUCCESS).sendToTarget();
-			context.notify(NoxDroidService.STATUS_CONNECTIVITY_SUCCESS);
+			context.notify(NoxDroidService.STATUS_CONNECTIVITY_OK);
 
 		} else {
 //			Message.obtain(messenger,

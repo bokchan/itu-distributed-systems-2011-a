@@ -3,6 +3,7 @@ package dk.itu.noxdroid.service;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import android.app.Notification;
@@ -74,6 +75,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 	public static final int ERROR_NO_LOCATION = 24;
 	public static final int STATUS_LOCATION_OK = 25;
+	
+	public static final int GET_SENSOR_STATES = 26;
 
 	private boolean isTrackOpen = false;
 
@@ -90,6 +93,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private SharedPreferences prefs;
 	private NoxDroidDbAdapter dbAdapter;
 	private Hashtable<Class<?>, Boolean> tests = new Hashtable<Class<?>, Boolean>();
+	private NoxDroidApp app;
+	boolean connectToIOIO;
 
 	public class ServiceBinder extends Binder {
 		public NoxDroidService getService() {
@@ -163,6 +168,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		showNotification();
 
 		msgQueue = new ArrayList<Integer>();
+		
+		app = ((NoxDroidApp) getApplication());
 
 		// Get dbAdapter;
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
@@ -192,7 +199,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// - based upon http://goo.gl/y5m4u - also take a look at the *real* api
 		//
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean connectToIOIO = prefs.getBoolean(
+		connectToIOIO = prefs.getBoolean(
 				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), true);
 
 		if (connectToIOIO) {
@@ -283,9 +290,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 						+ String.valueOf(data));
 	}
 
-	private void updateTest(Class<?> c, boolean flag) {
-		Log.d(TAG, "updating test for: " + c.getSimpleName() + " " + flag);
-		tests.put(c, flag);
+	private void updateTest(Class<?> c, boolean status) {
+		Log.d(TAG, "updating test for: " + c.getSimpleName() + " " + status);
+		tests.put(c, status);
 		if (c.equals(GPSLocationService.class)
 				|| c.equals(SkyHookLocationService.class)) {
 			if ((tests.containsKey(GPSLocationService.class) && tests
@@ -297,7 +304,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				notifyClients(ERROR_NO_LOCATION);
 			}
 		} else {
-			notifyClients(getTestStatus(c, flag));
+			notifyClients(getTestStatus(c, status));
 		}
 		if (isReady()) {
 			notifyClients(STATUS_SERVICE_READY);
@@ -379,6 +386,10 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 				Log.i(TAG, "STATUS_GPS_ENABLED");
 				updateTest(GPSLocationService.class, true);
 				break;
+			case GET_SENSOR_STATES : 
+				for (Entry<Class<?>, Boolean> e: tests.entrySet()) {
+					updateTest(e.getKey(), e.getValue());
+				}
 			default:
 				super.handleMessage(msg);
 				break;
@@ -418,14 +429,11 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public void notify(int msg) {
 		switch (msg) {
 		case (ERROR_IOIO_CONNECTION_LOST):
-			Log.e(TAG, "Received message: ");
-			notifyClients(msg);
-			break;
 		case ERROR_IOIO_ABORTED:
-			notifyClients(msg);
-			break;
+		case ERROR_IOIO_INTERRUPTED : 
+			updateTest(IOIOConnectionTest.class, false);
 		case STATUS_IOIO_CONNECTED:
-			notifyClients(msg);
+			updateTest(IOIOConnectionTest.class, true);
 			break;
 		case STATUS_IOIO_STOPPED_RECORDING:
 			break;
@@ -458,7 +466,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 					// has crashed.
 				}
 			}
-
 			// Detach our existing connection.
 			unbindService(connSkyhookService);
 			locServiceIsBound = false;
@@ -560,12 +567,18 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 			dbAdapter.endTrack(((NoxDroidApp) getApplication())
 					.getCurrentTrack().toString());
-
 		}
 		isTrackOpen = false;
 		((NoxDroidApp) getApplication()).setCurrentTrack(null);
 		Log.i(TAG, "Stopped track: ");
-		updateTest(IOIOConnectionTest.class, true);
+		
+		if (connectToIOIO) {
+			// Check for IOIO connection
+			IOIOConnectionTest ioiotest = new IOIOConnectionTest();
+			ioiotest.execute(new Void[] {});
+		} else {
+			updateTest(IOIOConnectionTest.class, true);
+		}
 	}
 
 	class ConnectivityTest extends AsyncTask<Void, Void, Boolean> {

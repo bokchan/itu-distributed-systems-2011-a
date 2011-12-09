@@ -57,7 +57,7 @@ public class NoxDroidMainActivity extends Activity {
 	private Hashtable<Class<?>, Boolean> tests;
 	private boolean isBound;
 	private Messenger msg_service;
-	private NoxDroidApp app; 
+	private NoxDroidApp app;
 	private ServiceConnection mConnection = new ServiceConnection() {
 
 		@Override
@@ -162,7 +162,13 @@ public class NoxDroidMainActivity extends Activity {
 		} else if (app.getCurrentTrack() != null){
 			updateGUI(NoxDroidService.STATUS_RECORDING);
 		} else {
-			updateGUI(NoxDroidService.STATUS_SERVICE_READY);
+			Message msg = Message.obtain(null, NoxDroidService.GET_SENSOR_STATES);
+			msg.replyTo = messenger;
+			try {
+				msg_service.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

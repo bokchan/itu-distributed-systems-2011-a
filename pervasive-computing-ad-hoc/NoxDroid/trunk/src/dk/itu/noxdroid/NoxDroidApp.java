@@ -1,5 +1,6 @@
 package dk.itu.noxdroid;
 
+import java.util.Hashtable;
 import java.util.UUID;
 
 import android.app.Application;
@@ -12,6 +13,7 @@ public class NoxDroidApp extends Application {
 	private NoxDroidDbAdapter dbAdapter;
 	private String TAG;
 	private UUID currentTrack = null;
+	private Hashtable<Class<?>, Boolean> sensorStates = new Hashtable<Class<?>, Boolean>();
 	
 	@Override
 	public void onCreate() {
@@ -48,6 +50,15 @@ public class NoxDroidApp extends Application {
 	}
 	public UUID getCurrentTrack() {
 		return this.currentTrack;
+	}
+	
+	public void updateState(Class<?> c, boolean state) {
+		sensorStates.put(c, state);
+	}
+	
+	public boolean getState(Class<?> c) 
+	{
+		return sensorStates.containsKey(c) && sensorStates.get(c); 
 	}
 	
 }
