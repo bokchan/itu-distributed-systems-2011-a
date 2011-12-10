@@ -86,8 +86,12 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
             		+ " | "
             		+ " <a href='/noxdroids_tracks_nox_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>View nox</a>"
             		+ " | View locations:"
-            		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>html</a>"
-            		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>csv</a>"            		
+            		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>html all</a> - "
+            		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "&provider=gps'>html gps</a> - "
+            		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "&provider=skyhook'>html skyhook</a> - "
+            		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>csv all</a> - "
+            		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "&provider=gps'>csv gps</a> - "
+            		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "&provider=skyhook'>csv skyhook</a>"
             		+ "</li>");
         }
         // no results

@@ -24,10 +24,10 @@ import com.google.appengine.api.datastore.QueryResultList;
  * Based upon http://code.google.com/appengine/docs/java/datastore/queries.html
  *
  */
-public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
+public class NoxDroidsTracksLocationsCSVListingServlet extends HttpServlet {
 
     private static final Logger log =
-        Logger.getLogger(NoxDroidsTracksLocationsListingServlet.class.getName());
+        Logger.getLogger(NoxDroidsTracksLocationsCSVListingServlet.class.getName());
 	
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -54,10 +54,9 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
     	
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query q = new Query("Location");
-
+        
         if (setProviderFiler)
         	q.addFilter("provider", Query.FilterOperator.EQUAL, providerSetting);
-        
         
         q.setAncestor(ancestorKey);
 //        q.addSort("start_time", Query.SortDirection.DESCENDING);
@@ -65,8 +64,18 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
         PreparedQuery pq = datastore.prepare(q);
 
         
-        resp.setContentType("text/html");
-        resp.getWriter().println("<ul>");
+//        resp.setContentType("text/html");
+        // note(s):
+        // resp.setContentType("text/plain")
+        // - didn't work so we set the header 
+        // 
+        // and its very important to set utf-8 to get weka to read the file/url
+        // based on this tip http://goo.gl/ajfxt
+        resp.setHeader("Content-Type", "text/plain; charset=utf-8");        
+        
+        
+       
+        resp.getWriter().println("name, desc, latitude, longitude");
 
         FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
         int pageSize = 20;
@@ -85,31 +94,22 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
         QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
         for (Entity entity : results) {
 
+        	// example get child from entity:
+        	// entity.getKey().getChild("Location", id)
         	
-        	//        	entity.getKey().getChild("Location", id)
-        	
-//        	String props = entity.getProperties().toString(); 
-//        	log("entity.getProperties().toString(): " + props);
-//        	System.out.println("entity.getProperties().toString(): " + props);
-        	
-            resp.getWriter().println("<li>"
-            		+ entity.getKey().getName() 
-            		+ " | "            		
+            resp.getWriter().println(            		
+            		entity.getProperty("latitude") 
+            		+ ","
+            		+ entity.getProperty("latitude")
+            		+ ","
             		+ entity.getProperty("latitude") 
-            		+ " | "
+            		+ ","
             		+ entity.getProperty("longitude")
-            		+ " | "
-            		+ entity.getProperty("geo_point")            		            		
-            		+ " | "
-            		+ entity.getProperty("provider") 
-            		+ " | "
-            		+ entity.getProperty("time_stamp") 
-            		+ "</li>");
+            		);
         }
         //no results
         if(results.size() < 1)
-        	resp.getWriter().println("<li>no results</li>");
-        resp.getWriter().println("</ul>");
+        	resp.getWriter().println("no results");
 
         String cursor = results.getCursor().toWebSafeString();
 
