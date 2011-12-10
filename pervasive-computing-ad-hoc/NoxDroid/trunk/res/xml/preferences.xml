@@ -22,7 +22,6 @@
             android:key="SERVER_URL"
             android:summary="Url to data webservice"
             android:title="Server Url"
-            
              />
         <!-- TODO: change android:defaultValue to http://noxdroidcloudengine.appspot.com/add_track 
         p-test-value http://10.0.1.7:8888/add_track -->
