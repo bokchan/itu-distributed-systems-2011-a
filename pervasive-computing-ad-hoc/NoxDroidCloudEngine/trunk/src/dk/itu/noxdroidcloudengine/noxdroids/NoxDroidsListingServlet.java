@@ -87,6 +87,8 @@ public class NoxDroidsListingServlet extends HttpServlet {
 //            		+ entity.getProperty("z")  
             		+ "</li>");
         }
+        if(results.size() < 1)
+        	resp.getWriter().println("<li>no results</li>");
         resp.getWriter().println("</ul>");
 
         String cursor = results.getCursor().toWebSafeString();
