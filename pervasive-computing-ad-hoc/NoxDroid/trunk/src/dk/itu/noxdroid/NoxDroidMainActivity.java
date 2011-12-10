@@ -350,7 +350,7 @@ public class NoxDroidMainActivity extends Activity {
 			break;
 		
 		case NoxDroidService.ERROR_NO_LOCATION:
-			if (!imgBtnGPS.getTag().equals(NoxDroidService.STATUS_LOCATION_OK)) {
+			if (imgBtnGPS.getTag().equals(NoxDroidService.STATUS_LOCATION_OK)) {
 				showDialog(SHOW_LOCATION);
 			}
 			imgBtnGPS.setImageResource(R.drawable.circle_red);

@@ -191,7 +191,7 @@ public class GPSLocationService extends Service {
 			/**
 			 * Add to database
 			 */
-			if (record)
+			if (true)
 				mDbHelper.createLocationPoint(latitude, longitude,
 						location.getProvider());
 		}
