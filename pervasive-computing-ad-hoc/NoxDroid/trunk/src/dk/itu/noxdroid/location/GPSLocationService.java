@@ -107,13 +107,18 @@ public class GPSLocationService extends Service {
 
 		Log.d(TAG, "GPS updateinterval: " + updateinterval);
 
-		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (loc != null) {
+//		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		if (loc != null) {
+//			notifyClients(NoxDroidService.STATUS_GPS_OK);
+//		} else {
+//			notifyClients(NoxDroidService.ERROR_NO_GPS);
+//
+//		}
+		if (providerEnabled())
+		{
 			notifyClients(NoxDroidService.STATUS_GPS_OK);
-
 		} else {
 			notifyClients(NoxDroidService.ERROR_NO_GPS);
-
 		}
 
 		// ask the Location Manager to send us location updates
@@ -187,7 +192,6 @@ public class GPSLocationService extends Service {
 
 			Log.i(TAG, "GPS LOC. lat: " + latitude + " lon: " + longitude
 					+ " provider: " + location.getProvider());
-
 			/**
 			 * Add to database
 			 */
@@ -199,20 +203,20 @@ public class GPSLocationService extends Service {
 		@Override
 		public void onProviderDisabled(String arg0) {
 			Log.d(TAG, "GPS_EVENT_STOPPED");
-			notifyClients(NoxDroidService.ERROR_NO_GPS);
+			if (providerEnabled()) {
+				notifyClients(NoxDroidService.STATUS_GPS_OK);
+			} else {
+				notifyClients(NoxDroidService.ERROR_NO_GPS);
+			}
 		}
 
 		@Override
 		public void onProviderEnabled(String provider) {
 			Log.d(TAG, "GPS_EVENT_STARTED");
-			Location loc = lm
-					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			if (loc != null) {
+			if (providerEnabled()) {
 				notifyClients(NoxDroidService.STATUS_GPS_OK);
-
 			} else {
 				notifyClients(NoxDroidService.ERROR_NO_GPS);
-
 			}
 		}
 
@@ -220,6 +224,10 @@ public class GPSLocationService extends Service {
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 
 		}
+	}
+	
+	private boolean providerEnabled(){
+		return lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null || lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null || lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER) != null;		
 	}
 
 	private void startRecording() {
