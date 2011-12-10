@@ -37,7 +37,7 @@
         android:key="ioio_prefs"
         android:title="IOIO Preferences" >
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="IOIO_ENABLED"
             android:title="IOIO enabled" />
         <EditTextPreference
