@@ -1,6 +1,8 @@
 package dk.itu.noxdroidcloudengine.tracks;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +26,9 @@ public class AddTrackServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(AddTrackServlet.class
 			.getName());
 
+	private static SimpleDateFormat formatter = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 
@@ -43,7 +48,6 @@ public class AddTrackServlet extends HttpServlet {
 		String trackJSON = req.getParameter("track_json");
 		String isTestForm = req.getParameter("is_test_form");
 
-		
 		// Set up variables
 		//
 		// we are pragmatic here if the basic extract of the json fails
@@ -88,14 +92,24 @@ public class AddTrackServlet extends HttpServlet {
 			log("AddTrackServlet - the json seemed currupted" + e.getMessage());
 
 		}
-		
-		
-		
+
+		//
+		// format start / time into java date object
+		//
+		Date trackStartTimeDate = null;
+		Date trackEndTimeDate = null;
+		try {
+			trackStartTimeDate = (Date) formatter.parse(trackStartTime);
+			trackEndTimeDate = (Date) formatter.parse(trackEndTime);
+		} catch (ParseException e) {
+			log("AddTrackServlet - track start / end time stamp was currupted"
+					+ e.getMessage());
+		}
+
 		//
 		// add nox droid sensor
 		//
 
-		
 		// Entity - type/kind | key/id | optional parent - this one has no
 		// parent
 		// if an entity with the same id exists - data is stored into that
@@ -110,11 +124,14 @@ public class AddTrackServlet extends HttpServlet {
 		// add track
 		//
 		Entity track = new Entity("Track", trackId, noxDroid.getKey());
-		
+
 		// not strictly needed use the key name/id - entity.getKey().getName()
 		// track.setProperty("id", trackId);
 		track.setProperty("start_time", trackStartTime);
 		track.setProperty("end_time", trackEndTime);
+		track.setProperty("start_time_date", trackStartTimeDate);
+		track.setProperty("end_time_date", trackEndTimeDate);
+
 		datastore.put(track);
 
 		// add locations and nox
@@ -122,21 +139,15 @@ public class AddTrackServlet extends HttpServlet {
 		addNoxToDatastore(noxJSONArray, track, datastore);
 
 		if (isTestForm != null) {
-			resp.sendRedirect("/noxdroids_tracks_listing?ancestor_key_name=" + noxDroidId);
-			
-			
-			
+			resp.sendRedirect("/noxdroids_tracks_listing?ancestor_key_name="
+					+ noxDroidId);
+
 		} else {
 			// OK - we return 201 in a restful like approach
 			// - which is the normal for success on put/post
 			// - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 			resp.setStatus(201);
 		}
-
-		
-		
-		
-		
 
 	}
 
@@ -158,55 +169,67 @@ public class AddTrackServlet extends HttpServlet {
 		double longitude = 0.0;
 		double latitude = 0.0;
 		GeoPt geoPoint;
-		String time_stamp;
+		String timeStamp;
+		Date timeStampDate = null;
 		String provider;
-
+		// prepare time format
 		if (jsonArray != null) {
 
 			try {
 				System.out.println(jsonArray.toString(4));
 
 				for (int i = 0; i < jsonArray.length(); ++i) {
-					JSONObject location = jsonArray.getJSONObject(i);
+					JSONObject obj = jsonArray.getJSONObject(i);
 
-					// note: also rec.keys()
-					longitude = location.getDouble("longitude");
-					latitude = location.getDouble("latitude");
-					
-					time_stamp = location.getString("time_stamp");
-					provider = location.getString("provider");
+					longitude = obj.getDouble("longitude");
+					latitude = obj.getDouble("latitude");
+					timeStamp = obj.getString("time_stamp");
+					provider = obj.getString("provider");
 
-					// 
+					//
+					// format time_stamp to java date object
+					//
+					try {
+						timeStampDate = (Date) formatter.parse(timeStamp);
+					} catch (ParseException e) {
+						log("AddTrackServlet - location time stamp was currupted"
+								+ e.getMessage());
+					}
+
+					//
 					// Prepare geo point
-					// - but also store  latitude / longitude
+					// - but also store latitude / longitude
 					// - we play safe but might overblow datastore a bit
 					//
 					// GEOPT(lat, long) GEOPT(37.4219, -122.0846)
 					// - takes only floats not double
 					geoPoint = new GeoPt((float) latitude, (float) longitude);
-					
+
 					// Entity(type/kind, id/key, parent )
-					entity = new Entity("Location", i + 1,
-							track.getKey());
-					
-					// not strictly needed use the key name/id - entity.getKey().getName()
+					entity = new Entity("Location", i + 1, track.getKey());
+
+					// not strictly needed use the key name/id -
+					// entity.getKey().getName()
 					// entity.setProperty("id", i + 1);
 					entity.setProperty("latitude", latitude);
 					entity.setProperty("longitude", longitude);
-					entity.setProperty("time_stamp", time_stamp);
+					entity.setProperty("time_stamp", timeStamp);
+					entity.setProperty("time_stamp_date", timeStampDate);
 					entity.setProperty("provider", provider);
 					entity.setProperty("geo_point", geoPoint);
-					
+
 					locations.add(entity);
 
 					System.out.println("longitude: " + longitude
 							+ " latitude: " + latitude + " time_stamp: "
-							+ time_stamp + " provider: " + provider);
+							+ timeStamp + "time as date obj: " + timeStampDate
+							+ " provider: " + provider);
 				}
 
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log("AddTrackServlet - location json was currupted"
+						+ e.getMessage());
+
 			}
 
 			// batch add locations
@@ -232,7 +255,8 @@ public class AddTrackServlet extends HttpServlet {
 		Entity entity = null;
 		double nox = 0.0;
 		double temperature = 0.0;
-		String time_stamp;
+		String timeStamp;
+		Date timeStampDate = null;
 
 		if (jsonArray != null) {
 
@@ -242,28 +266,40 @@ public class AddTrackServlet extends HttpServlet {
 				for (int i = 0; i < jsonArray.length(); ++i) {
 					JSONObject obj = jsonArray.getJSONObject(i);
 
-					// note: also rec.keys()
 					nox = obj.getDouble("nox");
 					temperature = obj.getDouble("temperature");
-					time_stamp = obj.getString("time_stamp");
+					timeStamp = obj.getString("time_stamp");
+
+					//
+					// format time_stamp to java date object
+					//
+					try {
+						timeStampDate = (Date) formatter.parse(timeStamp);
+					} catch (ParseException e) {
+						log("AddTrackServlet - location time stamp was currupted"
+								+ e.getMessage());
+					}
 
 					// Entity(type/kind, id/key, parent )
 					entity = new Entity("Nox", i + 1, track.getKey());
-					// not strictly needed use the key name/id - entity.getKey().getName()
+					// not strictly needed use the key name/id -
+					// entity.getKey().getName()
 					// entity.setProperty("id", i + 1);
 					entity.setProperty("temperature", temperature);
 					entity.setProperty("nox", nox);
-					entity.setProperty("time_stamp", time_stamp);
+					entity.setProperty("time_stamp", timeStamp);
+					entity.setProperty("time_stamp_date", timeStampDate);
 
 					noxList.add(entity);
 
 					System.out.println("nox: " + nox + " temperature: "
-							+ temperature + " time_stamp: " + time_stamp);
+							+ temperature + " time_stamp: " + timeStamp
+							+ "time as date obj: " + timeStampDate);
 				}
 
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log("AddTrackServlet - location json was currupted"
+						+ e.getMessage());
 			}
 
 			// batch add locations

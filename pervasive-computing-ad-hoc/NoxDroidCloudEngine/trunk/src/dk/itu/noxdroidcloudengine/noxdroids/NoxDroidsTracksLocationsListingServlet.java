@@ -53,12 +53,18 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
 //        q.addSort("start_time", Query.SortDirection.DESCENDING);
         
         PreparedQuery pq = datastore.prepare(q);
-        int pageSize = 20;
+
         
         resp.setContentType("text/html");
         resp.getWriter().println("<ul>");
 
-        FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+        FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+        int pageSize = 20;
+        boolean usePaging = false;
+        // note: use this one pager should be used
+        // 
+        // FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+        
         String startCursor = req.getParameter("cursor");
         
         // If this servlet is passed a cursor parameter, let's use it
@@ -68,6 +74,9 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
               
         QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
         for (Entity entity : results) {
+
+        	
+        	//        	entity.getKey().getChild("Location", id)
         	
 //        	String props = entity.getProperties().toString(); 
 //        	log("entity.getProperties().toString(): " + props);
@@ -87,13 +96,16 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
             		+ entity.getProperty("time_stamp") 
             		+ "</li>");
         }
+        //no results
+        if(results.size() < 1)
+        	resp.getWriter().println("<li>no results</li>");
         resp.getWriter().println("</ul>");
 
         String cursor = results.getCursor().toWebSafeString();
 
         
         // Assuming this servlet lives at '/noxdroids_tracks_nox_listing'
-        if(results.size() >= pageSize)
+        if(usePaging && results.size() >= pageSize)
 	        resp.getWriter().println(
 	            "<a href='/noxdroids_tracks_nox_listing?ancestor_parent_key_name=" 
 	        		+ ancestorParentKeyName + "&ancestor_key_name=" + ancestorKeyName

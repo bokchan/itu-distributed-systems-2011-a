@@ -53,12 +53,17 @@ public class NoxDroidsTracksNoxListingServlet extends HttpServlet {
 //        q.addSort("start_time", Query.SortDirection.DESCENDING);
         
         PreparedQuery pq = datastore.prepare(q);
-        int pageSize = 20;
         
         resp.setContentType("text/html");
         resp.getWriter().println("<ul>");
 
-        FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+        FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+        int pageSize = 20;
+        boolean usePaging = false;
+        // note: use this one pager should be used
+        // 
+        // FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+
         String startCursor = req.getParameter("cursor");
         
         // If this servlet is passed a cursor parameter, let's use it
@@ -88,7 +93,7 @@ public class NoxDroidsTracksNoxListingServlet extends HttpServlet {
 
         
         // Assuming this servlet lives at '/noxdroids_tracks_nox_listing'
-        if(results.size() >= pageSize)
+         if(usePaging && results.size() > 20)
 	        resp.getWriter().println(
 	            "<a href='/noxdroids_tracks_nox_listing?ancestor_parent_key_name=" 
 	        		+ ancestorParentKeyName + "&ancestor_key_name=" + ancestorKeyName

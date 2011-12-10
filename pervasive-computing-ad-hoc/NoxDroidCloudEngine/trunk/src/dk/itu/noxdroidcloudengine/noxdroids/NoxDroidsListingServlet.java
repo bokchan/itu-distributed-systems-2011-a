@@ -36,13 +36,19 @@ public class NoxDroidsListingServlet extends HttpServlet {
         Query q = new Query("NoxDroid").addSort("username", Query.SortDirection.DESCENDING);
         // naive: its not possible to sort on the id/name (key) or what ?
         
+        
         PreparedQuery pq = datastore.prepare(q);
-        int pageSize = 20;
         
         resp.setContentType("text/html");
         resp.getWriter().println("<ul>");
 
-        FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+        FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+        int pageSize = 20;
+        boolean usePaging = false;
+        // note: use this one pager should be used
+        // 
+        // FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+
         String startCursor = req.getParameter("cursor");
         
         // If this servlet is passed a cursor parameter, let's use it
@@ -94,7 +100,7 @@ public class NoxDroidsListingServlet extends HttpServlet {
         String cursor = results.getCursor().toWebSafeString();
 
         // Assuming this servlet lives at '/noxdroids_listing'
-        if(results.size() > 20)
+        if(usePaging && results.size() > 20)
 	        resp.getWriter().println(
 	            "<a href='/noxdroids_listing?cursor=" + cursor + "'>Next page</a>");
     }

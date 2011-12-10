@@ -49,12 +49,17 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
         q.addSort("start_time", Query.SortDirection.DESCENDING);
         
         PreparedQuery pq = datastore.prepare(q);
-        int pageSize = 20;
         
         resp.setContentType("text/html");
         resp.getWriter().println("<ul>");
 
-        FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+        FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+        int pageSize = 20;
+        boolean usePaging = false;
+        // note: use this one pager should be used
+        // 
+        // FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize);
+
         String startCursor = req.getParameter("cursor");
         
         // If this servlet is passed a cursor parameter, let's use it
@@ -78,10 +83,11 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
             		+ entity.getProperty("end_time") 
             		+ " | "
             		+ entity.getKey() 
-            		+ "|"
+            		+ " | "
             		+ " <a href='/noxdroids_tracks_nox_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>View nox</a>"
-            		+ "|"
-            		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>View locations</a>"
+            		+ " | View locations:"
+            		+ " <a href='/noxdroids_tracks_location_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>html</a>"
+            		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>csv</a>"            		
             		+ "</li>");
         }
         // no results
@@ -92,7 +98,7 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
         String cursor = results.getCursor().toWebSafeString();
         
         // Assuming this servlet lives at '/noxdroids_tracks_listing'
-        if(results.size() >= pageSize)
+         if(usePaging && results.size() > 20)
 	        resp.getWriter().println(
 	            "<a href='/noxdroids_tracks_listing?ancestor_key_name=" 
 	        		+ ancestorKeyName
