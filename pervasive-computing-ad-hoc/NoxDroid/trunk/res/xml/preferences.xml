@@ -21,7 +21,9 @@
             android:defaultValue="http://noxdroidcloudengine.appspot.com/add_track"
             android:key="SERVER_URL"
             android:summary="Url to data webservice"
-            android:title="Server Url" />
+            android:title="Server Url"
+            
+             />
         <!-- TODO: change android:defaultValue to http://noxdroidcloudengine.appspot.com/add_track 
         p-test-value http://10.0.1.7:8888/add_track -->
         <EditTextPreference
@@ -42,7 +44,9 @@
         <EditTextPreference
             android:defaultValue="41"
             android:key="IOIO_NO2_PIN"
-            android:title="IOIO NO2 pin" />
+            android:title="IOIO NO2 pin"
+            android:numeric="integer"
+             />
         <!-- <EditTextPreference
             android:defaultValue="42"
             android:key="IOIO_TEMP_PIN"
@@ -62,6 +66,7 @@
         <EditTextPreference
             android:defaultValue="2000"
             android:key="IOIO_UPDATE_INTERVAL"
+            android:numeric="integer"
             android:title="IOIO Update Interval (ms)" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -70,6 +75,7 @@
         <EditTextPreference
             android:defaultValue="2000"
             android:key="SKYHOOK_UPDATE_INTERVAL"
+            android:numeric="integer"
             android:title="Update interval" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -77,6 +83,7 @@
         android:title="GPS" >
         <EditTextPreference
             android:defaultValue="10000"
+            android:numeric="integer"
             android:key="GPS_UPDATE_INTERVAL"
             android:title="update interval" />
     </PreferenceCategory>
