@@ -102,32 +102,16 @@ public class GPSLocationService extends Service {
 		//
 		mDbHelper = ((NoxDroidApp) getApplication()).getDbAdapter();
 		updateinterval = Integer.valueOf((String) PreferenceManager
-				.getDefaultSharedPreferences(this).getAll()
-				.get("GPS_UPDATE_INTERVAL"));
+				.getDefaultSharedPreferences(this).getString(
+						getString(R.string.GPS_UPDATE_INTERVAL), "2000"));
 
 		Log.d(TAG, "GPS updateinterval: " + updateinterval);
 
-//		Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//		if (loc != null) {
-//			notifyClients(NoxDroidService.STATUS_GPS_OK);
-//		} else {
-//			notifyClients(NoxDroidService.ERROR_NO_GPS);
-//
-//		}
-		if (providerEnabled())
-		{
+		if (providerEnabled()) {
 			notifyClients(NoxDroidService.STATUS_GPS_OK);
 		} else {
 			notifyClients(NoxDroidService.ERROR_NO_GPS);
 		}
-
-		// ask the Location Manager to send us location updates
-
-		// bind to location manager - TODO: fine tune the variables
-		// 30000L / minTime = the minimum time interval for notifications, in
-		// milliseconds.
-		// 10.0f / minDistance - the minimum distance interval for notifications
-		// lm.addGpsStatusListener(gpsStatusListener);
 
 		// ask the Location Manager to send us location updates
 		locListenD = new DispLocListener();
@@ -155,7 +139,6 @@ public class GPSLocationService extends Service {
 	public void onDestroy() {
 		try {
 			Log.d(TAG, "onDestroy called");
-
 			// Location: close down / unsubscribe the location updates
 			lm.removeUpdates(locListenD);
 		} catch (Exception e) {
@@ -225,9 +208,11 @@ public class GPSLocationService extends Service {
 
 		}
 	}
-	
-	private boolean providerEnabled(){
-		return lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null || lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null || lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER) != null;		
+
+	private boolean providerEnabled() {
+		return lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null
+				|| lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null
+				|| lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER) != null;
 	}
 
 	private void startRecording() {

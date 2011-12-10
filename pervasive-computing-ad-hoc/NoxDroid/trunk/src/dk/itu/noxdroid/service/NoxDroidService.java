@@ -190,7 +190,6 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		// Start skyhook & GPS services
 		doBindService();
 
-		// - based upon http://goo.gl/y5m4u - also take a look at the *real* api
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		connectToIOIO = prefs.getBoolean(
 				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), true);

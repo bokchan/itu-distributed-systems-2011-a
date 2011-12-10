@@ -89,10 +89,8 @@ public class SkyHookLocationService extends Service {
 		// before this is set it has a value of: 10000 view
 		// http://screencast.com/t/nSXoYDm54aw4
 		updateinterval = Integer.valueOf((String) PreferenceManager
-				.getDefaultSharedPreferences(this).getAll()
-				.get("SKYHOOK_UPDATE_INTERVAL"));
+				.getDefaultSharedPreferences(this).getString("SKYHOOK_UPDATE_INTERVAL", "2000"));
 		Log.d(TAG, "Skyhook updateinterval: " + updateinterval);
-
 	}
 	
 	@Override
