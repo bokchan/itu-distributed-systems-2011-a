@@ -192,7 +192,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		connectToIOIO = prefs.getBoolean(
-				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), true);
+				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), false);
+		Log.d(TAG, String.valueOf(connectToIOIO));
 
 		if (connectToIOIO) {
 			// Check for IOIO connection
