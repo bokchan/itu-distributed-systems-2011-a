@@ -26,7 +26,7 @@ public class NoxDroidAppEngineUtils {
 
 	private static String TAG = "NoxDroidAppEngineUtils";
 	
-	public static void postForm(String cloudServiceURL, String trackUUID, String userId, String userName, NoxDroidDbAdapter mDbHelper) {
+	public static boolean postForm(String cloudServiceURL, String trackUUID, String userId, String userName, NoxDroidDbAdapter mDbHelper) {
 
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(cloudServiceURL);
@@ -105,13 +105,12 @@ public class NoxDroidAppEngineUtils {
 				StatusLine status = response.getStatusLine();
 				Log.d(TAG, "status code: " + status.getStatusCode());
 
-//				Toast.makeText(TracksListActivity.this,
-//						"Post to cloud was successful", Toast.LENGTH_SHORT)
-//						.show();
-
-				// TODO: - enabled and check this one
-				// Set track flag in database to be sync'ed
-				// mDbHelper.setTrackSync(trackUUID);
+				//Set track flag in database to be sync'ed
+				mDbHelper.setTrackSync(trackUUID);
+				
+				
+				return true;
+				
 				
 				
 
@@ -132,6 +131,10 @@ public class NoxDroidAppEngineUtils {
 					"IOException	in case of a problem or the connection was aborted - "
 							+ e.getMessage());
 		}
+		
+		
+		return false;
+		
 
 	}
 	

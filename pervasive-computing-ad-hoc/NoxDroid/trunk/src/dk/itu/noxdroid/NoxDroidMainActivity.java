@@ -306,7 +306,7 @@ public class NoxDroidMainActivity extends Activity {
 			imgBtnIOIO.setImageResource(R.drawable.circle_red);
 			Toast.makeText(getBaseContext(), "IOIO Lost connection",
 					Toast.LENGTH_LONG);
-			Log.e(TAG, "IOIO Not Connected");
+			Log.i(TAG, "IOIO Not Connected"); // this is strictly not an error right?
 			break;
 		case NoxDroidService.ACTION_START_TRACK:
 			vibrator.vibrate(30);
@@ -320,7 +320,7 @@ public class NoxDroidMainActivity extends Activity {
 			imgBtnStart.setVisibility(View.VISIBLE);
 			imgBtnStop.setVisibility(View.GONE);
 			imgBtnStart.setEnabled(true);
-			Log.e(TAG, "Stop track");
+			Log.d(TAG, "Stop track");
 
 			break;
 		case NoxDroidService.STATUS_SERVICE_READY:

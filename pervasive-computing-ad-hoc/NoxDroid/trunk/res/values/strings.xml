@@ -43,6 +43,9 @@
     <string name="tracks_service_stopped">Tracks service stopped</string>
     <string name="SKYHOOK_UPDATE_INTERVAL">SKYHOOK_UPDATE_INTERVAL</string>	
 	<string name="no_tracks">No tracks recorded yet</string>
+	<string name="no_track_start_time">No track start time this recording is garbage</string>
+	<string name="no_track_end_time">No track start time this recording is garbage</string>
+	<string name="no_track_sync_flag">No no sync flag is set yet</string>
 	<string name="DIALOG_MSG_NOXDROID_ABOUT">NOxDroid is a device and application for showing air pollution in Copenhagen. \n\nIt works by connecting your phone and a gas sensor attached to a IOIO board.\nThe collected sensor data is used to show a map of pollution levels. \n\nThe project has been made by Pelle Krøgholt, Stine Hartmann Bierre and Andreas Bok Andersen (2011)\n\nMore information available on\nwww.noxdroid.org </string>
 	<string name="DIALOG_MSG_IOIO_HELP">Please check that the IOIO turned on and is connected with the phone.\n\nIf the IOIO is turned on the battery level  might be too low and you should change the battery on the IOIO board.</string>
 	<string name="DIALOG_MSG_EXIT">This will end NOxDroid and stop any ongoing recordings</string>

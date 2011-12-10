@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.cloudservice.NoxDroidAppEngineUtils;
@@ -68,14 +70,10 @@ public class TracksListActivity extends ListActivity {
 		// adapter
 		//
 		mDbHelper = ((NoxDroidApp) getApplication()).getDbAdapter();
-
-		
 		
 		// list view specific
         fillData();
-//        registerForContextMenu(getListView());
-		
-		
+//        registerForContextMenu(getListView());		
 		
 	}
 	
@@ -83,25 +81,54 @@ public class TracksListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        
+                
+        Toast.makeText(TracksListActivity.this, "Post to cloud process is started please hold your hat...", Toast.LENGTH_SHORT).show();
         
         // do something post to service
-        Log.d(TAG, "onListItemClick: " + position + " " + id);
+        // Log.d(TAG, "onListItemClick: " + position + " " + id);
+
+        TextView trackItemUUIDText = (TextView) v.findViewById(R.id.trackItemUUID);
+        String trackUID  = (String) trackItemUUIDText.getText();
 
         
         
-        
-		// emulator
-		String trackUID = "8c3adc99-3e51-4922-a3c9-d127117bb764";
+        TextView trackItemStartTimeText = (TextView) v.findViewById(R.id.trackItemStartTime);
+        String trackStartTime  = (String) trackItemStartTimeText.getText();
 
-		// post to cloud service
-		NoxDroidAppEngineUtils.postForm(cloudServiceURL, trackUID, userId, userName, mDbHelper);
+        TextView trackItemEndTimeText = (TextView) v.findViewById(R.id.trackItemEndTime);
+        String trackEndTime  = (String) trackItemEndTimeText.getText();
+
+        TextView trackItemSyncFlagText = (TextView) v.findViewById(R.id.trackItemSyncFlag);
+        String trackSyncFlag  = (String) trackItemSyncFlagText.getText();        
+                
+        String statusMessage = null;
         
-        
-        
+        // TODO: move into a more elegant/convenient case approach
+        // only post to cloud if track has start/end time etc...
+        if(trackStartTime == null || trackEndTime == null || trackSyncFlag.equals(1) || trackSyncFlag.equals("1")) {
+//        	statusMessage = "Track is garbage needs both a start time and a end time";
+//        	statusMessage = "Track is already posted to cloud service";
+        	statusMessage = "Track is already posted to cloud service or Track is garbage needs both a start time and a end time";
+        	
+        } else if (trackUID !=null) {
+
+        	if (NoxDroidAppEngineUtils.postForm(cloudServiceURL, trackUID, userId, userName, mDbHelper)) {
+            	statusMessage = "Post to cloud was successful";
+                // update page again
+        		fillData();
+            } else {
+            	statusMessage = "Post to cloud was not successful please try again later";
+            }
+        	
+    	} else {
+    		statusMessage = "Post to cloud was not successful please try again";
+    		// TODO: log me
+    	}
+        	
+        Toast.makeText(TracksListActivity.this, statusMessage, Toast.LENGTH_SHORT).show();
+
         
         // hook post in here // 
-        
 //        Intent i = new Intent(this, NoteEdit.class);
 //        i.putExtra(NotesDbAdapter.KEY_ROWID, id);
 //        startActivityForResult(i, ACTIVITY_EDIT);
@@ -119,14 +146,14 @@ public class TracksListActivity extends ListActivity {
 	
     private void fillData() {
         // Get all of the rows from the database and create the item list
-    	Cursor mNotesCursor = mDbHelper.fetchAllTracks();
+    	Cursor mNotesCursor = mDbHelper.fetchAllTracks("desc");
         startManagingCursor(mNotesCursor);
 
         // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[]{mDbHelper.KEY_TRACKUUID};
+        String[] from = new String[]{mDbHelper.KEY_ROWID, mDbHelper.KEY_TIME_STAMP_START, mDbHelper.KEY_TIME_STAMP_END, mDbHelper.KEY_TRACKUUID, mDbHelper.KEY_SYNC_FLAG};
 
         // and an array of the fields we want to bind those fields to (in this case just trackItemText)
-        int[] to = new int[]{R.id.trackItemText};
+        int[] to = new int[]{R.id.trackItemId,R.id.trackItemStartTime,R.id.trackItemEndTime, R.id.trackItemUUID,R.id.trackItemSyncFlag};
 
         // Now create a simple cursor adapter and set it to display
         SimpleCursorAdapter tracksAdapter = 
@@ -144,19 +171,14 @@ public class TracksListActivity extends ListActivity {
     }
 	
 	
-	
-	
-	
-	
-	
-	
-	/* moce all post to an utility package etc...*/
+
 	
 	
 	/*
 	 * Post Static To Cloud
 	 * 
 	 * Should normally not be done from an activity (UI)
+	 * 
 	 */
 	public void postStaticToCloud(View view) {
 

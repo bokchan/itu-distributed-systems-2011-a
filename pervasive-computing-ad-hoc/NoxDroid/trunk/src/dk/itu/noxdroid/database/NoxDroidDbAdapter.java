@@ -204,37 +204,6 @@ public class NoxDroidDbAdapter {
 		mDbHelper.close();
 	}
 
-	// /**
-	// *
-	// * TODO: clean up remove
-	// *
-	// * @return a track id
-	// */
-	// public long createTrackId() {
-	//
-	// long trackId;
-	// String sql = "select track_uuid from " + DATABASE_TABLE +
-	// " order by track_uuid desc limit 1";
-	//
-	// String[] selectionArgs = null;
-	// Cursor listCursor = mDb.rawQuery(sql, selectionArgs);
-	//
-	// listCursor.moveToFirst();
-	// if(! listCursor.isAfterLast()) {
-	// do {
-	// trackId = listCursor.getLong(0);
-	// } while (listCursor.moveToNext());
-	// } else {
-	// trackId = 0;
-	// }
-	// listCursor.close();
-	//
-	// return trackId + 1;
-	// }
-	//
-	//
-	//
-	//
 
 	/**
 	 * Create / start a track
@@ -287,7 +256,7 @@ public class NoxDroidDbAdapter {
 
 		String sql = "UPDATE " + DATABASE_TABLE_TRACKS + " SET "
 				+ KEY_SYNC_FLAG
-				+ "=1 WHERE uuid='" + trackUUID
+				+ "=1 WHERE " + KEY_TRACKUUID +"='" + trackUUID
 				+ "'";
 		Log.d(TAG, "sql: " + sql);
 		mDb.execSQL(sql);
@@ -355,10 +324,19 @@ public class NoxDroidDbAdapter {
 	 * 
 	 * @return Cursor over all tracks
 	 */
-	public Cursor fetchAllTracks() {
-
+	public Cursor fetchAllTracks(String order) {
+		String orderBy = null;
+		
+		// do set "ORDER BY " its handled by the query handler
+		if(order.equals("asc"))
+			orderBy = KEY_ROWID+" asc";
+		else if(order.equals("desc"))
+			orderBy = KEY_ROWID+" desc"; // reverse		
+		
+		// query arguments:
+		// public Cursor query (String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy)
 		return mDb.query(DATABASE_TABLE_TRACKS, new String[] { KEY_ROWID,
-				KEY_TRACKUUID, KEY_TIME_STAMP_START, KEY_TIME_STAMP_END }, null, null, null, null, null);
+				KEY_TRACKUUID, KEY_TIME_STAMP_START, KEY_TIME_STAMP_END, KEY_SYNC_FLAG }, null, null, null, null, orderBy);
 	}
 
 	/**
@@ -375,7 +353,7 @@ public class NoxDroidDbAdapter {
 		Cursor mCursor =
 
 		mDb.query(true, DATABASE_TABLE_TRACKS, new String[] { KEY_ROWID,
-				KEY_LATITUDE, KEY_LONGITUDE }, KEY_ROWID + "=" + rowId, null,
+				KEY_TRACKUUID, KEY_TIME_STAMP_START, KEY_TIME_STAMP_END }, KEY_ROWID + "=" + rowId, null,
 				null, null, null, null);
 		if (mCursor != null) {
 			mCursor.moveToFirst();
@@ -455,7 +433,7 @@ public class NoxDroidDbAdapter {
 	
 	/**
 	 * 
-	 * Get a track as track object
+	 * Get a single track as a track object
 	 * 
 	 * @param UUID
 	 * @return
