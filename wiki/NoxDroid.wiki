@@ -12,6 +12,14 @@ https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/noxdroid_o
 
 
 
+== Test / debugging ==
+
+todo
+
+=== Debug the ioio / noxdroid device ===
+
+Read NOxDROID_README
+
 
 === Post to App engine ===
 
