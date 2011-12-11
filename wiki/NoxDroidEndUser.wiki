@@ -1,4 +1,4 @@
-#summary 
+#summary short and simple guide for endusers probably only for hand out / print etc...
 
 
 = NoxDroid minimal end user manual =

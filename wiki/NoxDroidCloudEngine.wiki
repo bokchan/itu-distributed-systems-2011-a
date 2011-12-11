@@ -1,14 +1,11 @@
-#summary 
+#summary technical details focused on the app engine part
 
 
 = App engine - NoxDroidCloudEngine =
 
 Code: https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/NoxDroidCloudEngine/trunk
 
-
 Some general App Engine tricks: AppEngineAdHocTipsAndTricks
-
-
 
 == Main url(s) ==
 
@@ -27,9 +24,6 @@ Listings of tracks (recordings) is coming up etc... ('todo')
 ==== Unit tests ====
 
  * [ https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/NoxDroidCloudEngine/trunk Various example(s) of using the data storage ]
-
-
-
 
 
 

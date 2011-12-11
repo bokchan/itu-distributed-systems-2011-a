@@ -1,15 +1,14 @@
-#summary 
+#summary technical details focused on the android application part
 
 
-= Android engine - NoxDroid =
+= NoxDroid Android App =
 
 Code: https://itu-distributed-systems-2011-a.googlecode.com/svn/pervasive-computing-ad-hoc/NoxDroid/trunk
 
 
+== NoxDroid on the move ==
 
-
-
-
+https://itu-distributed-systems-2011-a.googlecode.com/svn/wiki/images/noxdroid_onthemove_1.jpg
 
 
 
