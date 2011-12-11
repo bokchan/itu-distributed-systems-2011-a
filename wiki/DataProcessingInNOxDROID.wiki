@@ -38,7 +38,7 @@ ContractNOX(N)
    M : emptyset for noxdata
    for n in N : 
       c <- contracted point n0, n1, ni where |nh-ng| < some delta 
-         M.add(c) 
+      M.add(c) 
    return M
 }}}
 
