@@ -19,11 +19,33 @@ Open WEKA and load the file, see [DataProcessingInWeka]
 Look at the mean, stddev, min and max. 
 
 == Preprocessing of location and nox data == 
-Here is some pseudo code for the algorithm which should process the data
+Here is some pseudo code for the algorithm which should process the data for a single track
 
 {{{
 N : set of noxdata of track T
 G : set of locationdata of track T
-for n in N : 
-   contract n0, n1, ni where |ni-n(i-1)| < some delta 
+K : empty set of KML datapoints 
+
+for (gx,gy) in G : 
+  N = set of nox between gx_t and gy_t (_t is timestamp of gx)
+  L = ContractNOX(N)
+  E.add(gx)
+  E = L.size-1 extrapolated GPS between gx and gy 
+  for i..L.size : 
+     KML.add((L[i], E[i]))
+
+ContractNOX(N)
+   M : emptyset for noxdata
+   for n in N : 
+      c <- contracted point n0, n1, ni where |nh-ng| < some delta 
+         M.add(c) 
+   return M
 }}}
+
+Several interesting things to do when we want to show multiple tracks. 
+First of all we need to do the dataprocessing in real time. The pollution level should be visualized according to selected timespan. 
+
+  * Show tracks by a user. Ability to select/unselect individual tracks.
+  * Show pollution on the map with timespan selection
+
+Should all KML datapoints be calculated at once or can you pass the map's quadrant as arguments.
