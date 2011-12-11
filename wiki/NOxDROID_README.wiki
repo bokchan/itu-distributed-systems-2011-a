@@ -1,0 +1,7 @@
+#summary NOXDROID README
+
+Vigtigte ting at tjekke
+1. Tjek at NO2 pin i settings stemmer overens med analog in pin på ioio boardet. 
+brug evt IOIOController fra androidmarket til at verificere 
+2. Den lille hvide skrue som sidder på ioio boardet skal skrues op på max, så langt med uret så muligt.
+3. Tjek at data bliver skrevet til database. 
