@@ -21,6 +21,12 @@ select time_stamp,location_provider, latitude, longitude from locations where ti
 }}}
 Click the *Action* button and choose "Save result to CSV file"
 
+=== Getting locations above some threshold for nox ===
+{{{
+select latitude || '-' || longitude , latitude, longitude from locations where time_stamp >= '2011-12-11 12:21:39' and time_stamp <= '2011-12-11 12:23:21'
+}}}
+
+
 Open the saved CSV files and remove quotation marks " by search replace.
 Add column headers, eg. 
 
