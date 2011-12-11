@@ -14,4 +14,4 @@ Processing of data
 == Analyzing sensor data in Weka == 
 Load the data from either appengine or directly from the phone see [SQLiteManagerHOWTO]
 
-Open WEKA and load the file cf [DataProcessingInWeka]
+Open WEKA and load the file, see [DataProcessingInWeka]
