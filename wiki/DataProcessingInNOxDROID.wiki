@@ -17,3 +17,13 @@ Load the data from either appengine or directly from the phone see [SQLiteManage
 Open WEKA and load the file, see [DataProcessingInWeka]
 
 Look at the mean, stddev, min and max. 
+
+== Preprocessing of location and nox data == 
+Here is some pseudo code for the algorithm which should process the data
+
+{{{
+N : set of noxdata of track T
+G : set of locationdata of track T
+for n in N : 
+   contract n0, n1, ni where |ni-n(i-1)| < some delta 
+}}}
