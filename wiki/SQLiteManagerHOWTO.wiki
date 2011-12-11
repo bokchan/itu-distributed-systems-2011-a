@@ -10,7 +10,8 @@ Open Firefox SQLiteManager and connect to the downloaded noxdroid database
 
 === Getting NOX from the nox table === 
 {{{
-select time_stamp, nox from nox where time_stamp >= (select time_stamp_start from tracks where _id = 'id of the track') and time_stamp  <= (select time_stamp_end from tracks where _id = 'id of the track')}}}
+select time_stamp, nox from nox where time_stamp >= (select time_stamp_start from tracks where _id = 'id of the track') and time_stamp  <= (select time_stamp_end from tracks where _id = 'id of the track')
+}}}
 
 Click the *Action* button and choose "Save result to CSV file"
 
