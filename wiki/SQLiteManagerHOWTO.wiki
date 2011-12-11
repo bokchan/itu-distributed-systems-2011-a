@@ -1,0 +1,16 @@
+#summary Read data from sqlitedatabase
+
+  #Connect to the phone via ADB (USB or ADB Wireless)
+  #In the console on the computer go to the local directory you want to save the database to.
+  #write adb pull /[the_dir_to_noxdroid.db_on_your_phone]/noxdroid.db ./[rename or empty to keep noxdroid.db]
+
+Install [https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/ Firefox SQLiteManager]
+
+Open Firefox SQLiteManager and connect to the downloaded noxdroid database 
+
+=== Getting NOX from the nox table === 
+select time_stamp, nox from nox where time_stamp >= (select time_stamp_start from tracks where _id = 12) and time_stamp  <= (select time_stamp_end from tracks where _id = 12)
+
+=== Getting locations from the locations table ===
+
+select time_stamp,location_provider, latitude, longitude from locations where time_stamp >= (select time_stamp_start from tracks where _id = 12) and time_stamp  <= (select time_stamp_end from tracks where _id = 12) order by time_stamp asc
