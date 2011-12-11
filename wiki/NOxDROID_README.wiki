@@ -1,6 +1,7 @@
 #summary NOXDROID README
 
-Vigtigte ting at tjekke
+== Vigtigte ting at tjekke ==
+
 1. Tjek at NO2 pin i settings stemmer overens med analog in pin på ioio boardet. 
 brug evt IOIOController fra androidmarket til at verificere 
 
