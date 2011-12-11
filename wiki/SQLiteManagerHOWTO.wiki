@@ -20,4 +20,8 @@ select time_stamp,location_provider, latitude, longitude from locations where ti
 Click the *Action* button and choose "Save result to CSV file"
 
 Open the saved CSV files and remove quotation marks " by search replace.
-Add column headers, eg. _time_stamp, nox_
+Add column headers, eg. 
+
+_time_stamp, nox_
+
+_12-12-2011 12:00:00, .65433_
