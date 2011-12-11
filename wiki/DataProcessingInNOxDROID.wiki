@@ -32,9 +32,9 @@ CreateSingleTrackKML(N, G)
      N = set of nox between gx_t and gy_t (_t is timestamp of gx)
      L = ContractNOX(N)
      E.add(gx)
-     E = L.size-1 extrapolated GPS between gx and gy 
+     E = L.size-1 of extrapolated GPS points between gx and gy 
      for i..L.size : 
-        KML.add((L[i], E[i]))
+        KML.add((L[i].timestamp,L[i].timestamp, E[i]))
    return K
 
 ContractNOX(N)
@@ -44,6 +44,10 @@ ContractNOX(N)
       M.add(c) 
    return M
 }}}
+
+This should be done when the data is uploaded and saved in a table: 
+
+timestamp, latitude, longitude, geopoint, nox
 
 Several interesting things to do when we want to show multiple tracks. 
 First of all we need to do the dataprocessing in real time. The pollution level should be visualized according to selected timespan. 
