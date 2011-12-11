@@ -8,3 +8,7 @@ brug evt IOIOController fra androidmarket til at verificere
 2. Den lille hvide skrue som sidder på ioio boardet skal skrues op på max, så langt med uret så muligt.
 
 3. Tjek at data bliver skrevet til database. 
+
+4. Vær sikker på at ledningen med 40kOhm ikke rører ioio boardet. 
+
+5. Hvis ioio boardet lyser men telefonen ikke registrerer boardet: dobbelttjek usb kablet ml telefon og ioio, skru på den hvide knap, jf pkt 2, eller skift batteri på ioio'en. 
