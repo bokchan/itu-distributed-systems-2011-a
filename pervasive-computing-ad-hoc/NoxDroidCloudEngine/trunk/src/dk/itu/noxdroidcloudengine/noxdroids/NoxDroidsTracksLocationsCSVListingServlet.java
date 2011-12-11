@@ -98,9 +98,9 @@ public class NoxDroidsTracksLocationsCSVListingServlet extends HttpServlet {
         	// entity.getKey().getChild("Location", id)
         	
             resp.getWriter().println(            		
-            		entity.getProperty("latitude") 
+            		entity.getProperty("no name") 
             		+ ","
-            		+ entity.getProperty("latitude")
+            		+ entity.getProperty("no desc")
             		+ ","
             		+ entity.getProperty("latitude") 
             		+ ","
