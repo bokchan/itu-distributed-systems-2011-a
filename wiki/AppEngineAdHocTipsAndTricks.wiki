@@ -58,8 +58,6 @@ results in:
 }}}
 
 
-
-
 == run development server on ip address ==
 
 set argument in the run path 
@@ -73,5 +71,21 @@ set argument in the run path
 screen shoot:
 
 http://screencast.com/t/NZEdpjkuUk
+
+
+
+
+
+
+
+== make/set index's ==
+
+todo
+
+
+== make/set index's ==
+
+set threads 
+
 
 
