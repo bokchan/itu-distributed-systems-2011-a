@@ -12,4 +12,4 @@ Processing of data
 
 
 == Analyzing sensor data in Weka == 
-Load the data from either appengine or directly from the phone see [WikiSyntax SQLiteManagerHOWTO]
+Load the data from either appengine or directly from the phone see [SQLiteManagerHOWTO]
