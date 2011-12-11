@@ -9,8 +9,14 @@ Install [https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/ Firefox 
 Open Firefox SQLiteManager and connect to the downloaded noxdroid database 
 
 === Getting NOX from the nox table === 
-select time_stamp, nox from nox where time_stamp >= (select time_stamp_start from tracks where _id = 12) and time_stamp  <= (select time_stamp_end from tracks where _id = 12)
+select time_stamp, nox from nox where time_stamp >= (select time_stamp_start from tracks where _id = 'id of the track') and time_stamp  <= (select time_stamp_end from tracks where _id = 'id of the track')
+
+Click the *Action* button and choose "Save result to CSV file"
 
 === Getting locations from the locations table ===
 
-select time_stamp,location_provider, latitude, longitude from locations where time_stamp >= (select time_stamp_start from tracks where _id = 12) and time_stamp  <= (select time_stamp_end from tracks where _id = 12) order by time_stamp asc
+select time_stamp,location_provider, latitude, longitude from locations where time_stamp >= (select time_stamp_start from tracks where _id = 'id of the track') and time_stamp  <= (select time_stamp_end from tracks where _id = 'id of the track') order by time_stamp asc
+
+Click the *Action* button and choose "Save result to CSV file"
+
+Open the saved CSV files and remove quotation marks " by search replace.
