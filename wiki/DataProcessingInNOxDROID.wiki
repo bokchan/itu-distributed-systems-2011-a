@@ -22,17 +22,20 @@ Look at the mean, stddev, min and max.
 Here is some pseudo code for the algorithm which should process the data for a single track
 
 {{{
-N : set of noxdata of track T
-G : set of locationdata of track T
-K : empty set of KML datapoints 
 
-for (gx,gy) in G : 
-  N = set of nox between gx_t and gy_t (_t is timestamp of gx)
-  L = ContractNOX(N)
-  E.add(gx)
-  E = L.size-1 extrapolated GPS between gx and gy 
-  for i..L.size : 
-     KML.add((L[i], E[i]))
+CreateSingleTrackKML(N, G)
+   N : set of noxdata of some track T
+   G : set of locationdata of some track T
+   K : empty set of KML datapoints 
+
+   for (gx,gy) in G : 
+     N = set of nox between gx_t and gy_t (_t is timestamp of gx)
+     L = ContractNOX(N)
+     E.add(gx)
+     E = L.size-1 extrapolated GPS between gx and gy 
+     for i..L.size : 
+        KML.add((L[i], E[i]))
+   return K
 
 ContractNOX(N)
    M : emptyset for noxdata
