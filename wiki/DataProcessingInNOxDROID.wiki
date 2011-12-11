@@ -15,3 +15,5 @@ Processing of data
 Load the data from either appengine or directly from the phone see [SQLiteManagerHOWTO]
 
 Open WEKA and load the file, see [DataProcessingInWeka]
+
+Look at the mean, stddev, min and max. 
