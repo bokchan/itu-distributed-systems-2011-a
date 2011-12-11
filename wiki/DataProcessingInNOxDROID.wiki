@@ -5,11 +5,13 @@
 Analyzing sensor data in Weka
 
 Preprocessing of location and nox data
-  *Cleaning GPS and nox data
+  * Cleaning GPS and nox data
 
 Processing of data
-  *Aligning nox and location data
+  * Aligning nox and location data
 
 
 == Analyzing sensor data in Weka == 
 Load the data from either appengine or directly from the phone see [SQLiteManagerHOWTO]
+
+Open WEKA and load the file cf [DataProcessingInWeka]
