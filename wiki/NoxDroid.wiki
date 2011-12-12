@@ -36,7 +36,7 @@ Requires phone to be rooted and requires a SD Card on the phone.
 
     adb -s <device id/name> shell 
 
-    # tip - ls is your friend
+    # tip - ls is your friend 
     ls /data/data/dk.itu.noxdroid/databases
     # should not be empty then continue
     cat /data/data/dk.itu.noxdroid/databases/noxdroid.db > /sdcard/noxdroid.db

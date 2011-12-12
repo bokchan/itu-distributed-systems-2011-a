@@ -27,3 +27,13 @@ Do:
 
 
 Document eventually how to do it through eclipse with screen shots and so if you need it (at sbie)
+
+
+== Uninstall ==
+
+
+{{{
+    
+    adb -s <some id> uninstall <package name space e.g. dk.itu.noxdroid>
+    
+}}}
