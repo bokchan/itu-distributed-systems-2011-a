@@ -10,8 +10,6 @@
     android:layout_margin="0dp"
     android:orientation="vertical" >
     
-
-
     <RelativeLayout
         android:id="@+id/wrapper"
         android:layout_width="wrap_content"
@@ -44,14 +42,17 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
             android:textStyle="bold"
+            android:visibility="gone"
             android:text="NO2"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+             />
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:visibility="gone"
             android:src="@drawable/circle_green_no_border" />
 
     </RelativeLayout>

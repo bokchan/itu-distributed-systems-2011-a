@@ -23,7 +23,6 @@ public class NoxDroidIOIOThread extends Thread {
 	private String TAG;
 	/** Subclasses should use this field for controlling the IOIO. */
 	protected IOIO ioio_;
-	private boolean flag = false;
 	private boolean abort_ = false;
 	private boolean connected_ = false;
 
@@ -37,8 +36,9 @@ public class NoxDroidIOIOThread extends Thread {
 	private int pinledRed = 20;
 	private int pinAnalogIn = 41;
 	
-	private double nox;
-	private double temperature;
+	private double green_upper_bound;
+	private double yellow_upper_bound;
+	
 	
 	private int updateinterval = 2000;
 	
@@ -54,7 +54,11 @@ public class NoxDroidIOIOThread extends Thread {
 
 		
 		updateinterval = Integer.valueOf((String)service.getPrefs().get("IOIO_UPDATE_INTERVAL"));
+		Log.d(TAG, "IOIO updateinterval: " +  String.valueOf(updateinterval));
 		pinAnalogIn = Integer.valueOf((String) service.getPrefs().get("IOIO_NO2_PIN"));
+		green_upper_bound = (double) Double.valueOf((String) service.getPrefs().get("NOX_GREEN_UPPER_BOUND"))/100;
+		yellow_upper_bound = (double) Double.valueOf((String) service.getPrefs().get("NOX_YELLOW_UPPER_BOUND"))/100;
+		Log.i(TAG, "green: " + green_upper_bound + " yellow: " + yellow_upper_bound);
 	}
 
 	/** Not relevant to subclasses. */
@@ -166,17 +170,28 @@ public class NoxDroidIOIOThread extends Thread {
 		try {
 			//final float reading = SensorDataUtil.muAtoMuGrames(input_.read());
 			final float reading = input_.read();
-			// addToDebug(Float.toString(reading));
-			ledGreen_.write(!flag);
-			ledYellow_.write(!flag);
-			ledRed_.write(flag);
-			flag = flag ? false : true;
 			
+			if (reading < green_upper_bound ) {
+				ledRed_.write(false);
+				ledYellow_.write(false);
+				ledGreen_.write(true);
+			} else if (reading < yellow_upper_bound) {
+				ledRed_.write(false);
+				ledYellow_.write(true);
+				ledGreen_.write(false);
+			} else {
+				ledRed_.write(true);
+				ledYellow_.write(false);
+				ledGreen_.write(false);
+				
+				
+			}
 			// TODO: probably just disable this part
 			// because we are not going to send data directly back to the UI
 			Object obj = (Object) reading;
 			dbAdapter.createNox(reading, 0.0);
 			service.update(this.getClass(), obj);
+			
 			sleep(updateinterval);
 			
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");

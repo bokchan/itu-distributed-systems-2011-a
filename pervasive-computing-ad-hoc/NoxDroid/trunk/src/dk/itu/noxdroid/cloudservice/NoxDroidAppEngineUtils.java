@@ -152,6 +152,7 @@ public class NoxDroidAppEngineUtils {
 		// first build list json objects
 		List<JSONObject> jsonList = new ArrayList<JSONObject>();
 		Cursor mCursor = mDbHelper.fetchLocations(trackUID);
+		
 
 		double latitude;
 		double longitude;

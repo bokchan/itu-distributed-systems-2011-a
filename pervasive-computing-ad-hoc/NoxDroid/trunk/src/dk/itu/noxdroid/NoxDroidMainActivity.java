@@ -215,6 +215,7 @@ public class NoxDroidMainActivity extends Activity {
 	 * Start track - send message(s) to the underlying service(s)
 	 */
 	public void startTrack(View view) {
+		vibrator.vibrate(100);
 		updateGUI(NoxDroidService.ACTION_START_TRACK);
 		Message msg = Message.obtain(null, NoxDroidService.ACTION_START_TRACK);
 		msg.replyTo = messenger;
@@ -231,6 +232,7 @@ public class NoxDroidMainActivity extends Activity {
 	 * Stop track - send message(s) to the underlying service(s)
 	 */
 	public void endTrack(View view) {
+		vibrator.vibrate(100);
 		updateGUI(NoxDroidService.ACTION_STOP_TRACK);
 		Toast.makeText(this, "stopping service", Toast.LENGTH_SHORT);
 		Message msg = Message.obtain(null, NoxDroidService.ACTION_STOP_TRACK);
@@ -244,25 +246,23 @@ public class NoxDroidMainActivity extends Activity {
 	}
 
 	public void imgBtnGPS_onClick(View view) {
+		vibrator.vibrate(100);
 		showDialog(SHOW_LOCATION);
 	}
 	
 	public void imgBtnIOIO_onClick(View view) {
+		vibrator.vibrate(100);
 		showDialog(SHOW_IOIO);
-	}
-
-	public void changeConnectivity(View view) {
-		Toast.makeText(this, "You clicked change connectivity",
-				Toast.LENGTH_SHORT).show();
 	}
 	
 	public void btnHelp_onClick(View view) {
-		vibrator.vibrate(30);
+		vibrator.vibrate(100);
 		Log.d(TAG, "Help clicked");
 		showDialog(SHOW_HELP);
 	}
 	
 	public void imgBtnConn_onClick(View view) {
+		vibrator.vibrate(100);
 		showDialog(SHOW_CONNECTIVITY);
 	}
 
@@ -309,13 +309,11 @@ public class NoxDroidMainActivity extends Activity {
 			Log.i(TAG, "IOIO Not Connected"); // this is strictly not an error right?
 			break;
 		case NoxDroidService.ACTION_START_TRACK:
-			vibrator.vibrate(30);
 			imgBtnStart.setVisibility(View.GONE);
 			imgBtnStop.setVisibility(View.VISIBLE);
 			imgBtnStop.setEnabled(true);
 			break;
 		case NoxDroidService.ACTION_STOP_TRACK:
-			vibrator.vibrate(30);
 			imgBtnStop.setEnabled(false);
 			imgBtnStart.setVisibility(View.VISIBLE);
 			imgBtnStop.setVisibility(View.GONE);
@@ -503,7 +501,7 @@ public class NoxDroidMainActivity extends Activity {
 			break;
 		case SHOW_CONNECTIVITY :
 			builder = new AlertDialog.Builder(this);
-			builder.setMessage(getString(R.string.DIALOG_MSG_HELP));
+			builder.setMessage(getString(R.string.DIALOG_MSG_CONNECTIVITY));
 			builder.setTitle("Connectivity");
 			builder.setPositiveButton("Mobile Data", new DialogInterface.OnClickListener(){
 				@Override

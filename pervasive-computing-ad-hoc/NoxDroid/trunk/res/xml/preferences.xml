@@ -37,7 +37,7 @@
         android:key="ioio_prefs"
         android:title="IOIO Preferences" >
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="1"
             android:key="IOIO_ENABLED"
             android:title="IOIO enabled" />
         <EditTextPreference
@@ -67,7 +67,9 @@
             android:key="IOIO_UPDATE_INTERVAL"
             android:numeric="integer"
             android:title="IOIO Update Interval (ms)" />
+         
     </PreferenceCategory>
+    
     <PreferenceCategory
         android:key="skyhook_prefs"
         android:title="Skyhook" >
@@ -85,5 +87,17 @@
             android:numeric="integer"
             android:key="GPS_UPDATE_INTERVAL"
             android:title="update interval" />
+    </PreferenceCategory>
+    <PreferenceCategory android:key="NOX_LEVELS" android:title="NOx levels">
+        <EditTextPreference
+            android:defaultValue="40"
+            android:numeric="integer"
+            android:key="NOX_GREEN_UPPER_BOUND"
+            android:title="Green NOx (0-100)" />
+        <EditTextPreference
+            android:defaultValue="60"
+            android:numeric="integer"
+            android:key="NOX_YELLOW_UPPER_BOUND"
+            android:title="Yellow NOx (0-100)" />
     </PreferenceCategory>
 </PreferenceScreen>

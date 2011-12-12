@@ -175,24 +175,24 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 
 		// Get dbAdapter;
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
-		
+
 		registerReceiver(networkStateReceiver, filter);
 
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		try {
+			
 			APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this)
 					.getAll();
 			Log.i(TAG, "Got SharedPreferences " + APP_PREFS);
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-
+		
 		//
 		// Start skyhook & GPS services
 		doBindService();
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		connectToIOIO = Boolean.parseBoolean(prefs.getString(
-				getString(dk.itu.noxdroid.R.string.IOIO_ENABLED), "false"));
+		connectToIOIO = prefs.getBoolean(getString(R.string.IOIO_ENABLED), true);
 		Log.d(TAG, String.valueOf(connectToIOIO));
 
 		if (connectToIOIO) {
@@ -206,9 +206,13 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		connTest.execute(new Void[] {});
 
 	}
-
+	
 	public synchronized Map<String, ?> getPrefs() {
 		return this.APP_PREFS;
+	}
+	
+	public SharedPreferences getPreferences() {
+		return prefs;
 	}
 
 	@Override
@@ -496,7 +500,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
-				} 
+				}
 				updateTest(ConnectivityTest.class, true);
 
 				NetworkInfo mNetworkInfo = (NetworkInfo) intent
@@ -514,7 +518,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 						+ " mOtherNetworkInfo = "
 						+ (mOtherNetworkInfo == null ? "[none]"
 								: mOtherNetworkInfo + " noConn="
-										+ isDisConnected) + " reason=" + mReason + " isFailOver=" + mIsFailover);
+										+ isDisConnected) + " reason="
+						+ mReason + " isFailOver=" + mIsFailover);
 			}
 
 			Log.w("Network Listener", "Network Type Changed");
