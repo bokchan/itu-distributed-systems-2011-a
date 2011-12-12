@@ -238,6 +238,5 @@ public class SkyHookLocationService extends Service {
 
 	public void stopRecording() {
 		_xps.abort();
-	}
-	
+	}	
 }

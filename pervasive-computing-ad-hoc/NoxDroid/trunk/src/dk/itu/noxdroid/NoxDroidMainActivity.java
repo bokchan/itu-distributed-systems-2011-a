@@ -100,6 +100,8 @@ public class NoxDroidMainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG, "onCreate");
+		
 		setContentView(R.layout.main2);
 
 		app = (NoxDroidApp) getApplication();
@@ -154,6 +156,8 @@ public class NoxDroidMainActivity extends Activity {
 		Line l2 = new Line(this, points2);
 		layoutWrapper.addView(l, 0);
 		layoutWrapper.addView(l2, 0);
+		
+		
 	}
 
 	@Override
@@ -166,6 +170,7 @@ public class NoxDroidMainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d(TAG, "onCreate");
 		if (!isServiceRunning(NoxDroidService.class)) {
 			// Start service
 			doBindService();
