@@ -30,6 +30,7 @@ public class NoxDroidAppEngineUtils {
 
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(cloudServiceURL);
+		boolean postSuccessFlag = false;
 
 		/*
 		 * 
@@ -109,7 +110,7 @@ public class NoxDroidAppEngineUtils {
 				mDbHelper.setTrackSync(trackUUID);
 				
 				
-				return true;
+				postSuccessFlag = true;
 				
 				
 				
@@ -133,7 +134,7 @@ public class NoxDroidAppEngineUtils {
 		}
 		
 		
-		return false;
+		return postSuccessFlag;
 		
 
 	}
