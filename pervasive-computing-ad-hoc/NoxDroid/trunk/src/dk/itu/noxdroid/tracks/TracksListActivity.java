@@ -44,7 +44,7 @@ public class TracksListActivity extends ListActivity {
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		cloudServiceURL = prefs.getString(
-				getString(dk.itu.noxdroid.R.string.WEBSERVICE_URL),
+				getString(dk.itu.noxdroid.R.string.SERVER_URL),
 				"http://noxdroidcloudengine.appspot.com/add_track");
 
 		userId = prefs.getString(getString(dk.itu.noxdroid.R.string.USER_ID),
@@ -178,24 +178,6 @@ public class TracksListActivity extends ListActivity {
 		// "When you call this.setListAdapter this must extend ListActivity probably you class just extends Activity."
 	}
 
-	/*
-	 * Post Static To Cloud
-	 * 
-	 * Should normally not be done from an activity (UI)
-	 */
-	public void postStaticToCloud(View view) {
-
-		// just for test
-		// String trackUID = "f3d282f3-6f1b-4a5c-bfa3-a0fc33cfc1a5-test";
-
-		// emulator
-		String trackUID = "8c3adc99-3e51-4922-a3c9-d127117bb764";
-
-		// post to cloud service
-		NoxDroidAppEngineUtils.postForm(cloudServiceURL, trackUID, userId,
-				userName, mDbHelper);
-
-	}
 
 	class PostToCloudAsyncTask extends AsyncTask<String, Void, String> {
 

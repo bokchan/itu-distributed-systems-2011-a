@@ -34,6 +34,7 @@ import android.widget.Toast;
 import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.NoxDroidMainActivity;
 import dk.itu.noxdroid.R;
+import dk.itu.noxdroid.cloudservice.NoxDroidAppEngineUtils;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread;
 import dk.itu.noxdroid.ioio.IOIOConnectedTestThread.STATUS;
@@ -672,8 +673,23 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 				e1.printStackTrace();
 			}
 
-			dbAdapter.endTrack(((NoxDroidApp) getApplication())
-					.getCurrentTrack().toString());
+			String trackUUID = ((NoxDroidApp) getApplication()).getCurrentTrack().toString();
+			dbAdapter.endTrack(trackUUID);
+			
+			// async post to service
+			new PostTrackToCloud().execute(trackUUID);
+			
+			
+//			String cloudServiceURL = (String) APP_PREFS.get(getString(dk.itu.noxdroid.R.string.SERVER_URL));
+//			String userId = (String) APP_PREFS.get(getString(dk.itu.noxdroid.R.string.USER_ID));
+//			String userName = (String) APP_PREFS.get(getString(dk.itu.noxdroid.R.string.USER_NAME));
+//			// post to cloud
+//			boolean postToCloudFlag = NoxDroidAppEngineUtils.postForm(cloudServiceURL, trackUUID, userId, userName, dbAdapter);
+			
+			
+			
+			
+			
 		}
 		isTrackOpen = false;
 		((NoxDroidApp) getApplication()).setCurrentTrack(null);
@@ -706,6 +722,35 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 		}
 	}
 
+	
+	
+	
+	/**
+	* 
+	* Make the post to track in an asynchronous task
+	*
+	*/
+	class PostTrackToCloud extends AsyncTask<String, Void, Void> {
+
+		@Override
+		protected Void doInBackground(String... params) {
+			String trackUUID = params[0];
+
+			String cloudServiceURL = (String) APP_PREFS.get(getString(dk.itu.noxdroid.R.string.SERVER_URL));
+			String userId = (String) APP_PREFS.get(getString(dk.itu.noxdroid.R.string.USER_ID));
+			String userName = (String) APP_PREFS.get(getString(dk.itu.noxdroid.R.string.USER_NAME));
+			
+			// post to cloud
+			boolean postToCloudFlag = NoxDroidAppEngineUtils.postForm(
+			cloudServiceURL, trackUUID, userId, userName, dbAdapter);
+			
+			return null;
+		}
+	
+	}	
+	
+	
+	
 	class IOIOConnectionTest extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
