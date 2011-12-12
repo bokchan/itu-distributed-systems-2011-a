@@ -102,7 +102,8 @@ public class NoxDroidActivity extends Activity {
 			Intent intent = new Intent(NoxDroidActivity.this,
 					PreferencesActivity.class);
 			startActivity(intent);
-			Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
+			// test toast:
+			// Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
 			break;
 		}
 		return true;

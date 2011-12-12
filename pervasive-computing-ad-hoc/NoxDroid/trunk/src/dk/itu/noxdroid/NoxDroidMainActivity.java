@@ -376,7 +376,8 @@ public class NoxDroidMainActivity extends Activity {
 		case R.id.preferences:
 			startActivity(new Intent(NoxDroidMainActivity.this,
 					PreferencesActivity.class));
-			Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
+			// test toast:
+			// Toast.makeText(this, "Just a test", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.post_to_cloud:
 			startActivity(new Intent(NoxDroidMainActivity.this,
