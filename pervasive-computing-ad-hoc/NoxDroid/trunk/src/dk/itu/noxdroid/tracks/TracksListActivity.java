@@ -78,10 +78,6 @@ public class TracksListActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Toast.makeText(TracksListActivity.this,
-				"Post to cloud process is started please hold your hat...",
-				Toast.LENGTH_SHORT).show();
-
 		// do something post to service
 		// Log.d(TAG, "onListItemClick: " + position + " " + id);
 
