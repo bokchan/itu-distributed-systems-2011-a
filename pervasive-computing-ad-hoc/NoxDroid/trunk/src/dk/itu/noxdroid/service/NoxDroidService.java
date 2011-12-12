@@ -247,6 +247,7 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 
 		unbindService(connSkyhookService);
 		unbindService(connGPSService);
+		prefs.unregisterOnSharedPreferenceChangeListener(this);
 
 		// stop additional services
 		stopService(new Intent(this, GPSLocationService.class));
