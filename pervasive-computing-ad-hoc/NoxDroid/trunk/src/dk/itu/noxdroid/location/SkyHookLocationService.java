@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.skyhookwireless.wps.WPSAuthentication;
@@ -88,8 +87,7 @@ public class SkyHookLocationService extends Service {
 
 		// before this is set it has a value of: 10000 view
 		// http://screencast.com/t/nSXoYDm54aw4
-		updateinterval = Integer.valueOf((String) PreferenceManager
-				.getDefaultSharedPreferences(this).getString("SKYHOOK_UPDATE_INTERVAL", "2000"));
+		updateinterval = Integer.valueOf((String) ((NoxDroidApp) getApplication()).getAppPrefs().getString("SKYHOOK_UPDATE_INTERVAL", "2000"));
 		Log.d(TAG, "Skyhook updateinterval: " + updateinterval);
 	}
 	
@@ -120,6 +118,10 @@ public class SkyHookLocationService extends Service {
 				doCheck = true;
 				_xps.getPeriodicLocation(auth,
 						WPSStreetAddressLookup.WPS_NO_STREET_ADDRESS_LOOKUP,updateinterval, 0, _callback);
+				break;
+			case NoxDroidService.CHANGE_UPDATEINTERVAL_SKYHOOK :
+				updateinterval = msg.getData().getInt(getString(R.string.SKYHOOK_UPDATE_INTERVAL));
+				break;
 			default:
 				break;
 			}
@@ -190,7 +192,6 @@ public class SkyHookLocationService extends Service {
 			Log.i(TAG, String.format("lat: %s - long: %s - acc: %s",
 					location.getLatitude(), location.getLongitude(),
 					location.getSpeed()));
-			
 			if (doCheck) {
 				Log.i(TAG, "check Performed");
 				notifyClients(NoxDroidService.STATUS_SKYHOOK_OK);

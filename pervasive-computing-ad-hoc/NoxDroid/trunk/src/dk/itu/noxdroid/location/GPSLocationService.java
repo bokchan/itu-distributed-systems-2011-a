@@ -261,6 +261,9 @@ public class GPSLocationService extends Service {
 			case NoxDroidService.ACTION_STOP_TRACK:
 				stopRecording();
 				break;
+			case NoxDroidService.CHANGE_UPDATEINTERVAL_GPS:
+				updateinterval = msg.getData().getInt(getString(R.string.GPS_UPDATE_INTERVAL));
+				break;
 			default:
 				break;
 			}

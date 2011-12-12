@@ -17,10 +17,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -40,7 +42,8 @@ import dk.itu.noxdroid.ioio.NoxDroidIOIOThread;
 import dk.itu.noxdroid.location.GPSLocationService;
 import dk.itu.noxdroid.location.SkyHookLocationService;
 
-public class NoxDroidService extends Service implements IOIOEventListener {
+public class NoxDroidService extends Service implements IOIOEventListener,
+		OnSharedPreferenceChangeListener {
 
 	public final static int MSG_REGISTER_CLIENT = 1;
 	public final static int MSG_UNREGISTER_CLIENT = 2;
@@ -80,6 +83,9 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	public static final int GET_SENSOR_STATES = 26;
 	public static final int ACTION_SKYHOOK_DOTEST = 27;
 
+	public static final int CHANGE_UPDATEINTERVAL_SKYHOOK = 28;
+	public static final int CHANGE_UPDATEINTERVAL_GPS = 29;
+
 	private boolean isTrackOpen = false;
 
 	public Map<String, ?> APP_PREFS = null;
@@ -96,6 +102,8 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 	private NoxDroidDbAdapter dbAdapter;
 	private Hashtable<Class<?>, Boolean> tests = new Hashtable<Class<?>, Boolean>();
 	boolean connectToIOIO;
+
+	private NoxDroidApp app;
 
 	private ConnectivityTest connTest;
 	private IOIOConnectionTest ioiotest;
@@ -166,6 +174,7 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		TAG = getString(R.string.LOGCAT_TAG, getString(R.string.app_name), this
 				.getClass().getSimpleName());
 
+		app = (NoxDroidApp) getApplication();
 		nman = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		// Display a notification about us starting. We put an icon in the
 		// status bar.
@@ -179,20 +188,21 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		registerReceiver(networkStateReceiver, filter);
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 		try {
-			
-			APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this)
-					.getAll();
+
+			APP_PREFS = app.getAppPrefs().getAll();
 			Log.i(TAG, "Got SharedPreferences " + APP_PREFS);
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-		
+
 		//
 		// Start skyhook & GPS services
 		doBindService();
 
-		connectToIOIO = prefs.getBoolean(getString(R.string.IOIO_ENABLED), true);
+		connectToIOIO = prefs
+				.getBoolean(getString(R.string.IOIO_ENABLED), true);
 		Log.d(TAG, String.valueOf(connectToIOIO));
 
 		if (connectToIOIO) {
@@ -206,11 +216,11 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		connTest.execute(new Void[] {});
 
 	}
-	
+
 	public synchronized Map<String, ?> getPrefs() {
 		return this.APP_PREFS;
 	}
-	
+
 	public SharedPreferences getPreferences() {
 		return prefs;
 	}
@@ -678,6 +688,75 @@ public class NoxDroidService extends Service implements IOIOEventListener {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			updateTest(this.getClass(), result);
+		}
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		/**
+		 * If preferences are changed after the
+		 */
+		try {
+
+			prefs = app.getAppPrefs();
+			APP_PREFS = prefs.getAll();
+			Log.i(TAG, "Got SharedPreferences " + prefs);
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+
+		int updateinterval;
+		if (app.getCurrentTrack() != null && ioio_thread_ != null
+				&& ioio_thread_.isAlive()) {
+			
+			if (key.equals(getString(R.string.IOIO_NO2_PIN))
+					|| key.equals(getString(R.string.IOIO_UPDATE_INTERVAL))) {
+				// Restart ioiothread so changes are reflected
+				updateinterval = Integer.parseInt(prefs.getString(
+						getString(R.string.IOIO_UPDATE_INTERVAL), "2000"));
+				int no2pin = Integer.parseInt(prefs.getString(
+						getString(R.string.IOIO_NO2_PIN), "41"));
+				ioio_thread_.setUpdateSettings(updateinterval, no2pin);
+				Log.d(TAG, "Updated IOIO settings. updateinterval: "
+						+ updateinterval + " no2pin: " + no2pin);
+			}
+		}
+
+		if (key.equals(getString(R.string.SKYHOOK_UPDATE_INTERVAL))) {
+			Message msg = Message.obtain(null, CHANGE_UPDATEINTERVAL_SKYHOOK);
+			msg.replyTo = messenger;
+			updateinterval = Integer.parseInt(prefs.getString(
+					getString(R.string.SKYHOOK_UPDATE_INTERVAL), "2000"));
+			Bundle data = new Bundle();
+			data.putInt(getString(R.string.SKYHOOK_UPDATE_INTERVAL),
+					updateinterval);
+			msg.setData(data);
+			try {
+				messengerSkyhook.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+
+			Log.d(TAG, "Updated SKYHOOK settings. updateinterval: "
+					+ updateinterval);
+		}
+		if (key.equals(getString(R.string.GPS_UPDATE_INTERVAL))) {
+			Message msg = Message.obtain(null, CHANGE_UPDATEINTERVAL_GPS);
+			msg.replyTo = messenger;
+			Bundle data = new Bundle();
+			updateinterval = Integer.parseInt(prefs.getString(
+					getString(R.string.GPS_UPDATE_INTERVAL), "2000"));
+			data.putInt(getString(R.string.GPS_UPDATE_INTERVAL), updateinterval);
+			msg.setData(data);
+			try {
+				messengerGPS.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+
+			Log.d(TAG, "Updated GPS settings. updateinterval: "
+					+ updateinterval);
 		}
 	}
 }

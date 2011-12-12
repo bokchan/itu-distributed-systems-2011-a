@@ -52,10 +52,10 @@ public class NoxDroidIOIOThread extends Thread {
 		TAG = service.getString(R.string.LOGCAT_TAG, service
 				.getString(R.string.app_name), this.getClass().getSimpleName());
 
-		
 		updateinterval = Integer.valueOf((String)service.getPrefs().get("IOIO_UPDATE_INTERVAL"));
 		Log.d(TAG, "IOIO updateinterval: " +  String.valueOf(updateinterval));
 		pinAnalogIn = Integer.valueOf((String) service.getPrefs().get("IOIO_NO2_PIN"));
+		Log.d(TAG, "NO2 pin: " + pinAnalogIn);
 		green_upper_bound = (double) Double.valueOf((String) service.getPrefs().get("NOX_GREEN_UPPER_BOUND"))/100;
 		yellow_upper_bound = (double) Double.valueOf((String) service.getPrefs().get("NOX_YELLOW_UPPER_BOUND"))/100;
 		Log.i(TAG, "green: " + green_upper_bound + " yellow: " + yellow_upper_bound);
@@ -269,6 +269,12 @@ public class NoxDroidIOIOThread extends Thread {
 			}
 		}
 		return null;
+	}
+	
+	public synchronized void setUpdateSettings(int interval, int no2pin) {
+		updateinterval = interval;
+		pinAnalogIn = no2pin;
+		Log.d(TAG, "updated IOIO settings. updateinterval - " + updateinterval + " no2pin - " + no2pin);
 	}
 
 	private void notifyEventchanged(int msg) {

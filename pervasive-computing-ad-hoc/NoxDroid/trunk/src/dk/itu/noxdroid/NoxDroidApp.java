@@ -4,15 +4,18 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 
-public class NoxDroidApp extends Application {
+public class NoxDroidApp extends Application implements OnSharedPreferenceChangeListener {
 	//private DbAdapter dbAdapter;
 	private NoxDroidDbAdapter dbAdapter;
 	private String TAG;
 	private UUID currentTrack = null;
+	private SharedPreferences APP_PREFS;
 	private Hashtable<Class<?>, Boolean> sensorStates = new Hashtable<Class<?>, Boolean>();
 	
 	@Override
@@ -22,7 +25,9 @@ public class NoxDroidApp extends Application {
 				.getClass().getSimpleName());
 		Log.i(TAG, "Created NoxdroidApp");
 		
+		
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this);
 	}
 	
 	public NoxDroidDbAdapter getDbAdapter() {
@@ -61,4 +66,14 @@ public class NoxDroidApp extends Application {
 		return sensorStates.containsKey(c) && sensorStates.get(c); 
 	}
 	
+	public SharedPreferences getAppPrefs() {
+		return APP_PREFS;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this);
+	}
 }
