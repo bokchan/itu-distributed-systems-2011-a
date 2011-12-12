@@ -107,6 +107,11 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 
 	private ConnectivityTest connTest;
 	private IOIOConnectionTest ioiotest;
+	
+	IntentFilter filterConnectivityAction = new IntentFilter(
+			ConnectivityManager.CONNECTIVITY_ACTION);
+	IntentFilter filterPowerConnected = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
+	IntentFilter filterPowerDisconnected = new IntentFilter(Intent.ACTION_POWER_DISCONNECTED);
 
 	public class ServiceBinder extends Binder {
 		public NoxDroidService getService() {
@@ -185,7 +190,9 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 		// Get dbAdapter;
 		dbAdapter = ((NoxDroidApp) getApplication()).getDbAdapter();
 
-		registerReceiver(networkStateReceiver, filter);
+		registerReceiver(broadcastReceiver, filterConnectivityAction);
+		registerReceiver(broadcastReceiver, filterPowerConnected);
+		registerReceiver(broadcastReceiver, filterPowerDisconnected);
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
@@ -248,6 +255,8 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 		unbindService(connSkyhookService);
 		unbindService(connGPSService);
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
+		
+		unregisterReceiver(broadcastReceiver);
 
 		// stop additional services
 		stopService(new Intent(this, GPSLocationService.class));
@@ -493,11 +502,12 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 		}
 	}
 
-	BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+	BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
+			Log.d(TAG, "Broadcast receiver: " + action);
 			if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 				boolean isDisConnected = intent.getBooleanExtra(
 						android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY,
@@ -532,13 +542,26 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 										+ isDisConnected) + " reason="
 						+ mReason + " isFailOver=" + mIsFailover);
 			}
+			
+			if (action.equals(Intent.ACTION_POWER_CONNECTED)) {
+				if (app.getCurrentTrack() == null) {
+					if (ioiotest != null)
+						ioiotest.cancel(true);
+					ioiotest = new IOIOConnectionTest();
+					ioiotest.execute(new Void[] {});
+				}
+				 
+			}
+			
+			if (action.equals(Intent.ACTION_POWER_DISCONNECTED)) {
+				updateTest(IOIOConnectionTest.class, false);
+			}
 
 			Log.w("Network Listener", "Network Type Changed");
 		}
 	};
 
-	IntentFilter filter = new IntentFilter(
-			ConnectivityManager.CONNECTIVITY_ACTION);
+	
 
 	/**
 	 * Tracks
@@ -642,7 +665,7 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 
 		if (connectToIOIO) {
 			// Check for IOIO connection
-			IOIOConnectionTest ioiotest = new IOIOConnectionTest();
+			ioiotest = new IOIOConnectionTest();
 			ioiotest.execute(new Void[] {});
 		} else {
 			updateTest(IOIOConnectionTest.class, true);
