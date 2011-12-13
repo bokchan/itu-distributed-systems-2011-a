@@ -150,7 +150,6 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 	};
 
 	private ServiceConnection connGPSService = new ServiceConnection() {
-
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			messengerGPS = null;
@@ -300,8 +299,13 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 		Notification notification = new Notification(R.drawable.no2_molecule,
 				text, System.currentTimeMillis());
 
+		
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, NoxDroidMainActivity.class), 0);
+				new Intent(this, NoxDroidMainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+		
+//		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+//				new Intent(this, NoxDroidMainActivity.class), Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		
 
 		// Set the info for the views that show in the notification panel.
 
@@ -379,16 +383,6 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 			return ERROR_NO_SKYHOOK;
 	}
 
-	public void removeMessenger(Messenger m) {
-		clients.remove(m);
-		Log.i(TAG, "Removed messenger from NoxDroidService");
-	}
-
-	public void addMessenger(Messenger m) {
-		clients.add(m);
-		Log.i(TAG, "Added Messenger to NoxDroidService");
-	}
-
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -396,7 +390,11 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 			switch (msg.what) {
 			case MSG_REGISTER_CLIENT:
 				Log.i(TAG, "Added client: " + msg.replyTo);
-				clients.add(msg.replyTo);
+				if (!clients.contains(msg.replyTo)) 
+					clients.add(msg.replyTo);
+				break;
+			case MSG_UNREGISTER_CLIENT :
+				clients.remove(msg.replyTo);
 				break;
 			case STATUS_SKYHOOK_OK:
 				// TODO: if SkyHook is not depending on GPS but network
@@ -422,15 +420,20 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 				updateTest(GPSLocationService.class, true);
 				break;
 			case GET_SENSOR_STATES:
-				for (Entry<Class<?>, Boolean> e : tests.entrySet()) {
-					updateTest(e.getKey(), e.getValue());
-				}
+				sendSensorStates();
+				break;
 			default:
 				super.handleMessage(msg);
 				break;
 			}
 		}
 	}
+	
+	private void sendSensorStates() {
+		for (Entry<Class<?>, Boolean> e : tests.entrySet()) {
+			updateTest(e.getKey(), e.getValue());
+		}
+	} 
 
 	public final Messenger messenger = new Messenger(new IncomingHandler());
 
@@ -569,7 +572,6 @@ public class NoxDroidService extends Service implements IOIOEventListener,
 				}
 
 			}
-
 			
 			if (action.equals(Intent.ACTION_POWER_DISCONNECTED)) {
 				Log.d(TAG, "ACTION_POWER_DISCONNECTED");

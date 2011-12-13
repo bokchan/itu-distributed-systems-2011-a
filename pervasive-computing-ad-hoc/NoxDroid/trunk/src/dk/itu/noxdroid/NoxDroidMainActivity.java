@@ -68,6 +68,7 @@ public class NoxDroidMainActivity extends Activity {
 	private static final int SHOW_HELP = 5;
 	private static final int SHOW_CONNECTIVITY = 6;
 	private Builder builder;
+	private boolean updateSensorStates = false;  
 	private ServiceConnection mConnection = new ServiceConnection() {
 
 		@Override
@@ -86,16 +87,26 @@ public class NoxDroidMainActivity extends Activity {
 						NoxDroidService.MSG_REGISTER_CLIENT);
 				msg.replyTo = messenger;
 				msg_service.send(msg);
+				
 				Log.i(TAG, "Registered messenger to NoxDroidService");
+				if (updateSensorStates) {
+					msg = Message.obtain(null,
+							NoxDroidService.GET_SENSOR_STATES);
+					msg.replyTo = messenger;
+					msg_service.send(msg);
+					updateSensorStates = false;
+				}
+				
 			} catch (RemoteException e) {
 
 			}
 		}
 	};
-
-	// TODO : Listener on usb not plugged in
-	// TODO : Listener on connectivity changed
-	// TODO : LIstener on GPS status changed
+	
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +167,6 @@ public class NoxDroidMainActivity extends Activity {
 		Line l2 = new Line(this, points2);
 		layoutWrapper.addView(l, 0);
 		layoutWrapper.addView(l2, 0);
-		
-		
 	}
 
 	@Override
@@ -166,17 +175,17 @@ public class NoxDroidMainActivity extends Activity {
 		Log.d(TAG, "onDestroy");
 		doUnbindService();
 	}
+	
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		Log.d(TAG, "onCreate");
-		if (!isServiceRunning(NoxDroidService.class)) {
-			// Start service
-			doBindService();
-		} else if (app.getCurrentTrack() != null) {
+		
+		
+		if (app.getCurrentTrack() != null) {
 			updateGUI(NoxDroidService.STATUS_RECORDING);
-		} else {
+		} else if (msg_service != null) {
 			Message msg = Message.obtain(null,
 					NoxDroidService.GET_SENSOR_STATES);
 			msg.replyTo = messenger;
@@ -185,7 +194,10 @@ public class NoxDroidMainActivity extends Activity {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
+		}else {
+			updateSensorStates = true;
 		}
+		doBindService();
 	}
 
 	void doBindService() {
@@ -194,7 +206,6 @@ public class NoxDroidMainActivity extends Activity {
 		bindService(new Intent(this, NoxDroidService.class), mConnection,
 				Context.BIND_AUTO_CREATE);
 		isBound = true;
-
 	}
 
 	void doUnbindService() {
@@ -533,4 +544,5 @@ public class NoxDroidMainActivity extends Activity {
 		}
 		return super.onCreateDialog(id);
 	}
+	
 }
