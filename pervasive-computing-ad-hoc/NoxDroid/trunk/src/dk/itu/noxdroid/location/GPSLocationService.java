@@ -109,9 +109,13 @@ public class GPSLocationService extends Service {
 
 		if (providerEnabled()) {
 			notifyClients(NoxDroidService.STATUS_GPS_OK);
+			Log.d(TAG, "GPS enabled");
 		} else {
 			notifyClients(NoxDroidService.ERROR_NO_GPS);
+			Log.d(TAG, "GPS not enabled");
 		}
+		
+		
 
 		// ask the Location Manager to send us location updates
 		locListenD = new DispLocListener();
@@ -178,7 +182,7 @@ public class GPSLocationService extends Service {
 			/**
 			 * Add to database
 			 */
-			if (true)
+			if (record)
 				mDbHelper.createLocationPoint(latitude, longitude,
 						location.getProvider());
 		}
@@ -230,6 +234,7 @@ public class GPSLocationService extends Service {
 
 	private void stopRecording() {
 		Log.i(TAG, "Stop rec");
+		record = false;
 		lm.removeUpdates(locListenD);
 	}
 
