@@ -56,3 +56,19 @@ First of all we need to do the dataprocessing in real time. The pollution level 
   * Show pollution on the map with timespan selection
 
 Should all KML datapoints be calculated at once or can you pass the map's quadrant as arguments.
+
+{{{
+G = {g1, g2,...,gi}, where g1 consists of KMLPoints k (with limit) where k_timestamp >= datetime_start && k_timestamp <= datetime_end and k is in geocell gc 
+for each g1, g2,...,gi : 
+   Lg = # Green(KMLPoints)   
+   Ly = # Yellow(KMLPoints)
+   Lr = # Red(KMLPoints)
+   for each k1,...kn : 
+      
+
+
+}}}
+
+http://code.google.com/p/javageomodel/
+http://code.google.com/apis/maps/articles/geospatial.html
+http://code.google.com/p/geomodel/source/browse/trunk/demos/pubschools
