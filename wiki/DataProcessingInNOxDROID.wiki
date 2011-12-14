@@ -58,15 +58,18 @@ First of all we need to do the dataprocessing in real time. The pollution level 
 Should all KML datapoints be calculated at once or can you pass the map's quadrant as arguments.
 
 {{{
-G = {g1, g2,...,gi}, where g1 consists of KMLPoints k (with limit) where k_timestamp >= datetime_start && k_timestamp <= datetime_end and k is in geocell gc 
+Save KMLPoint as an Entity extending GeoModel. 
+Divide "Copenhagen" into geocells
+G = {g1, g2,...,gi}, where g1 consists of KMLPoints k (with limit) where k_timestamp >= datetime_start && k_timestamp <= datetime_end and k is in geocell gc
+
 for each g1, g2,...,gi : 
-   Lg = # Green(KMLPoints)   
+   Refine resolution, [45,-90], [45, 90], [-45,-90],[-45,90] proximity searches for {
+   Lg = # Green(KMLPoints)
    Ly = # Yellow(KMLPoints)
    Lr = # Red(KMLPoints)
-   for each k1,...kn : 
-      
-
-
+}
+   If Lg, Ly, Lr are close increase the resolution of the geocell.
+   Else Get the dominant KMLPoints in the geocell -> Color the geocell accordingly by drawing a polygon consisting of a coordinates furtherst from the center.
 }}}
 
 http://code.google.com/p/javageomodel/
