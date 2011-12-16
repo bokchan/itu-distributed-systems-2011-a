@@ -1,0 +1,248 @@
+package dk.itu.noxdroidcloudengine.dataprocessing;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.GeoPt;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.QueryResultList;
+
+import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
+import de.micromata.opengis.kml.v_2_2_0.Coordinate;
+import de.micromata.opengis.kml.v_2_2_0.Document;
+import de.micromata.opengis.kml.v_2_2_0.Kml;
+import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
+import de.micromata.opengis.kml.v_2_2_0.LineString;
+import de.micromata.opengis.kml.v_2_2_0.Placemark;
+import de.micromata.opengis.kml.v_2_2_0.TimeStamp;
+import dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsListingServlet;
+
+public class KMLGeneratorJAK {
+	private double green_upperbound; 
+	private double yellow_upperbound;
+	private final String styleurl_green = "transGreenLine";
+	private final String styleurl_yellow = "transYellowLine";
+	private final String styleurl_red = "transRedLine";
+
+	private static final Logger log = Logger
+			.getLogger(NoxDroidsListingServlet.class.getName());
+
+	private static double nox_delta = Double.parseDouble(System
+			.getProperty("noxdroidcloudengine.noxdelta"));
+
+	private static SimpleDateFormat formatter = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+
+	private static enum NOXLEVEL {
+		GREEN, YELLOW, RED
+	}
+	
+	public KMLGeneratorJAK() {
+		green_upperbound = Double.parseDouble(System.getProperty("noxdroid.green_uppperbound"));
+		yellow_upperbound = Double.parseDouble(System.getProperty("noxdroid.green_uppperbound"));
+	}
+	
+	
+
+	public void loadLocations(Key track) {
+		List<Entity> kml_points = new ArrayList<Entity>();
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query qLoc = new Query("Location");
+		qLoc.setAncestor(track);
+		qLoc.addSort("time_stamp_date", Query.SortDirection.ASCENDING);
+
+		PreparedQuery pq = datastore.prepare(qLoc);
+		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+
+		QueryResultList<Entity> locations = pq.asQueryResultList(fetchOptions);
+		System.out.println(locations.toString());
+
+		Entity loc1 = locations.get(0);
+
+		// Maybe clean gps data.
+
+		Kml kml = KmlFactory.createKml();
+		Document doc = kml.createAndSetDocument().withName(track.getName());
+		doc.createAndAddStyle().withId(styleurl_green).createAndSetLineStyle().withColor("00FF00").withWidth(5);
+		doc.createAndAddStyle().withId(styleurl_yellow).createAndSetLineStyle().withColor("FFFF00").withWidth(5);
+		doc.createAndAddStyle().withId(styleurl_red).createAndSetLineStyle().withColor("FF0000").withWidth(5);
+		for (Entity loc2 : locations.subList(1, locations.size())) {
+			Date t1 = (Date) loc1.getProperty("time_stamp_date");
+			Date t2 = (Date) loc2.getProperty("time_stamp_date");
+
+			Query qNox = new Query("Nox");
+			qNox.setAncestor(track);
+			qNox.addFilter("time_stamp_date",
+					Query.FilterOperator.GREATER_THAN_OR_EQUAL, t1);
+			qNox.addFilter("time_stamp_date",
+					Query.FilterOperator.LESS_THAN_OR_EQUAL, t2);
+			qNox.addSort("time_stamp_date", Query.SortDirection.ASCENDING);
+			pq = datastore.prepare(qNox);
+			QueryResultList<Entity> nox = pq.asQueryResultList(fetchOptions);
+			// ArrayList<Entity> processed_nox = processNox(nox);
+
+			/**
+			 * GREEN: 0,255,0 YELLOW: 255,255,0 RED: 255,0,0 0.20 0.40
+			 * 
+			 * 
+			 * 255/20
+			 * 
+			 */
+
+			Double[][] points = extrapolateGPS(
+					cast(loc1.getProperty("latitude"), Double.class),
+					cast(loc1.getProperty("longitude"), Double.class),
+					cast(loc2.getProperty("latitude"), Double.class),
+					cast(loc2.getProperty("longitude"), Double.class),
+					nox.size());
+
+			Date timeStampDate = null;
+			Placemark placemark = null;
+			LineString lineString = null;
+			List<Coordinate> coords = null;
+			NOXLEVEL CURRENT_NOX_VAL = null;
+			for (int i = 1; i < points.length; i++) {
+
+				Entity _nox = nox.get(i);
+				double nox_val = cast(_nox.getProperty("nox"), Double.class);
+				Entity kml_point = new Entity("KMLPoint", track);
+				timeStampDate = cast(_nox.getProperty("time_stamp_date"),
+						Date.class);
+				kml_point.setProperty("time_stamp", timeStampDate);
+				kml_point.setProperty("nox", _nox.getProperty("nox"));
+				kml_point.setProperty("latitude", points[i][0]);
+				kml_point.setProperty("longitude", points[i][1]);
+
+				kml_point.setProperty("geo_point",
+						new GeoPt(Float.parseFloat(points[i][0].toString()),
+								Float.parseFloat(points[i][1].toString())));
+				kml_points.add(kml_point);
+
+				/**
+				 * If ni && nj are in same category add gps coord to placemark
+				 * else add Placemark to doc and start new Placemark
+				 */
+
+				if (i == 0 || !getNOXLEVEL(nox_val).equals(CURRENT_NOX_VAL)) {
+					CURRENT_NOX_VAL = getNOXLEVEL(nox_val);
+					placemark = createPlacemark(getStyleURL(CURRENT_NOX_VAL),
+							cast(_nox.getProperty("time_stamp"), String.class));
+					doc.getFeature().add(placemark);
+					lineString = createLineString();
+
+					placemark.setGeometry(lineString);
+					coords = new ArrayList<Coordinate>();
+					lineString.setCoordinates(coords);
+					coords.add(new Coordinate(points[i][0], points[i][1]));
+
+					// add placemark
+				} else {
+					coords.add(new Coordinate(points[i][0], points[i][1]));
+				}
+			}
+		}
+
+		System.out.println(kml_points);
+		try {
+			
+//		final StringWriter sw = new StringWriter();
+//		kml.marshal(sw);
+		//final Kml kml_unmarshalled = Kml.unmarshal(sw.toString());
+		
+		System.out.println(kml.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+
+		// Remove to write to db
+		// datastore.put(kml_points);
+
+	}
+
+	private ArrayList<Entity> processNox(QueryResultList<Entity> nox) {
+		ArrayList<Entity> nox_processed = new ArrayList<Entity>();
+		Entity nox0 = nox.get(0);
+		nox_processed.add(nox0);
+		for (Entity nox1 : nox.subList(1, nox.size())) {
+			Double x = (Double) nox0.getProperty("nox");
+			Double y = (Double) nox1.getProperty("nox");
+			if (Math.abs(x - y) < nox_delta) {
+				continue;
+			} else {
+				nox_processed.add(nox1);
+				nox0 = nox1;
+			}
+		}
+		return nox_processed;
+	}
+
+	private Double[][] extrapolateGPS(double lat1, double lon1, double lat2,
+			double lon2, int factor) {
+		Double[][] points = new Double[factor][2];
+		double deltaLat = (double) (lat2 - lat1) / factor;
+		double deltaLong = (double)(lon2 - lon2) / (double)factor;
+		// Use first GPS point
+		points[0][0] = lat1;
+		points[0][1] = lon1;
+		for (int i = 1; i < factor; i++) {
+			points[i][0] = (i * deltaLat) + lat1;
+			points[i][1] = (i * deltaLong) + lon1;
+		}
+		return points;
+	}
+
+	private <T> T cast(Object o, Class<? extends T> c) {
+		return (T) c.cast(o);
+	}
+	
+
+	private String getStyleURL(NOXLEVEL level) {
+		switch (level) {
+		case GREEN:
+			return styleurl_green;
+		case YELLOW:
+			return "#" + styleurl_yellow;
+		case RED:
+			return "#" + styleurl_red;
+		default:
+			return "#" + styleurl_yellow;
+		}
+
+	}
+
+	private NOXLEVEL getNOXLEVEL(double value) {
+		if (value <= green_upperbound) {
+			return NOXLEVEL.GREEN;
+		} else if (value <= yellow_upperbound) {
+			return NOXLEVEL.YELLOW;
+		} else {
+			return NOXLEVEL.RED;
+		}
+	}
+
+	private LineString createLineString() {
+		LineString l = new LineString().withExtrude(false)
+				.withTessellate(false)
+				.withAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
+		return l;
+	}
+
+	private Placemark createPlacemark(String style, String time_stamp) {
+
+		Placemark p = new Placemark().withStyleUrl(style).withTimePrimitive(
+				new TimeStamp().withWhen(time_stamp));
+		return p;
+	}	
+}

@@ -21,9 +21,9 @@ import com.google.appengine.repackaged.org.json.JSONArray;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
 
-public class AddTrackServlet extends HttpServlet {
+public class PostTrackServlet extends HttpServlet {
 
-	private static final Logger log = Logger.getLogger(AddTrackServlet.class
+	private static final Logger log = Logger.getLogger(PostTrackServlet.class
 			.getName());
 
 	private static SimpleDateFormat formatter = new SimpleDateFormat(
@@ -148,7 +148,8 @@ public class AddTrackServlet extends HttpServlet {
 			// - http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 			resp.setStatus(201);
 		}
-
+		
+		System.out.println(track.getKey().toString());
 	}
 
 	/**
@@ -204,7 +205,6 @@ public class AddTrackServlet extends HttpServlet {
 					// GEOPT(lat, long) GEOPT(37.4219, -122.0846)
 					// - takes only floats not double
 					geoPoint = new GeoPt((float) latitude, (float) longitude);
-					
 
 					// Entity(type/kind, id/key, parent )
 					entity = new Entity("Location", i + 1, track.getKey());
@@ -266,7 +266,6 @@ public class AddTrackServlet extends HttpServlet {
 
 				for (int i = 0; i < jsonArray.length(); ++i) {
 					JSONObject obj = jsonArray.getJSONObject(i);
-					  
 
 					nox = obj.getDouble("nox");
 					temperature = obj.getDouble("temperature");

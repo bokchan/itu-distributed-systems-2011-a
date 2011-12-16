@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>MAPS</title>
+<link rel="stylesheet" href="http://openlayers.org/api/theme/default/style.css" type="text/css" />
+<link rel="stylesheet" href="http://openlayers.org/dev/examples/style.css" type="text/css" />
+<!-- <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAl9RMqSzhPUXAfeBCXOussRTQDbvAygy0cfGJr8dEMAYKf3RWNBQqP9mjKIsqTfmAlz5LOJ3Xpy5s4w'></script> -->
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<style type="text/css">
+    .googlemaps div { background-color: transparent; }
+</style>
+<script type="text/javascript">
+// ffb445dc-d2eb-494f-a4af-78c20b5d181c 
+// http://localhost:8888/serve_kml?noxdroid=bok.chan&track=ffb445dc-d2eb-494f-a4af-78c20b5d181c
+// http://noxdroidcloudengine.appspot.com/map.html?noxdroidkey=Stine_g&trackkey=6f51a2be-1ef7-49d0-b2a4-ed39fa8ce87e
+// http://noxdroidcloudengine.appspot.com/serve_kml?noxdroid=Stine_g&track=6f51a2be-1ef7-49d0-b2a4-ed39fa8ce87e
+var host = 'http://noxdroidcloudengine.appspot.com';
+    function googlemaps_v3_initialize_1() {
+    	var trackkey = $(location).attr('trackkey');
+    	var noxdroid = $(location).attr('noxdroidkey');
+    	
+        var latlng = new google.maps.LatLng(55.676097,12.568337);
+        //var latlng = new google.maps.LatLng(40.65, -73.95)
+        var options = {
+            zoom: 12,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.HYBRID
+        };
+        var map = new google.maps.Map(document.getElementById("googlemap_v3_1"), options);
+
+        var layerOpt = {
+            map: map,
+            preserveViewport: true,
+            suppressInfoWindows: false
+        };
+        
+        var layer = new google.maps.KmlLayer(host + '/serve_kml?noxdroid=bok.chan&track=eeb445dc-d2eb-494f-a4af-78c20b5d281c', layerOpt);
+        //var layer = new google.maps.KmlLayer('http://geocommons.com/overlays/188280.kml', layerOpt);
+        
+        //var layer = new google.maps.KmlLayer($.get( host + "/serve_kml", { track: 'eeb445dc-d2eb-494f-a4af-78c20b5d281c', noxdroid: 'bok.chan'}), layerOpt);
+    }
+    
+    jQuery(document).ready(googlemaps_v3_initialize_1);
+</script>
+
+</head>
+<form action="/serve_kml" method="get">
+<body>
+	<div class="googlemaps" id="googlemap_v3_1" style="width: 700px; height: 700px;"></div>
+	
+</body>
+</html>

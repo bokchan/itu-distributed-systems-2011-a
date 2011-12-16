@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+	<Document id="d1f0e9d5-a877-4a57-bce1-263cf6443392">
+		<Placemark id="449ea458-819d-4fd7-9f2d-54cb7d104c18">
+			<name>My Home</name>
+			<description>Chan's home</description>
+			<Point id="5bc34a0d-821c-4418-a484-7317cf1bc573">
+				<coordinates>33.44,22.33</coordinates>
+			</Point>
+		</Placemark>
+	</Document>
+</kml>

@@ -92,6 +92,7 @@ public class NoxDroidsTracksListingServlet extends HttpServlet {
             		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "'>csv all</a> - "
             		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "&provider=gps'>csv gps</a> - "
             		+ " <a href='/noxdroids_tracks_location_csv_listing?ancestor_parent_key_name=" + ancestorKeyName + "&ancestor_key_name=" + entity.getKey().getName() + "&provider=skyhook'>csv skyhook</a>"
+            		+ " <a href='/serve_kml?noxdroid=" + ancestorKeyName + "&track=" + entity.getKey().getName() + "'>kml file</a>"
             		+ "</li>");
         }
         // no results

@@ -5,5 +5,8 @@
     <datastore-index kind="Track" ancestor="true" source="auto">
         <property name="start_time" direction="desc"/>
     </datastore-index>
-
+    
+      <datastore-index kind="Nox" ancestor="true" source="auto">
+        <property name="time_stamp_date" direction="asc"/>
+    </datastore-index>
 </datastore-indexes>

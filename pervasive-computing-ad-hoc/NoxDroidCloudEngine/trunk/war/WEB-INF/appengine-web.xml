@@ -15,6 +15,9 @@
   <!-- Configure java.util.logging -->
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+    <property name="noxdroidcloudengine.noxdelta" value="0.5"/>
+    <property name="noxdroid.green_uppperbound" value="0.4"/>
+    <property name="noxdroid.yellow_uppperbound" value="0.6"/>
   </system-properties>
  
 </appengine-web-app>

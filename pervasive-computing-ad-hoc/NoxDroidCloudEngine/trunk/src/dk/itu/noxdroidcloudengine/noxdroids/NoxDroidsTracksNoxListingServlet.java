@@ -33,7 +33,6 @@ public class NoxDroidsTracksNoxListingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
           throws ServletException, IOException {
 
-    	
     	String ancestorParentKeyName = req.getParameter("ancestor_parent_key_name");
     	Key parentAncestorKey = KeyFactory.createKey("NoxDroid", ancestorParentKeyName);
     	// prints: NoxDroid()
@@ -43,8 +42,7 @@ public class NoxDroidsTracksNoxListingServlet extends HttpServlet {
     	String ancestorKeyName = req.getParameter("ancestor_key_name");
     	Key ancestorKey = KeyFactory.createKey(parentAncestorKey, "Track", ancestorKeyName);
     	System.out.println("ancestorKey: " + ancestorKey);
-    	System.out.println("ancestorKey.getParent(): " + ancestorKey.getParent());    	
-    	
+    	System.out.println("ancestorKey.getParent(): " + ancestorKey.getParent());
     	
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query q = new Query("Nox");

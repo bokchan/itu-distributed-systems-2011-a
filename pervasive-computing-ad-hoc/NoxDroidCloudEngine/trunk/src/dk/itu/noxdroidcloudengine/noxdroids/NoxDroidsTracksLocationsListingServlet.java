@@ -63,7 +63,6 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
 //        q.addSort("start_time", Query.SortDirection.DESCENDING);
         
         PreparedQuery pq = datastore.prepare(q);
-
         
         resp.setContentType("text/html");
         resp.getWriter().println("<ul>");
@@ -84,7 +83,6 @@ public class NoxDroidsTracksLocationsListingServlet extends HttpServlet {
               
         QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
         for (Entity entity : results) {
-
         	
         	//        	entity.getKey().getChild("Location", id)
         	
