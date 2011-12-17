@@ -1,5 +1,7 @@
 package dk.itu.noxdroid.model;
 
+import java.util.ArrayList;
+
 public class Track {
 
 	private String id;
@@ -7,6 +9,7 @@ public class Track {
 	private String endTime;
 	private int syncFlag;
 	
+	private ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 	
 	public Track () {
 	}		
