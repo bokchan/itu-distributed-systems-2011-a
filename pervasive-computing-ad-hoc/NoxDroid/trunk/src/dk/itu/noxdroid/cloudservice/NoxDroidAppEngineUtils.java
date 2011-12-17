@@ -109,10 +109,7 @@ public class NoxDroidAppEngineUtils {
 				//Set track flag in database to be sync'ed
 				mDbHelper.setTrackSync(trackUUID);
 				
-				
 				postSuccessFlag = true;
-				
-				
 				
 
 			} catch (Exception e) {

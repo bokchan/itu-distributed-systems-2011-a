@@ -16,7 +16,9 @@ public class NoxDroidApp extends Application implements OnSharedPreferenceChange
 	private String TAG;
 	private UUID currentTrack = null;
 	private SharedPreferences APP_PREFS;
+	private static double GPSDelta = 0.0;
 	private Hashtable<Class<?>, Boolean> sensorStates = new Hashtable<Class<?>, Boolean>();
+	private static double NOXDelta = 0.0;
 	
 	@Override
 	public void onCreate() {
@@ -28,6 +30,8 @@ public class NoxDroidApp extends Application implements OnSharedPreferenceChange
 		
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		APP_PREFS = PreferenceManager.getDefaultSharedPreferences(this);
+		GPSDelta = Double.parseDouble(APP_PREFS.getString("GPS_DELTA", "10.0"));
+		NOXDelta = Double.parseDouble(APP_PREFS.getString("NOX_DELTA_MIN", "0.5"));
 	}
 	
 	public NoxDroidDbAdapter getDbAdapter() {
@@ -69,6 +73,13 @@ public class NoxDroidApp extends Application implements OnSharedPreferenceChange
 	public SharedPreferences getAppPrefs() {
 		return APP_PREFS;
 	}
+	
+	public static double getGPSDelta() {
+		return GPSDelta;
+	} 
+	public static double getNOXDelta() {
+		return NOXDelta;
+	} 
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,

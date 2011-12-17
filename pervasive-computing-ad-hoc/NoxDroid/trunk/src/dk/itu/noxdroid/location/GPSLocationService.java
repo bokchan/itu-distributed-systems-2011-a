@@ -17,6 +17,8 @@ package dk.itu.noxdroid.location;
 
 import java.util.ArrayList;
 
+import org.gavaghan.geodesy.GlobalCoordinates;
+
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -37,6 +39,7 @@ import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.service.NoxDroidService;
+import dk.itu.noxdroid.util.GPSUtil;
 
 // Need the following import to get access to the app resources, since this
 // class is in a sub-package.
@@ -71,6 +74,7 @@ public class GPSLocationService extends Service {
 	public final Messenger _handler = new Messenger(new IncomingHandler());
 
 	private boolean record = false;
+	private GlobalCoordinates lastKnownPosition;
 
 	/**
 	 * Class for clients to access. Because we know this service always runs in
@@ -114,8 +118,6 @@ public class GPSLocationService extends Service {
 			notifyClients(NoxDroidService.ERROR_NO_GPS);
 			Log.d(TAG, "GPS not enabled");
 		}
-		
-		
 
 		// ask the Location Manager to send us location updates
 		locListenD = new DispLocListener();
@@ -182,9 +184,14 @@ public class GPSLocationService extends Service {
 			/**
 			 * Add to database
 			 */
-			if (record)
-				mDbHelper.createLocationPoint(latitude, longitude,
-						location.getProvider());
+			if (record) {
+				GlobalCoordinates newPosition = new GlobalCoordinates(latitude, longitude);
+				if (lastKnownPosition == null || GPSUtil.getGPSDelta(lastKnownPosition, newPosition) >= NoxDroidApp.getGPSDelta()) {
+					mDbHelper.createLocationPoint(latitude, longitude,
+							location.getProvider());
+					lastKnownPosition = newPosition;
+				}
+			}
 		}
 
 		@Override
@@ -267,7 +274,8 @@ public class GPSLocationService extends Service {
 				stopRecording();
 				break;
 			case NoxDroidService.CHANGE_UPDATEINTERVAL_GPS:
-				updateinterval = msg.getData().getInt(getString(R.string.GPS_UPDATE_INTERVAL));
+				updateinterval = msg.getData().getInt(
+						getString(R.string.GPS_UPDATE_INTERVAL));
 				break;
 			default:
 				break;

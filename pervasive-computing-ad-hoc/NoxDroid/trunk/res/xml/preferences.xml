@@ -87,6 +87,7 @@
             android:numeric="integer"
             android:key="GPS_UPDATE_INTERVAL"
             android:title="update interval" />
+        <EditTextPreference android:title="GPS delta min" android:defaultValue="10.0" android:key="GPS_DELTA"/>
     </PreferenceCategory>
     <PreferenceCategory android:key="NOX_LEVELS" android:title="NOx levels">
         <EditTextPreference
@@ -99,5 +100,6 @@
             android:numeric="integer"
             android:key="NOX_YELLOW_UPPER_BOUND"
             android:title="Yellow NOx (0-100)" />
+        <EditTextPreference android:title="NOx delta min" android:key="NOX_DELTA_MIN" android:defaultValue="0.5"/>
     </PreferenceCategory>
 </PreferenceScreen>

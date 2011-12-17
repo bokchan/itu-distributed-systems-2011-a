@@ -39,7 +39,7 @@ public class NoxDroidIOIOThread extends Thread {
 	private double green_upper_bound;
 	private double yellow_upper_bound;
 	
-	
+	private float lastKnownNOX = -1;	
 	private int updateinterval = 2000;
 	
 	private ArrayList<IOIOEventListener> listeners = new ArrayList<IOIOEventListener>();
@@ -184,20 +184,25 @@ public class NoxDroidIOIOThread extends Thread {
 				ledYellow_.write(false);
 				ledGreen_.write(false);
 				
-				
 			}
 			// TODO: probably just disable this part
 			// because we are not going to send data directly back to the UI
 			Object obj = (Object) reading;
-			dbAdapter.createNox(reading, 0.0);
 			service.update(this.getClass(), obj);
+			
+			Log.d(TAG, "NOx level: " +  reading);
+			if (lastKnownNOX==-1 || Math.abs(reading-lastKnownNOX) >= NoxDroidApp.getNOXDelta() ) {
+				dbAdapter.createNox(reading, 0.0);
+				lastKnownNOX = reading;
+			}
+			
+			
 			
 			sleep(updateinterval);
 			
 			Log.i(TAG, "calling mDbHelper.createNox(nox, temperature) - should add row to the nox table in noxdroid.db");
 
 		} catch (InterruptedException e) {
-			
 			notifyEventchanged(NoxDroidService.ERROR_IOIO_INTERRUPTED);
 			Log.i(TAG, "LOOP: " + e.getMessage());
 			ioio_.disconnect();

@@ -2,6 +2,8 @@ package dk.itu.noxdroid.location;
 
 import java.util.ArrayList;
 
+import org.gavaghan.geodesy.GlobalCoordinates;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -25,6 +27,7 @@ import dk.itu.noxdroid.NoxDroidApp;
 import dk.itu.noxdroid.R;
 import dk.itu.noxdroid.database.NoxDroidDbAdapter;
 import dk.itu.noxdroid.service.NoxDroidService;
+import dk.itu.noxdroid.util.GPSUtil;
 
 /*
  * NoxDroidLocationService
@@ -36,6 +39,7 @@ public class SkyHookLocationService extends Service {
 	private XPS _xps;
 	private NoxDroidDbAdapter mDbHelper;
 	private SkyhookLocationCallBack _callback = new SkyhookLocationCallBack();
+	private GlobalCoordinates lastKnownPosition = null;
 
 	private String TAG;
 	private ArrayList<Messenger> clients = new ArrayList<Messenger>();
@@ -199,9 +203,13 @@ public class SkyHookLocationService extends Service {
 				retries = 0;
 				return WPSContinuation.WPS_STOP;
 			} else {
-				mDbHelper.createLocationPoint(location.getLatitude(),
-					location.getLongitude(), "skyhook");
-				Log.i(TAG, "Saved Location to database");
+				GlobalCoordinates newPosition = new GlobalCoordinates(location.getLatitude(), location.getLatitude());
+				if (lastKnownPosition == null || GPSUtil.getGPSDelta(lastKnownPosition, newPosition) >= NoxDroidApp.getGPSDelta()) {
+					mDbHelper.createLocationPoint(location.getLatitude(),
+						location.getLongitude(), "skyhook");
+					Log.i(TAG, "Saved Location to database");
+					lastKnownPosition = newPosition; 
+				} 
 
 				try {
 					Thread.sleep(updateinterval);
