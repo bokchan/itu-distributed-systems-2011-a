@@ -18,6 +18,7 @@
     <property name="noxdroidcloudengine.noxdelta" value="0.5"/>
     <property name="noxdroid.green_uppperbound" value="0.4"/>
     <property name="noxdroid.yellow_uppperbound" value="0.6"/>
+    <property name="appengine.datastore.disableChunkSizeWarning" value="true"/>
   </system-properties>
  
 </appengine-web-app>

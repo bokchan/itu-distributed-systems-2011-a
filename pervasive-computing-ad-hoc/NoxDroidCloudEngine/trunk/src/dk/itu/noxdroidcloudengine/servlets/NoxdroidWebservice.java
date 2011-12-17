@@ -1,10 +1,10 @@
 package dk.itu.noxdroidcloudengine.servlets;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -12,18 +12,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.repackaged.org.json.JSONArray;
 
 import dk.itu.noxdroidcloudengine.dataprocessing.KMLManager;
+import dk.itu.noxdroidcloudengine.dataprocessing.KMLManager.KMLACTION;
 import dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsTracksListingServlet;
 
 public class NoxdroidWebservice extends HttpServlet {
@@ -36,15 +30,17 @@ public class NoxdroidWebservice extends HttpServlet {
 			MSG = message;
 		}
 	}
-
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	public static enum ACTION {
-		TRACKSBYNOXDROID, SINGLETRACKKML, DOWNLOADKML, UNDEFINED
+		LISTTRACKS, SINGLETRACKKML, DOWNLOADKML, ALLTRACKS, NOXDROIDTRACKS, UNDEFINED
 	}
+	
+	public static Enum<ACTION>[] ACTIONS = ACTION.class.getEnumConstants();
 
 	private static final Logger log = Logger
 			.getLogger(NoxDroidsTracksListingServlet.class.getName());
@@ -58,23 +54,72 @@ public class NoxdroidWebservice extends HttpServlet {
 		String action = req.getParameter("action");
 		System.out.println(noxdroidKeyName);
 		System.out.println(action);
+		Date date = null;
+		Date from = null;
+		Date to = null;
+		String[] params;
+		TimeZone z = TimeZone.getTimeZone("Europe/Copenhagen");
+		if (!z.inDaylightTime(new Date())) {
+			z.setDefault(TimeZone.getTimeZone("GMT+1"));
+		} else {
+			z.useDaylightTime();
+			}
+		
+		
+		
+//		if (z.inDaylightTime(new Date())) {
+//			z.setRawOffset(3600000);
+//		}
+		Calendar cal = GregorianCalendar.getInstance(z);
+		
+		if (req.getParameter("date") != null & req.getParameter("date").length() > 0){ 
+			String[] paramDate = req.getParameter("date").split("/");
+			
+			cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(paramDate[0]));
+			cal.set(Calendar.MONTH, Integer.parseInt(paramDate[1])-1);
+			cal.set(Calendar.YEAR, Integer.parseInt(paramDate[2]));
+		} else {
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+		}
+		
+		date = cal.getTime();
+		if (req.getParameter("from") != null && req.getParameter("from").length() > 0) {
+			params = req.getParameter("from").split(":"); 
+			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(params[0]));
+			cal.set(Calendar.MINUTE, Integer.parseInt(params[1]));
+		}
+		from = cal.getTime();
+		
+		if (req.getParameter("to") != null && req.getParameter("to").length() > 0) {
+			params = req.getParameter("to").split(":"); 
+			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(params[0]));
+			cal.set(Calendar.MINUTE, Integer.parseInt(params[1]));
+			
+		} else {
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		to = cal.getTime();
 
 		String trackKeyName;
 		Key trackKey;
 		String flag;
 		String kml;
-		boolean forceCreate;
+		KMLManager generator;
+		boolean forceCreate = true;
 		switch (getActionByString(action)) {
 		case SINGLETRACKKML:
 			trackKeyName = req.getParameter("track");
 			trackKey = KeyFactory.createKey(noxdroidKey, "Track",
 					trackKeyName);
 			flag = req.getParameter("force_create");
-			forceCreate = false;
 			if (flag != null) {
 				forceCreate = Boolean.parseBoolean(flag);
 			}
-			kml = getKMLForTrack(trackKey, forceCreate);
+			generator = new KMLManager();
+			kml = generator.generateKML(trackKey, noxdroidKey, KMLACTION.SINGLETRACK, forceCreate, from, to);
+			
 			resp.setHeader("Content-type",
 					"application/vnd.google-earth.kml+xml");
 			resp.setHeader("Content-Disposition", "attachment; filename=\""
@@ -82,14 +127,39 @@ public class NoxdroidWebservice extends HttpServlet {
 			resp.setStatus(200);
 			resp.getWriter().print(kml);
 			break;
-		case TRACKSBYNOXDROID:
-			JSONArray array = getTracksByNoxDROID(noxdroidKey);
+		case LISTTRACKS:
+			// Add date choice
+			generator = new KMLManager();
+			JSONArray array = generator.getTracksByNoxDROID(noxdroidKey);
 			resp.setHeader("Content-type","application/json;charset=UTF-8");
 			resp.setHeader("Transfer-Encoding", "chunked");
 			resp.setHeader("Access-Control-Allow-Origin", "*"); 
 			resp.setCharacterEncoding("UTF-8");	
 			resp.setStatus(200);
 			resp.getWriter().print(array.toString());
+			break;
+		case ALLTRACKS :
+			// Add date choice 
+			generator = new KMLManager();
+			kml = generator.generateKML(null, null, KMLACTION.ALLTRACKS, forceCreate, from, to);
+			resp.setHeader("Content-type",
+					"application/vnd.google-earth.kml+xml");
+			resp.setHeader("Content-Disposition", "attachment; filename=\""
+					+ noxdroidKeyName + ".kml\"");
+			resp.setStatus(200);
+			resp.getWriter().print(kml);
+			System.out.println("Sent response");
+			break;
+		case NOXDROIDTRACKS: 
+			// Add datechoice
+			generator = new KMLManager();
+			kml = generator.generateKML(null, noxdroidKey, KMLACTION.NOXDROIDTRACKS, forceCreate, from, to);
+			resp.setHeader("Content-type",
+					"application/vnd.google-earth.kml+xml");
+			resp.setHeader("Content-Disposition", "attachment; filename=\""
+					+ noxdroidKeyName + ".kml\"");
+			resp.setStatus(200);
+			resp.getWriter().print(kml);
 			break;
 		case DOWNLOADKML : 
 			trackKeyName = req.getParameter("track");
@@ -100,7 +170,8 @@ public class NoxdroidWebservice extends HttpServlet {
 			if (flag != null) {
 				forceCreate = Boolean.parseBoolean(flag);
 			}
-			kml = getKMLForTrack(trackKey, forceCreate);
+			generator = new KMLManager();
+			kml = generator.generateKML(trackKey, noxdroidKey, KMLACTION.DOWNLOADKML, forceCreate, null, null);
 			resp.setHeader("Content-type",
 					"application/vnd.google-earth.kml+xml");
 			resp.setHeader("Content-Disposition",
@@ -118,67 +189,28 @@ public class NoxdroidWebservice extends HttpServlet {
 		}
 	}
 
-	private JSONArray getTracksByNoxDROID(Key noxdroidKey) {
-		DatastoreService datastore = DatastoreServiceFactory
-				.getDatastoreService();
-		Query q = new Query("Track");
-
-		q.setAncestor(noxdroidKey);
-		q.addSort("start_time", Query.SortDirection.DESCENDING);
-
-		PreparedQuery pq = datastore.prepare(q);
-
-		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
-
-		QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
-
-		JSONArray tracks = new JSONArray();
-		for (Entity track : results) {
-			Map<String, Object> properties = new HashMap<String, Object>();
-
-			for (Entry<String, Object> property : track.getProperties()
-					.entrySet()) {
-				if (!property.getKey().equalsIgnoreCase("kml")) {
-					properties.put(property.getKey(), property.getValue());
-				}
-			}
-			properties.put("trackid", track.getKey().getName());
-			properties.put("noxdroidid", track.getParent().getName());
-			tracks.put(properties);
-
-		}
-		log.log(Level.ALL, tracks.toString());
-		System.out.println(tracks.toString());
-		return tracks;
-	}
-
-	private String getKMLForTrack(Key trackkey, boolean flag) {
-		KMLManager generator = new KMLManager();
-		return generator.getKML(trackkey, flag);
-	}
-
 	private ACTION getActionByString(String action) {
-		System.out.println(ACTION.SINGLETRACKKML.name());
-		System.out.println(ACTION.TRACKSBYNOXDROID.name());
-		if (action.equalsIgnoreCase(ACTION.SINGLETRACKKML.name())) {
-			
-			return ACTION.SINGLETRACKKML;
-		} else if (action.equalsIgnoreCase(ACTION.TRACKSBYNOXDROID.name())) {
-			return ACTION.TRACKSBYNOXDROID;
-		} else if (action.equalsIgnoreCase(ACTION.DOWNLOADKML.name())) {
-			return ACTION.DOWNLOADKML;
+		
+		for (Enum<ACTION> e: ACTIONS) {
+			if (e.name().equalsIgnoreCase(action))
+				return (ACTION)e;
 		}
-		return ACTION.TRACKSBYNOXDROID;
+		
+		return ACTION.LISTTRACKS;
 	}
 
 	// Serverside
 	// Get tracks by noxdroid id
 	// Get kml by trackid
 	// Get all map data for timespan, default today...
-	//
+	// Add name to kml, center coordinate for trip
+	// Upload alltracks to geocommons
+	// make cronjob 
 
 	// Client side
 	// Javascript for showing map
 	// Ajax get to noxdroidcloudengine
-
+	// Response status on errors 
+	// Zoom in more
+	//NoxDROID stats : Accordion #tracks #nox links to that days data 
 }

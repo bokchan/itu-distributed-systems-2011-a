@@ -45,13 +45,19 @@ var host = 'http://noxdroidcloudengine.appspot.com';
         //var layer = new google.maps.KmlLayer($.get( host + "/serve_kml", { track: 'eeb445dc-d2eb-494f-a4af-78c20b5d281c', noxdroid: 'bok.chan'}), layerOpt);
     }
     
-    jQuery(document).ready(googlemaps_v3_initialize_1);
+    //jQuery(document).ready(googlemaps_v3_initialize_1);
+    el = $("#mydiv input.hidden");
+    alert(el.attr('value'));
 </script>
 
 </head>
 <form action="/serve_kml" method="get">
 <body>
 	<div class="googlemaps" id="googlemap_v3_1" style="width: 700px; height: 700px;"></div>
-	
+	<div id="mydiv">
+		<input type="button">
+		<input type="hidden" value="test">
+		
+	</div>
 </body>
 </html>

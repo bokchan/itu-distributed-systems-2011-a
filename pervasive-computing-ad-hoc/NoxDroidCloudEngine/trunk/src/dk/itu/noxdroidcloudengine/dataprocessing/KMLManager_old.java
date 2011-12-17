@@ -4,25 +4,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TimeZone;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.boehn.kmlframework.kml.AltitudeModeEnum;
+import org.boehn.kmlframework.kml.ColorModeEnum;
 import org.boehn.kmlframework.kml.Document;
 import org.boehn.kmlframework.kml.Feature;
 import org.boehn.kmlframework.kml.Kml;
 import org.boehn.kmlframework.kml.LineString;
+import org.boehn.kmlframework.kml.LineStyle;
 import org.boehn.kmlframework.kml.Placemark;
 import org.boehn.kmlframework.kml.Point;
+import org.boehn.kmlframework.kml.Style;
 import org.boehn.kmlframework.kml.StyleSelector;
 import org.boehn.kmlframework.kml.TimeStamp;
 
@@ -31,16 +27,17 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.appengine.repackaged.org.json.JSONArray;
+import com.google.appengine.api.datastore.Text;
 
 import dk.itu.noxdroidcloudengine.noxdroids.NoxDroidsListingServlet;
 
-public class KMLManager {
+public class KMLManager_old {
 	private double green_upperbound;
 	private double yellow_upperbound;
 	private String styleurl_green = "transGreenLine";
@@ -60,15 +57,13 @@ public class KMLManager {
 			"dd-MM-yyyy");
 	private static SimpleDateFormat time_formatter = new SimpleDateFormat(
 			"HH:mm:ss");
-	private static SimpleDateFormat web_dateformatter = new SimpleDateFormat(""); 
 	private DatastoreService datastore;
-
 	public static enum NOXLEVEL {
 		GREEN, YELLOW, RED
 	}
 
 	public static enum KMLACTION {
-		ALLTRACKS, SINGLETRACK, NOXDROIDTRACKS, DOWNLOADKML, REBUILDKML, LISTTRACKS
+		ALLTRACKS, SINGLETRACK, NOXDROIDTRACKS, DOWNLOADKML
 	}
 
 	public static enum NOX {
@@ -83,21 +78,20 @@ public class KMLManager {
 		}
 	};
 
-	public KMLManager() {
+	public KMLManager_old() {
 		green_upperbound = Double.parseDouble(System
 				.getProperty("noxdroid.green_uppperbound"));
 		yellow_upperbound = Double.parseDouble(System
 				.getProperty("noxdroid.yellow_uppperbound"));
 		System.err.println("Green: " + green_upperbound);
 		System.err.println("Yellow: " + yellow_upperbound);
-
-		datastore = DatastoreServiceFactory.getDatastoreService();
 	}
 
 	@SuppressWarnings("unchecked")
-	public String generateKML(Key trackKey, Key noxdroidKey, KMLACTION action,
-			boolean forceCreate, Date from, Date to) {
-
+	public String generateKML(Key trackKey, Key NoxDroidKey, KMLACTION action,
+			boolean forceCreate) {
+		datastore = DatastoreServiceFactory
+				.getDatastoreService();
 		switch (action) {
 		case DOWNLOADKML:
 		case SINGLETRACK:
@@ -106,109 +100,53 @@ public class KMLManager {
 				Object[] response = generateTrackKML(track.getKey());
 				if (response.length == 2) {
 					Kml kml = new Kml();
-					Document kmldoc = createDocument(track.getParent()
-							.getName(), getTrackDescription(track));
+					Document kmldoc = createDocument(track.getParent().getName(), getTrackDescription(track));
 					kml.setFeature(kmldoc);
-					kmldoc.setFeatures((List<Feature>) response[0]);
+					kmldoc.setFeatures((List<Feature>) response[0]);					
 					return kml.toString();
 				}
 				return "";
-
+				
 			} catch (EntityNotFoundException e) {
 				e.printStackTrace();
 				return "";
 			}
-			
 		case ALLTRACKS:
-			return generateAllTracks(from, to, null, null);
+			return generateAllTracks(null, null, null, null);
 		case NOXDROIDTRACKS:
-			from = new Date(0);
-			to = new Date();
-			return generateAllTracks(from , to, noxdroidKey, null);
+			return generateAllTracks(null, null, NoxDroidKey, null);
 		}
 		return "";
 	}
 	
-	private JSONArray getNOxDROIDStats(Date date) {
-		return null;
-	}
-
-	public void rebuildKML(Date from, Date to) {
-		List<Entity> tracks = new ArrayList<Entity>();
-		ArrayList<Point> centerpoints = new ArrayList<Point>();
-
-		Query q = new Query("Track");
-
-		System.err.println("Rebuilding KML all tracks");
-
-		Calendar cal = GregorianCalendar.getInstance(TimeZone
-				.getTimeZone("Europe/Copenhagen"));
-		if (from != null) {
-			cal.setTime(from);
-		}
-
-		q.addFilter("start_time_date", FilterOperator.GREATER_THAN_OR_EQUAL,
-				from);
-		cal.add(GregorianCalendar.DAY_OF_MONTH, 1);
-		q.addFilter("start_time_date", FilterOperator.LESS_THAN_OR_EQUAL,
-				cal.getTime());
-
-		// q.addSort("start_time_date", SortDirection.ASCENDING);
-
-		PreparedQuery pq = datastore.prepare(q);
-		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
-		tracks = pq.asList(fetchOptions);
-
-		List<Feature> _placemarks = new ArrayList<Feature>();
-
-		for (Entity track : tracks) {
-			Object[] response = generateTrackKML(track.getKey());
-			if (response.length == 2) {
-				_placemarks.addAll((List<Placemark>) response[0]);
-				centerpoints.add((Point) response[1]);
-			}
-		}
-		Kml kml = new Kml();
-		Document kmldoc = createDocument(null, null);
-
-		kml.setFeature(kmldoc);
-		kmldoc.setFeatures(_placemarks);
-
-	}
 
 	@SuppressWarnings("unchecked")
-	private String generateAllTracks(Date from, Date to, Key noxdroidKey,
-			Key trackKey) {
-		System.err.println("Generating all tracks");
-		Calendar cal = GregorianCalendar.getInstance(TimeZone
-				.getTimeZone("Europe/Copenhagen"));
+	private String generateAllTracks(Date from, Date to, Key noxdroidKey, Key trackKey) {
 		List<Entity> tracks = new ArrayList<Entity>();
 		ArrayList<Point> centerpoints = new ArrayList<Point>();
-
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		
 		Query q = new Query("Track");
 		if (noxdroidKey != null)
 			q.setAncestor(noxdroidKey);
-		
-		if (from == null) {
-			cal = today(cal);
-		} 
-		q.addFilter("start_time_date",
-				FilterOperator.GREATER_THAN_OR_EQUAL, from);
 
-		if (to == null) {
-			cal.add(Calendar.DAY_OF_MONTH, 1);
-			to = cal.getTime();
-		} 
-		q.addFilter("start_time_date", FilterOperator.LESS_THAN_OR_EQUAL, to);
+		System.err.println("Generating all tracks");
+		if (from != null)
+			q.addFilter("start_time_date",
+					FilterOperator.GREATER_THAN_OR_EQUAL, from);
 
-		// q.addSort("start_time_date", SortDirection.ASCENDING);
+		if (to != null)
+			q.addFilter("end_time_date", FilterOperator.LESS_THAN_OR_EQUAL, to);
 		
+		//q.addSort("start_time_date", SortDirection.ASCENDING);
+
 		PreparedQuery pq = datastore.prepare(q);
 		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
 		tracks = pq.asList(fetchOptions);
-
+		
 		List<Feature> _placemarks = new ArrayList<Feature>();
-
+		
 		for (Entity track : tracks) {
 			Object[] response = generateTrackKML(track.getKey());
 			if (response.length == 2) {
@@ -224,42 +162,10 @@ public class KMLManager {
 
 		return kml.toString();
 	}
-	
-	public JSONArray getTracksByNoxDROID(Key noxdroidKey) {
-		DatastoreService datastore = DatastoreServiceFactory
-				.getDatastoreService();
-		Query q = new Query("Track");
-
-		q.setAncestor(noxdroidKey);
-		q.addSort("start_time", Query.SortDirection.DESCENDING);
-
-		PreparedQuery pq = datastore.prepare(q);
-
-		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
-
-		QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
-
-		JSONArray tracks = new JSONArray();
-		for (Entity track : results) {
-			Map<String, Object> properties = new HashMap<String, Object>();
-
-			for (Entry<String, Object> property : track.getProperties()
-					.entrySet()) {
-				if (!property.getKey().equalsIgnoreCase("kml")) {
-					properties.put(property.getKey(), property.getValue());
-				}
-			}
-			properties.put("trackid", track.getKey().getName());
-			properties.put("noxdroidid", track.getParent().getName());
-			tracks.put(properties);
-		}
-		log.log(Level.ALL, tracks.toString());
-		System.out.println(tracks.toString());
-		return tracks;
-	}
-
 
 	private Object[] generateTrackKML(Key trackKey) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
 
 		System.err.println("Trackkey " + trackKey.getName());
 		Query q = new Query("Location");
@@ -267,8 +173,9 @@ public class KMLManager {
 		q.setAncestor(trackKey);
 		PreparedQuery pq = datastore.prepare(q);
 		pq = datastore.prepare(q);
-
+		
 		List<Entity> locations = pq.asList(fetchOptions);
+		System.out.println("#locations: " + locations.size());
 
 		if (placemarks == null) {
 			placemarks = new ArrayList<Placemark>();
@@ -298,14 +205,12 @@ public class KMLManager {
 
 		for (Entity loc2 : locations.subList(1, locations.size())) {
 			Date t1 = null;
-			if ((t1 = cast(loc1.getProperty("time_stamp_date"), Date.class)) == null
-					&& (t1 = tryParse((String) loc1.getProperty("time_stamp"))) == null) {
-				loc1 = loc2;
+			if (( t1 = cast(loc1.getProperty("time_stamp_date"), Date.class)) == null && (t1 = tryParse((String)loc1.getProperty("time_stamp")))== null) {
+				loc1 = loc2 ;
 				continue;
 			}
 			Date t2 = null;
-			if ((t2 = cast(loc2.getProperty("time_stamp_date"), Date.class)) == null
-					&& (t2 = tryParse((String) loc2.getProperty("time_stamp"))) == null) {
+			if ((t2 = cast(loc2.getProperty("time_stamp_date"), Date.class)) == null && (t2 = tryParse((String)loc2.getProperty("time_stamp")))== null) {
 				continue;
 			}
 
@@ -319,6 +224,7 @@ public class KMLManager {
 			qNox.addSort("time_stamp_date", Query.SortDirection.ASCENDING);
 			pqNox = datastore.prepare(qNox);
 			QueryResultList<Entity> nox = pqNox.asQueryResultList(fetchOptions);
+			System.out.println("#nox" + nox.size());
 
 			// ArrayList<Entity> processed_nox = processNox(nox);
 
@@ -357,10 +263,7 @@ public class KMLManager {
 
 				double nox_val = cast(_nox.getProperty("nox"), Double.class);
 				timeStampDate = null;
-				if ((timeStampDate = cast(_nox.getProperty("time_stamp_date"),
-						Date.class)) == null
-						&& (timeStampDate = tryParse((String) _nox
-								.getProperty("time_stamp"))) == null) {
+				if ((timeStampDate = cast(_nox.getProperty("time_stamp_date"), Date.class)) == null && (timeStampDate = tryParse((String)_nox.getProperty("time_stamp")))== null) {
 					continue;
 				}
 				String timeStamp = DateFormatUtils.formatUTC(timeStampDate,
@@ -415,9 +318,194 @@ public class KMLManager {
 		// datastore.put(track);
 		// System.err.println(track.toString());
 		// response[0] = kmldoc.getFeatures();
-
+		
 		response[0] = placemarks;
 		return response;
+	}
+
+	public String generateKML(Key trackKey) {
+		List<Entity> kml_points = new ArrayList<Entity>();
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		System.err.println("Trackkey " + trackKey.getName());
+		Query q = new Query("Location");
+		q.setAncestor(trackKey);
+		// q.addSort("time_stamp_date", Query.SortDirection.ASCENDING);
+
+		PreparedQuery pq = datastore.prepare(q);
+		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+
+		QueryResultList<Entity> locations = pq.asQueryResultList(fetchOptions);
+		System.err.println("Fetched locations");
+		if (locations.size() == 0)
+			return "ERROR";
+		Entity loc1 = locations.get(0);
+
+		Entity track = null;
+		try {
+			track = datastore.get(trackKey);
+		} catch (EntityNotFoundException e) {
+			System.err.println("fucked up");
+			e.printStackTrace();
+		}
+		System.err.println("Fetched track");
+
+		// KML
+		Kml kml = new Kml();
+		Document kmldoc = new Document();
+		kml.setFeature(kmldoc);
+
+		LineStyle lineStyle;
+		Style green = new Style();
+		lineStyle = new LineStyle(NOX.GREEN.COLOR, ColorModeEnum.normal, 5d);
+		green.setLineStyle(lineStyle);
+		green.setId(styleurl_green);
+
+		Style yellow = new Style();
+		lineStyle = new LineStyle(NOX.YELLOW.COLOR, ColorModeEnum.normal, 5d);
+		yellow.setLineStyle(lineStyle);
+		yellow.setId(styleurl_yellow);
+
+		Style red = new Style();
+		lineStyle = new LineStyle(NOX.RED.COLOR, ColorModeEnum.normal, 5d);
+		red.setLineStyle(lineStyle);
+		red.setId(styleurl_red);
+
+		StyleSelector[] styles = { green, yellow, red };
+		List<StyleSelector> styleSelectors = new ArrayList<StyleSelector>(
+				Arrays.asList(styles));
+		kmldoc.setStyleSelectors(styleSelectors);
+		System.err.println("Prepared KML DOC");
+
+		kmldoc.setName(trackKey.getParent().getName());
+		kmldoc.setDescription(getTrackDescription(track));
+
+		Entity centerPoint = locations
+				.get((int) Math.floor(locations.size() / 2));
+
+		Point center = new Point(cast(centerPoint.getProperty("longitude"),
+				Double.class), cast(centerPoint.getProperty("latitude"),
+				Double.class));
+		kmldoc.setAddress(center.getLongitudeLatitudeAltitudeString());
+
+		for (Entity loc2 : locations.subList(1, locations.size())) {
+			Date t1 = (Date) loc1.getProperty("time_stamp_date");
+			Date t2 = (Date) loc2.getProperty("time_stamp_date");
+
+			Query qNox = new Query("Nox");
+			qNox.setAncestor(trackKey);
+			qNox.addFilter("time_stamp_date",
+					Query.FilterOperator.GREATER_THAN_OR_EQUAL, t1);
+			qNox.addFilter("time_stamp_date",
+					Query.FilterOperator.LESS_THAN_OR_EQUAL, t2);
+			qNox.addSort("time_stamp_date", Query.SortDirection.ASCENDING);
+			PreparedQuery pqNox = datastore.prepare(qNox);
+			QueryResultList<Entity> nox = pqNox.asQueryResultList(fetchOptions);
+
+			// ArrayList<Entity> processed_nox = processNox(nox);
+
+			/**
+			 * GREEN: 0,255,0 YELLOW: 255,255,0 RED: 255,0,0 0.20 0.40
+			 * 
+			 * 
+			 * 255/20
+			 * 
+			 */
+			System.err.println("Fetched Nox");
+			if (nox.size() == 0)
+				continue;
+			Double[][] points = extrapolateGPS(
+					cast(loc1.getProperty("latitude"), Double.class),
+					cast(loc1.getProperty("longitude"), Double.class),
+					cast(loc2.getProperty("latitude"), Double.class),
+					cast(loc2.getProperty("longitude"), Double.class),
+					nox.size());
+
+			System.err.println("Extrapolated GPS");
+			Date timeStampDate = null;
+			Placemark mark = null;
+			LineString lineString = null;
+			List<Point> coordinates = null;
+			NOXLEVEL CURRENT_NOX_VAL = null;
+
+			for (int i = 0; i < points.length; i++) {
+
+				Entity _nox = nox.get(i);
+
+				double nox_val = cast(_nox.getProperty("nox"), Double.class);
+				Entity kml_point = new Entity("KMLPoint", trackKey);
+				timeStampDate = cast(_nox.getProperty("time_stamp_date"),
+						Date.class);
+				String timeStamp = DateFormatUtils.formatUTC(timeStampDate,
+						DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT
+								.getPattern());
+
+				kml_point.setProperty("time_stamp", timeStampDate);
+				kml_point.setProperty("nox", _nox.getProperty("nox"));
+				kml_point.setProperty("latitude", points[i][0]);
+				kml_point.setProperty("longitude", points[i][1]);
+
+				kml_point.setProperty("geo_point",
+						new GeoPt(Float.parseFloat(points[i][0].toString()),
+								Float.parseFloat(points[i][1].toString())));
+				kml_points.add(kml_point);
+
+				/**
+				 * If ni && nj are in same category add gps coord to placemark
+				 * else add Placemark to doc and start new Placemark
+				 */
+
+				if (i == 0) {
+					coordinates = new ArrayList<Point>();
+					CURRENT_NOX_VAL = getNOXLEVEL(nox_val);
+					mark = createPlacemark(getStyleURL(CURRENT_NOX_VAL),
+							timeStamp);
+					coordinates
+							.add(new Point(points[i][1], points[i][0], 100d));
+				} else if (!getNOXLEVEL(nox_val).equals(CURRENT_NOX_VAL)) {
+					coordinates
+							.add(new Point(points[i][1], points[i][0], 100d));
+					lineString = createLineString(coordinates);
+					mark.setGeometry(lineString);
+					kmldoc.addFeature(mark);
+
+					if (i < points.length - 1) {
+						// Create new
+						CURRENT_NOX_VAL = getNOXLEVEL(nox_val);
+						coordinates = new ArrayList<Point>();
+						coordinates.add(new Point(points[i][1], points[i][0],
+								100d));
+						mark = createPlacemark(getStyleURL(CURRENT_NOX_VAL),
+								timeStamp);
+					}
+					// add placemark
+				} else {
+					coordinates
+							.add(new Point(points[i][1], points[i][0], 100d));
+					if (i == points.length - 1) {
+						lineString = createLineString(coordinates);
+						mark.setGeometry(lineString);
+						kmldoc.addFeature(mark);
+					}
+				}
+			}
+			loc1 = loc2;
+		}
+
+		System.err.println(kml_points);
+
+		track.setProperty("kml", new Text(kml.toString()));
+		track.setProperty("centerpoint", new GeoPt(center.getLatitude()
+				.floatValue(), center.getLongitude().floatValue()));
+
+		System.err.println(track.toString());
+		datastore.put(track);
+		System.err.println(kml.toString());
+
+		return kml.toString();
+
+		// Remove to write to db
+		// datastore.put(kml_points);
 	}
 
 	private ArrayList<Entity> processNox(QueryResultList<Entity> nox) {
@@ -527,52 +615,42 @@ public class KMLManager {
 
 	}
 
-	// public String getKML(Key trackid, boolean forceCreate) {
-	// DatastoreService datastore = DatastoreServiceFactory
-	// .getDatastoreService();
-	// Entity track = null;
-	// String kml = "";
-	// System.err.println("trackud " + trackid.getName());
-	// try {
-	// track = datastore.get(trackid);
-	// if (!track.hasProperty("kml") || forceCreate) {
-	// System.err.println("HasNot kml");
-	// kml = generateKML(trackid);
-	// } else {
-	// System.err.println("Has kml");
-	// kml = ((Text) track.getProperty("kml")).getValue();
-	// }
-	// } catch (EntityNotFoundException e) {
-	// e.printStackTrace();
-	// }
-	// return kml;
-	// }
+	public String getKML(Key trackid, boolean forceCreate) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Entity track = null;
+		String kml = "";
+		System.err.println("trackud " + trackid.getName());
+		try {
+			track = datastore.get(trackid);
+			if (!track.hasProperty("kml") || forceCreate) {
+				System.err.println("HasNot kml");
+				kml = generateKML(trackid);
+			} else {
+				System.err.println("Has kml");
+				kml = ((Text) track.getProperty("kml")).getValue();
+			}
+		} catch (EntityNotFoundException e) {
+			e.printStackTrace();
+		}
+		return kml;
+	}
 
 	private String getTrackDescription(Entity track) {
 		String description = "";
 		Date start = null;
-		if ((start = cast(track.getProperty("start_time_date"), Date.class)) == null
-				&& (start = tryParse((String) track.getProperty("start_time"))) == null) {
+		if (( start = cast(track.getProperty("start_time_date"), Date.class)) == null && (start = tryParse((String)track.getProperty("start_time")))== null) {
 			description += "No starttime found";
 		}
-		description += String.format("%s\t%s", date_formatter.format(start),
-				time_formatter.format(start));
+		description += String.format("%s\t%s",
+				date_formatter.format(start), time_formatter.format(start));
 		Date end = null;
-		if ((end = cast(track.getProperty("end_time_date"), Date.class)) == null
-				&& (end = tryParse((String) track.getProperty("end_time"))) == null) {
+		if ((end = cast(track.getProperty("end_time_date"), Date.class)) == null && (end = tryParse((String)track.getProperty("end_time")))== null) {
 			description += "\tNo endtime found";
 		}
 		description += String.format(" - %s", time_formatter.format(end));
-
+		
 		return description;
-	}
-	
-	private Calendar today(Calendar cal) {
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal;
 	}
 	/**
 	 * Make GEOPoints work Try out GEO ½½

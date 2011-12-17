@@ -1,6 +1,7 @@
 package dk.itu.noxdroidcloudengine.servlets;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.net.ftp.FTPClient;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -23,8 +26,9 @@ public class AdministrationServlet extends HttpServlet {
 			"yyyy-MM-dd HH:mm:ss");
 	
 	public static enum ACTION {
-		MISSINGDATES, MISSINGNOXORLOC, DOWNLOADKML, UNDEFINED
+		MISSINGDATES, MISSINGNOXORLOC, DOWNLOADKML, UNDEFINED, FTP
 	}
+	public static Enum<ACTION>[] ACTIONS = ACTION.class.getEnumConstants();
 	
 	ACTION action = null;
 	
@@ -49,7 +53,11 @@ public class AdministrationServlet extends HttpServlet {
 		case MISSINGDATES :
 			checkForMissingDates();
 			break;
+		case FTP: 
+			ftp();
+			break;
 		case UNDEFINED :
+			
 			default :
 				break;
 		}
@@ -144,15 +152,33 @@ public class AdministrationServlet extends HttpServlet {
 	}
 	
 	private ACTION getActionByString(String action) {
-		System.out.println(ACTION.MISSINGNOXORLOC.name());
-		System.out.println(ACTION.MISSINGDATES.name());
-		if (action.equalsIgnoreCase(ACTION.MISSINGNOXORLOC.name())) {
-			return ACTION.MISSINGNOXORLOC;
-		} else if (action.equalsIgnoreCase(ACTION.MISSINGDATES.name())) {
-			return ACTION.MISSINGDATES;
-		} else if (action.equalsIgnoreCase(ACTION.DOWNLOADKML.name())) {
-			return ACTION.DOWNLOADKML;
+		
+		for (Enum<ACTION> e: ACTIONS) {
+			if (e.name().equalsIgnoreCase(action))
+				return (ACTION)e;
 		}
 		return ACTION.UNDEFINED;
+	}
+	
+	private void ftp() {
+		FTPClient ftpclient = new FTPClient();
+		
+		
+		try {
+			ftpclient.connect("ftp.noxdroid.org");
+			ftpclient.login("noxdroid", "Yaz39m83Bq");
+			System.out.print(ftpclient.getReplyCode());
+			System.out.print(ftpclient.getReplyString());
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
 	}
 }

@@ -1,4 +1,10 @@
-<!-- Indices written at Thu, 15 Dec 2011 23:59:14 UTC -->
+<!-- Indices written at Sat, 17 Dec 2011 14:30:04 GMT+01:00 -->
 
-<datastore-indexes/>
+<datastore-indexes>
 
+    <!-- Used 6 times in query history -->
+    <datastore-index kind="Nox" ancestor="true" source="auto">
+        <property name="time_stamp_date" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
