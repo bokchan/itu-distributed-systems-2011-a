@@ -1,6 +1,0 @@
- * Dataprocessing (GPS/NOx Dataoverload)
- * Algorithm for converting to KML. Even more data cleaning ? 
- * GUI for upload list.
- * Automatic cleaning of uploaded data on the phone
- * Settings for GPS updateinterval and accuracy
- * 
