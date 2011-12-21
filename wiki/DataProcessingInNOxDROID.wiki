@@ -23,6 +23,36 @@ Here is some pseudo code for the algorithm which should process the data for a s
 
 {{{
 
+generateTrackKML(T) :
+  G : set of locationdata of some track T
+  if |G| == 0 return
+  g0 = G[0]
+  for g1 in G[1:] : 
+     t1 = g0.time_stamp
+     if (t1 == null)
+        g0 = g1
+        continue
+     t2 = g1.time_stamp
+     if (t2 == null) 
+        continue
+     N = set of nox data where time of n, nt :  t1 <= nt <= t2
+     if |N| == 0 : 
+        continue
+     
+
+     Insert |N|-2 gps points between g0 and g1 to geotag each nox reading
+     for n in N : 
+        if n is first : create Placemark
+        if level(n) !=  level(n-1) || n is last point 
+           add coordinates to placemark
+           if index of n is less than |N|-1 
+               update noxlevel
+     
+
+  
+
+  
+
 CreateSingleTrackKML(N, G)
    N : set of noxdata of some track T
    G : set of locationdata of some track T
