@@ -29,3 +29,6 @@ Google Android (Google): API System design comprising custom services extending 
 JQuery, javascript framework. Encapsulates and enhances many the javascript language and supports Ajax calls and dataconcumption (XML, Json etc.) 
 
 GoogleMaps API (Google): Visualization of map data. Pluggable with KML data thus in compatible with the chosen KML Framework as datatype for geotagging and visualizing sensor data. 
+
+== Evaluation == 
+Using existing community based datasharing sites like Pachube and Geocommons could be a way to provide access to NOxDROID data for a wider audience/user participation 
