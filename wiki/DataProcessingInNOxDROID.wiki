@@ -138,7 +138,7 @@ generateTrackKML(T) :
            if i is last :
               pm_list.add(pm)
       g0 = g1
-   return 
+   return pm_list
 }}}
 
 http://code.google.com/p/javageomodel/
