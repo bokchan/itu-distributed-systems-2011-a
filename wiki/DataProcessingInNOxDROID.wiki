@@ -110,31 +110,35 @@ generateTrackKML(T) :
   g0 = G[0]
   for g1 in G[1:] : 
      t1 = g0.time_stamp
-     if (t1 == null)
-        g0 = g1
-        continue
      t2 = g1.time_stamp
-     if (t2 == null) 
-        continue
      N = set of nox data where time of n, nt :  t1 <= nt <= t2
-     if |N| == 0 : 
-        continue
 
      noxvalue = null
+     List pm_list // List of placemarks
      Placemark pm
-     I : set |N|-1 of interpolated gps points between g0 and g1 
+     List c // List of gps coordinates
+     I : set of size |N|-1 of interpolated gps points between g0 and g1 
      for i in I : 
         if i is first : 
            pm = new Placemark
            nox = N[i.index]
-        elif nox.noxlevel !=  noxvalue
-           add coordinates to placemark
+           c.add(i.gpspoint)
+        elif nox.noxlevel !=  noxvalue : 
+           c.add(i.gpspoint)
+           pm.add(c)
            if index of i.index < |I|-1 
-               noxvalue = nox.noxlevel
-     
-       
-
-
+              noxvalue = nox.noxlevel
+              c = new List
+              c.add(i.gpspoint)
+              pm_list.add(pm)
+              pm = new Placemark
+        else : 
+           c.add(i.gpspoint)
+           pm.add(c)
+           if i is last :
+              pm_list.add(pm)
+      g0 = g1
+   return 
 }}}
 
 http://code.google.com/p/javageomodel/
