@@ -102,6 +102,41 @@ for each g1, g2,...,gi :
    Else Get the dominant KMLPoints in the geocell -> Color the geocell accordingly by drawing a polygon consisting of a coordinates furtherst from the center.
 }}}
 
+{{{
+
+generateTrackKML(T) :
+  G : set of locationdata of some track T
+  if |G| == 0 return
+  g0 = G[0]
+  for g1 in G[1:] : 
+     t1 = g0.time_stamp
+     if (t1 == null)
+        g0 = g1
+        continue
+     t2 = g1.time_stamp
+     if (t2 == null) 
+        continue
+     N = set of nox data where time of n, nt :  t1 <= nt <= t2
+     if |N| == 0 : 
+        continue
+
+     noxvalue = null
+     Placemark pm
+     I : set |N|-1 of interpolated gps points between g0 and g1 
+     for i in I : 
+        if i is first : 
+           pm = new Placemark
+           nox = N[i.index]
+        elif nox.noxlevel !=  noxvalue
+           add coordinates to placemark
+           if index of i.index < |I|-1 
+               noxvalue = nox.noxlevel
+     
+       
+
+
+}}}
+
 http://code.google.com/p/javageomodel/
 http://code.google.com/apis/maps/articles/geospatial.html
 http://code.google.com/p/geomodel/source/browse/trunk/demos/pubschools
